@@ -1,5 +1,15 @@
 {
     "family": "Homelessness",
+    "github": "https://github.com/GSS-Cogs/family-homelessness",
+    "jenkins": {
+        "base": "https://ci.floop.org.uk",
+        "path": [
+            "GSS_data",
+            "Homelessness"
+        ]
+    },
+    "sparql": "https://production-drafter-ons-alpha.publishmydata.com/v1/sparql/live",
+    "pmd": "http://gss-data.org.uk",
     "pipelines": [
         "MHCLG-Families-in-bed-and-breakfast-accommodation-for-more-than-6-weeks",
         "MHCLG-Rough-sleeping",

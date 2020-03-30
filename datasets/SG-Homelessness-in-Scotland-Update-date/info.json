@@ -1,0 +1,22 @@
+{
+    "title": "Homelessness in Scotland: Update [date]",
+    "publisher": "Scottish Government",
+    "description": "This bulletin provides information on local authority homelessness applications, assessments and outcomes. It also provides data on the number of households in temporary accommodation, along with the number of households in unsuitable temporary accommodation as defined in the Homeless Persons (Unsuitable Accommodation) (Scotland) Order 2014.\nThe bulletin is based on data collected from local authorities through the HL1 case-level homeless applications data collection along with the HL2 aggregate temporary accommodation summary return and the HL3 case-level temporary accommodation return.",
+    "landingPage": "https://www2.gov.scot/Topics/Statistics/Browse/Housing-Regeneration/RefTables#Publications",
+    "datasetNotes": [
+        "Data on this page identified as latest version of \"Homelessness in Scotland: Update to [date]\" which is listed in the \"Statistics\" column of the table at the top of the page. A link to the data is contained in the \"links\" column, named \"Publication (HTML, PDF, tables and charts)\". This opens a new page and access to the two XLS files is via \"supporting files\" located at the top RHS of the page."
+    ],
+    "published": "2019-01-29",
+    "families": [
+        "Homelessness"
+    ],
+    "extract": {
+        "source": "XLS",
+        "stage": "Documented"
+    },
+    "transform": {
+        "airtable": "recMlxYx7JYkEkQ9W"
+    },
+    "sizingNotes": "Messy structure with quite a few tabs and multiple tables on some tabs. Sub-dimensions and footnotes present.",
+    "notes": "There are two XLS files, one with the most data named \"tables\" which contains pure data and the other named \"charts\" which seems to be a summary of the \"tables\" file data but with charts added."
+}

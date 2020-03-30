@@ -1,0 +1,22 @@
+{
+    "title": "Statutory homelessness Detailed local authority-level",
+    "publisher": "Ministry for Housing, Communities and Local Government",
+    "description": "These tables include information on new prevention and relief duties owed. They are not comparable with the homelessness decisions figures reported prior to April 2018. This is because amendments to legislation, as introduced by the 2017 HRA, have introduced new duties that mean more people will be eligible for assistance out of homelessness from local authorities.",
+    "landingPage": "https://www.gov.uk/government/statistical-data-sets/live-tables-on-homelessness",
+    "datasetNotes": [
+        "Data can be located on the landing page by scrolling down the page to 'Detailed local authority-level tables' and click on the latest publication this will open an XLS spreadsheet however other formats may be available please see notes for details of how to request."
+    ],
+    "published": "2019-12-18",
+    "families": [
+        "Homelessness"
+    ],
+    "extract": {
+        "source": "XLS",
+        "stage": "Documented"
+    },
+    "transform": {
+        "airtable": "recAJWGiTDewVF60Q"
+    },
+    "sizingNotes": "",
+    "notes": ""
+}

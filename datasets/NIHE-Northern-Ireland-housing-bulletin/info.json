@@ -1,0 +1,22 @@
+{
+    "title": "Northern Ireland housing bulletin",
+    "publisher": "Northern Ireland Housing Executive",
+    "description": "The Northern Ireland Housing Bulletin is a quarterly bulletin containing information on new housing starts and completions, homelessness, the NI House Price Index and new house sales and prices.",
+    "landingPage": "https://www.communities-ni.gov.uk/topics/housing-statistics#toc-2",
+    "datasetNotes": [
+        "Data on this page identified as latest version via link entitled \"Northern Ireland housing bulletin [Quarter]\" towards middle part of page under heading \"Northern Ireland housing bulletins\". This opens a new page with the spreadsheet located under the heading \"Documents\"."
+    ],
+    "published": "2019-11-26",
+    "families": [
+        "Homelessness"
+    ],
+    "extract": {
+        "source": "XLS",
+        "stage": "Documented"
+    },
+    "transform": {
+        "airtable": "recolqS9SmiHw5p2a"
+    },
+    "sizingNotes": "This datatset seems to be purely a summary of data contained in the \"Northern Ireland homelessness bulletin\" dataset, see this dataset for details.",
+    "notes": "This datatset seems to be purely a summary of data contained in the \"Northern Ireland homelessness bulletin\" dataset."
+}

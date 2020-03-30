@@ -1,0 +1,23 @@
+{
+    "title": "Homelessness in Scotland:  Equalities Breakdown",
+    "publisher": "Scottish Government",
+    "description": "This bulletin provides information about homelessness in Scotland, with a focus on the equalities characteristics of homeless applicants.",
+    "landingPage": "https://www2.gov.scot/Topics/Statistics/Browse/Housing-Regeneration/RefTables#Publications",
+    "datasetNotes": [
+        "Data can be found by clicking on the Excel tables and charts link  for the latest publication. this opens another web page ",
+        " where 2 XLSX  files can be accessed  1 as a table and the other as a  chart."
+    ],
+    "published": "2019-11-19",
+    "families": [
+        "Homelessness"
+    ],
+    "extract": {
+        "source": "XLS",
+        "stage": "Documented"
+    },
+    "transform": {
+        "airtable": "reczxUaN3bLqZdCXr"
+    },
+    "sizingNotes": "Messy structure with multiple tables and charts on the tabs with footnotes.  May take a while to determine  dimensions.",
+    "notes": "There are 2 spreadsheets, one is titled tables and the other charts. There are similarities between the  2 spreadsheets and there may be some duplication, however there are some areas covered by one and not the other.  May also be linked to the Disabilities , Mental Health and Learning disabilities families."
+}

@@ -1,0 +1,23 @@
+{
+    "title": "Homelessness in Scotland: Annual Publication",
+    "publisher": "Scottish Government",
+    "description": "Information on local authority homelessness applications, assessments and outcomes along with information on the use of temporary accommodation.",
+    "landingPage": "https://www2.gov.scot/Topics/Statistics/Browse/Housing-Regeneration/RefTables#Publications",
+    "datasetNotes": [
+        "Data can be found by clicking on the Excel tables and charts link  for the latest publication. this opens another web page ",
+        " where 2 XLSX  files can be accessed  1 as a table and the other as a  chart."
+    ],
+    "published": "2019-06-26",
+    "families": [
+        "Homelessness"
+    ],
+    "extract": {
+        "source": "XLS",
+        "stage": "Documented"
+    },
+    "transform": {
+        "airtable": "recNEmx9U8FXMO0RX"
+    },
+    "sizingNotes": "Large messy tables with footnotes, a mixture of numbers and %, some tabs have multiple tables.  The charts file contains some tabs with data alternating with a tab with charts, whist other tabs have a combination of charts and tables.",
+    "notes": "This is also listed at line 64 in the disabilities family. There are 2 large messy XLSX spreadsheets."
+}

@@ -1,0 +1,22 @@
+{
+    "title": "Families in bed and breakfast accommodation for more than 6 weeks",
+    "publisher": "Ministry for Housing, Communities and Local Government",
+    "description": "Table showing quarterly figures for 2007 to 2012 by individual local authorities. On separate tabs and each tab has 4 tables",
+    "landingPage": "https://www.gov.uk/government/statistical-data-sets/families-in-bed-and-breakfast-accommodation-for-more-than-6-weeks",
+    "datasetNotes": [
+        "Data can be located on the landing page by scrolling down the page and locating the XLS speadsheet"
+    ],
+    "published": "2013-06-04",
+    "families": [
+        "Homelessness"
+    ],
+    "extract": {
+        "source": "XLS",
+        "stage": "Documented"
+    },
+    "transform": {
+        "airtable": "recGLGeVMKni3zKUq"
+    },
+    "sizingNotes": "Simple table structure with 6 separate tabs & 4 tables on each tab.",
+    "notes": ""
+}

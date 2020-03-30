@@ -1,0 +1,22 @@
+{
+    "title": "Rough sleeping",
+    "publisher": "Ministry for Housing, Communities and Local Government",
+    "description": "Annual statistical release evaluating the extent of rough sleeping",
+    "landingPage": "https://www.gov.uk/government/statistical-data-sets/live-tables-on-homelessness",
+    "datasetNotes": [
+        "Data can be located on the landing page by scrolling down the page to 'Rough sleeping tables'  click on the latest publication this will open an XLS spreadsheet however other formats may be available please see notes for details of how to request."
+    ],
+    "published": "2019-01-31",
+    "families": [
+        "Homelessness"
+    ],
+    "extract": {
+        "source": "XLS",
+        "stage": "Documented"
+    },
+    "transform": {
+        "airtable": "rec8y9CsU6ZNX73Mv"
+    },
+    "sizingNotes": "",
+    "notes": ""
+}

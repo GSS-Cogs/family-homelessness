@@ -1,0 +1,18 @@
+{
+    "family": "Homelessness",
+    "pipelines": [
+        "MHCLG-Families-in-bed-and-breakfast-accommodation-for-more-than-6-weeks",
+        "MHCLG-Rough-sleeping",
+        "MHCLG-Statutory-homelessness-Detailed-local-authority-level",
+        "MHCLG-Statutory-homelessness-in-England",
+        "NIHE-Northern-Ireland-Housing-Statistics",
+        "NIHE-Northern-Ireland-homelessness-bulletin",
+        "NIHE-Northern-Ireland-housing-bulletin",
+        "SG-Homelessness-in-Scotland-Annual-Publication",
+        "SG-Homelessness-in-Scotland-Equalities-Breakdown",
+        "SG-Homelessness-in-Scotland-Update-date",
+        "SG-Housing-Options-PREVENT1-Statistics-in-Scotland",
+        "WG-Homelessness-statistics",
+        "WG-Rough-Sleeper-Count"
+    ]
+}

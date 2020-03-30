@@ -1,0 +1,22 @@
+{
+    "title": "Housing Options (PREVENT1) Statistics in Scotland",
+    "publisher": "Scottish Government",
+    "description": "The PREVENT1 data specification contains the core questions to be used in the monitoring of housing options work by local authorities. One month after the end of each quarter, Local Authorities are asked to submit an XML file containing the information.",
+    "landingPage": "https://www2.gov.scot/Topics/Statistics/Browse/Housing-Regeneration/RefTables",
+    "datasetNotes": [
+        "Data on this page identified as latest version of \"Housing Options (PREVENT1) Statistics in Scotland [date]\" which is listed in the \"Statistics\" column of the table towards the top of the page. A link to the data is contained in the \"links\" column, named \"Excel Tables and Charts\". This opens a new page and access to the XLS file is via \"Open\" link located under heading \"Downloadable document\"."
+    ],
+    "published": "2019-06-26",
+    "families": [
+        "Homelessness"
+    ],
+    "extract": {
+        "source": "XLS",
+        "stage": "Documented"
+    },
+    "transform": {
+        "airtable": "reckO8LcMRZwEhQtJ"
+    },
+    "sizingNotes": "Messy structure with quite a few tabs, including mixture of data tabs and chart tabs. Multiple tables on some data tabs. Sub-dimensions and footnotes present.",
+    "notes": ""
+}

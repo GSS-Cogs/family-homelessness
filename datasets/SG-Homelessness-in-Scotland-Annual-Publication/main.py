@@ -4,7 +4,7 @@ from gssutils import *
 import json 
 
 info = json.load(open('info.json')) 
-landingPage = info['Landing Page'] 
+landingPage = info['landingPage'] 
 landingPage 
 
 # + 

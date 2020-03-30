@@ -1,4 +1,4 @@
-# # NIHE Northern Ireland Housing Statistics 
+# # SG Homelessness in Scotland Equalities Breakdown 
 
 from gssutils import * 
 import json 

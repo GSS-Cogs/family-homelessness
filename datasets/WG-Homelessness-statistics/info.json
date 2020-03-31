@@ -15,7 +15,8 @@
         "stage": "Documented"
     },
     "transform": {
-        "airtable": "recP83HYsMuw2tj9C"
+        "airtable": "recP83HYsMuw2tj9C",
+        "github": "8"
     },
     "sizingNotes": "Available through the odata route, so simple to get, but may need a number of separate downloads / produce a number of different data sets, so needs a fair amount of up-front analysis",
     "notes": ""

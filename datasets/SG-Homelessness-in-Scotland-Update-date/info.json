@@ -15,7 +15,8 @@
         "stage": "Documented"
     },
     "transform": {
-        "airtable": "recMlxYx7JYkEkQ9W"
+        "airtable": "recMlxYx7JYkEkQ9W",
+        "github": "6"
     },
     "sizingNotes": "Messy structure with quite a few tabs and multiple tables on some tabs. Sub-dimensions and footnotes present.",
     "notes": "There are two XLS files, one with the most data named \"tables\" which contains pure data and the other named \"charts\" which seems to be a summary of the \"tables\" file data but with charts added."

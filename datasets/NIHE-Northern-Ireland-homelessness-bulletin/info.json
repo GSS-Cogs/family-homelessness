@@ -15,7 +15,8 @@
         "stage": "Documented"
     },
     "transform": {
-        "airtable": "recqGhObrbTGPi3ON"
+        "airtable": "recqGhObrbTGPi3ON",
+        "github": "12"
     },
     "sizingNotes": "Multiple tabs with small tables and simple structure but some sub-dimensions and multiple footnotes.",
     "notes": ""

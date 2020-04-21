@@ -1,0 +1,127 @@
+{
+    "etltitle": "Rough sleeping",
+    "publisher": "Ministry for Housing, Communities and Local Government",
+    "description": "Annual statistical release evaluating the extent of rough sleeping",
+    "families": ["Homelessness"],
+    "landingPage": "https://www.gov.uk/government/statistical-data-sets/live-tables-on-homelessness",
+    "filename": "RS_STATS_2018_LiveTables.xlsx",
+    "dataset1": {
+      "name": "MHCLG Rough Sleeping in England",
+      "notes": "Four tables joined into one dataset"
+      "sheetnames": ["table 1", "table 2a", "table 2b", "table 2c"],
+      "comments": "Ignore LA Dropdown sheet. Footnotes from all 4 sheets need to be compiled and added to description/comments/metadata",
+      "tablestructure": ["Period", "ONS Geography Code", "Sex", "Nationality", "Age", "Percentage of Total", "Annual Percentage Change", "Measure Type", "Unit", "Marker", "Value"],
+      "sheet1": {
+        "name": "table 1",
+        "notes": "Hidden columns, Q:R for estimates, cannot unhide in Excel but can in Numbers on MAC",
+        "column01": "(A) ONS Code - change name to ONS Geography Code (Dimension)",
+        "column02": "(B) Local Authority/Region - REMOVE, not needed as we have the ONS Geography Code",
+        "column03": "(C) Higher level Local Authority - REMOVE, Not needed as we have ONS Geography Code",
+        "column04": "(D4:L4) Year - change name to Period and format as year/{year} (Dimension)",
+        "column05": "(M) Number of Households mid-2018 (‘000) - Set Period to relevant year and change Measure Type and Unit columns as stated",
+        "column06": "(N) 2018 rough sleeping rate (per 10,000 household) - Set Period to relevant year and change Measure Type and Unit columns as stated",
+        "column07": "(B) % change from previous year - move to a column and rename Annual Percentage Change - This is only for the higher level stats (Attribute)",
+        "column08": "(B) % of {Region} total - move to a column match up with relevant values and rename Percentage of Total - This is only for the higher level stats (Attribute)",
+        "column09": "(R32:R357) Values should be added to Marker column only for 2018",
+        "column10": "Add a Sex column with the value All (Dimension)",
+        "column11": "Add a Nationality column with the value All (Dimension)",
+        "column12": "Add Age column with value All (Dimension)",
+        "measuretypecolumn": {
+          "set1": "For standard values (Columns D:L) set to People",
+          "set2": "For Number fo households (Column M) set to Households",
+          "set3": "For Rough sleeping rate (Column N) set to Households"
+        },
+        "unitcolumn": {
+          "set1": "For standard values (Columns D:L) set to Count",
+          "set2": "For Number fo households (Column M) set to Thousands",
+          "set3": "For Rough sleeping rate (Column N) set to Rate Per 10,000"
+        },
+        "markercolumn": {
+          "set1": "Any Local Authority/Region with * in value should have the following value: Rough Sleeping inititive funding",
+          "set2": "Add values from R column for 2018 only, Streetcount | Estimate | Spotlight"
+        }
+      },
+      "sheet2": {
+        "name": "table 2a",
+        "notes": "Hidden columns, Q:R for estimates, cannot unhide in Excel but can in Numbers on MAC"
+        "column01": "(A) ONS Code - change name to ONS Geography Code (Dimension)",
+        "column02": "(B) Local Authority/Region - REMOVE, not needed as we have the ONS Geography Code",
+        "column03": "(C) Higher level Local Authority - REMOVE, Not needed as we have ONS Geography Code",
+        "column04": "(D4:O4) Year - change name to Period and format as year/{year} (Dimension)",
+        "column05": "(D5:O5) Sex {Total = T | Female = F | Male = M | Gender not known = U} (Dimension)",
+        "column06": "(B) % of {Region} total - move to a column match up with relevant values and rename Percentage of Total - This is only for the higher level stats, set to zero for all other rows (Attribute)",
+        "column07": "(Q32:Q357) Values should be added to Marker column only for 2018",
+        "column08": "Add a Nationality column with the value All (Dimension)",
+        "column09": "Add Age column with value All (Dimension)",
+        "column10": "Add Percentage of Total column with value 0 (Attribute)",
+        "measuretypecolumn": {
+          "set1": "For standard values (Columns D:O) set to People"
+        },
+        "unitcolumn": {
+          "set1": "For standard values (Columns D:O) set to Count"
+        },
+        "markercolumn": {
+          "set1": "Any Local Authority/Region with * in value should have the following value: Rough Sleeping inititive funding",
+          "set2": "Add values from Q column for 2018 only, Streetcount | Estimate | Spotlight"
+        }
+      },
+      "sheet2": {
+        "name": "table 2b",
+        "notes": "Hidden columns, V:W for estimates, cannot unhide in Excel but can in Numbers on MAC",
+        "column01": "(A) ONS Code - change name to ONS Geography Code (Dimension)",
+        "column02": "(B) Local Authority/Region - REMOVE, not needed as we have the ONS Geography Code",
+        "column03": "(C) Higher level Local Authority - REMOVE, Not needed as we have ONS Gepgraphy Code",
+        "column04": "(D4:R4) Year - change name to Period and format as year/{year} (Dimension)",
+        "column05": "(D5:R5) Nationality {Nationality not known = Unknown} (Dimension)",
+        "column06": "(B) % of {Region} total - move to a column match up with relevant values and rename Percentage of Total - This is only for the higher level stats, set to zero for all other rows (Attribute)",
+        "column07": "(V32:V357) Values should be added to Marker column only for 2018",
+        "column08": "Add Age column with value All (Dimension)",
+        "column09": "Add Percentage of Total column with value 0 (Attribute)",
+        "measuretypecolumn": {
+          "set1": "For standard values (Columns D:O) set to People"
+        },
+        "unitcolumn": {
+          "set1": "For standard values (Columns D:O) set to Count"
+        },
+        "markercolumn": {
+          "set1": "Any Local Authority/Region with * in value should have the following value: Rough Sleeping inititive funding",
+          "set2": "Add values from V column for 2018 only, Streetcount | Estimate | Spotlight"
+        }
+      },
+      "sheet3": {
+        "name": "table 2c",
+        "notes": "Hidden columns, T:U for estimates, cannot unhide in Excel but can in Numbers on MAC",
+        "column01": "(A) ONS Code - change name to ONS Geography Code (Dimension)",
+        "column02": "(B) Local Authority/Region - REMOVE, not needed as we have the ONS Geography Code",
+        "column03": "(C) Higher level Local Authority - REMOVE, Not needed as we have ONS Geography Code",
+        "column04": "(D4:Q4) Year - change name to Period and format as year/{year} (Dimension)",
+        "column05": "(D5:Q5) Age {Age not known = Unknown} (Dimension)",
+        "column06": "(B) % of {Region} total - move to a column and rename Percentage of Total - This is only for the higher level stats, set to zero for all other rows (Attribute)",
+        "column07": "(T32:T357) Values should be added to Marker column only for 2018, join T and U columns",
+        "column08": "Add Nationality column with value All (Dimension)",
+        "column09": "Add Percentage of Total column with value 0 (Attribute)",
+        "measuretypecolumn": {
+          "set1": "For standard values (Columns D:O) set to People"
+        },
+        "unitcolumn": {
+          "set1": "For standard values (Columns D:O) set to Count"
+        },
+        "markercolumn": {
+          "set1": "Any Local Authority/Region with * in value should have the following value: Rough Sleeping inititive funding",
+          "set2": "Add values from T column for 2018 only, Streetcount | Estimate | Spotlight"
+        }
+      },
+      "footnotes": "
+        The district authority of Shepway has been renamed Folkstone & Hythe. Users should compare previous years' figures for Shepway to Folkstone & Hythe in this release.
+        A street count is a single night snapshot of the number of people sleeping rough in a local authority area. Street counts are attended and independently verified by Homeless Link.
+      "
+    },
+    "transform": {
+        "airtable": "rec8y9CsU6ZNX73Mv",
+        "github": "2"
+    },
+    "decheck": {
+      "err1": "",
+      "err2": ""
+    }
+}

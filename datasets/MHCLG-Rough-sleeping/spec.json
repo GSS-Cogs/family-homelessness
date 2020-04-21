@@ -28,12 +28,12 @@
         "column12": "Add Age column with value All (Dimension)",
         "measuretypecolumn": {
           "set1": "For standard values (Columns D:L) set to People",
-          "set2": "For Number fo households (Column M) set to Households",
+          "set2": "For Number for households (Column M) set to Households",
           "set3": "For Rough sleeping rate (Column N) set to Households"
         },
         "unitcolumn": {
           "set1": "For standard values (Columns D:L) set to Count",
-          "set2": "For Number fo households (Column M) set to Thousands",
+          "set2": "For Number of households (Column M) set to Thousands",
           "set3": "For Rough sleeping rate (Column N) set to Rate Per 10,000"
         },
         "markercolumn": {
@@ -111,10 +111,7 @@
           "set2": "Add values from T column for 2018 only, Streetcount | Estimate | Spotlight"
         }
       },
-      "footnotes": "
-        The district authority of Shepway has been renamed Folkstone & Hythe. Users should compare previous years' figures for Shepway to Folkstone & Hythe in this release.
-        A street count is a single night snapshot of the number of people sleeping rough in a local authority area. Street counts are attended and independently verified by Homeless Link.
-      "
+      "footnotes": "The district authority of Shepway has been renamed Folkstone & Hythe. Users should compare previous years' figures for Shepway to Folkstone & Hythe in this release.A street count is a single night snapshot of the number of people sleeping rough in a local authority area. Street counts are attended and independently verified by Homeless Link."
     },
     "transform": {
         "airtable": "rec8y9CsU6ZNX73Mv",

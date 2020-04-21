@@ -7,7 +7,7 @@
     "filename": "RS_STATS_2018_LiveTables.xlsx",
     "dataset1": {
       "name": "MHCLG Rough Sleeping in England",
-      "notes": "Four tables joined into one dataset"
+      "notes": "Four tables joined into one dataset",
       "sheetnames": ["table 1", "table 2a", "table 2b", "table 2c"],
       "comments": "Ignore LA Dropdown sheet. Footnotes from all 4 sheets need to be compiled and added to description/comments/metadata",
       "tablestructure": ["Period", "ONS Geography Code", "Sex", "Nationality", "Age", "Percentage of Total", "Annual Percentage Change", "Measure Type", "Unit", "Marker", "Value"],
@@ -43,7 +43,7 @@
       },
       "sheet2": {
         "name": "table 2a",
-        "notes": "Hidden columns, Q:R for estimates, cannot unhide in Excel but can in Numbers on MAC"
+        "notes": "Hidden columns, Q:R for estimates, cannot unhide in Excel but can in Numbers on MAC",
         "column01": "(A) ONS Code - change name to ONS Geography Code (Dimension)",
         "column02": "(B) Local Authority/Region - REMOVE, not needed as we have the ONS Geography Code",
         "column03": "(C) Higher level Local Authority - REMOVE, Not needed as we have ONS Geography Code",

@@ -91,8 +91,34 @@ for x in range(no_of_datasets):
         except Exception as e:
             print('Error: ' + str(e))
 
-tbl_set[2]
+# Get all the unique column names
+col_set = []
+for t in tbl_set:
+    for c in t.columns:
+        if c not in col_set:
+            col_set.append(c)
+col_set
 
-tbl_set[3]
+# +
+# Add missing columns to each table and reorder all the tables to have the same structure and then concat
+i = 0
+
+for t in tbl_set:
+    for l in col_set:
+        if l not in t.columns:
+            t[l] = 'All'
+    tbl_set[i] = t[col_set]
+    print('Table ' + str(i))
+    print(tbl_set[i].columns)
+    i = i + 1
+    
+main_tbl = pd.concat(tbl_set)
+# -
+
+# Display unique values to ensure everythng has been included
+for c in main_tbl.columns:
+    if 'OBS' not in c:
+        print(c)
+        print(main_tbl[c].unique())
 
 

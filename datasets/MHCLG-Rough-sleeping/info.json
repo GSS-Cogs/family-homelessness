@@ -20,14 +20,30 @@
     },
     "sizingNotes": "",
     "notes": "",
+    "noofdatasets": "1",
     "dataset1": {
         "spreadsheetname": "Rough sleeping statistics England",
         "name": "Rough Sleeping Street Counts",
+        "noofsheets": "4",
         "sheet1": {
           "name": "table 1",
-          "columnnames": ["ONS Geography Code", "Local Authority", "Period"],
-          "coords": ["A5", "B5", "D4", "D5:N367"]
+          "columnnames": ["ONS Geography Code", "Local Authority", "SpareCol1", "Period", "SpareRow1", "SpareRow2"],
+          "coords": ["A5", "B5", "A5", "D4", "D4", "D4", "D5:N367"]
+        },
+        "sheet2": {
+          "name": "table 2a",
+          "columnnames": ["ONS Geography Code", "Local Authority", "SpareCol1", "Period", "Gender", "SpareRow2"],
+          "coords": ["A6", "B6", "A6", "D4", "D5", "D4", "D7:N358"]
+        },
+        "sheet3": {
+          "name": "table 2b",
+          "columnnames": ["ONS Geography Code", "Local Authority", "SpareCol1", "Period", "Nationality", "SpareRow2"],
+          "coords": ["A6", "B6", "A6", "D4", "D5", "D4", "D7:N358"]
+        },
+        "sheet4": {
+          "name": "table 2c",
+          "columnnames": ["ONS Geography Code", "Local Authority", "SpareCol1", "Period", "Age", "SpareRow2"],
+          "coords": ["A6", "B6", "A6", "D4", "D5", "D4", "D7:N358"]
         }
-
     }
 }

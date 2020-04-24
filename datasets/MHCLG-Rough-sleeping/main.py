@@ -67,6 +67,7 @@ def extract_table(tab, ref1, ref2, ref3, ref4, ref5, ref6, ref7, title1, title2,
         return "extract_sheet: " + str(e)   
 
 
+datasets = []
 tbl_set = []
 no_of_datasets = int(info['noofdatasets'])
 for x in range(no_of_datasets):
@@ -90,44 +91,55 @@ for x in range(no_of_datasets):
             del tbl
         except Exception as e:
             print('Error: ' + str(e))
+    datasets.append(tbl_set)
+    del tbl_set
 
 # Get all the unique column names
 col_set = []
-for t in tbl_set:
-    for c in t.columns:
-        if c not in col_set:
-            col_set.append(c)
+for d in datasets:
+    for t in d:
+        for c in t.columns:
+            if c not in col_set:
+                col_set.append(c)
 col_set
 
-# +
 # Add missing columns to each table and reorder all the tables to have the same structure and then concat
-i = 0
-
-for t in tbl_set:
-    for l in col_set:
-        if l not in t.columns:
-            t[l] = 'All'
-    tbl_set[i] = t[col_set]
-    print('Table ' + str(i))
-    print(tbl_set[i].columns)
-    i = i + 1
-    
-main_tbl = pd.concat(tbl_set)
-# -
+k = 0
+main_tbls = []
+for d in datasets:
+    i = 0
+    for t in d:
+        for l in col_set:
+            if l not in t.columns:
+                t[l] = 'All'
+        datasets[k][i] = t[col_set]
+        print('Table ' + str(i))
+        print(datasets[k][i].columns)
+        i = i + 1
+    main_tbls.append(pd.concat(datasets[0]))
 
 # Display unique values to ensure everythng has been included
-for c in main_tbl.columns:
-    if 'OBS' not in c:
-        print(c)
-        print(main_tbl[c].unique())
+for m in main_tbls:
+    for c in m:
+        if 'OBS' not in c:
+            print(c)
+            print(main_tbl[c].unique())
+    print('----------------------------------------------------------------------------------------------------')
 
 # Rename, add column and reorder
-main_tbl = main_tbl.rename(columns={'OBS': 'Value'})
-main_tbl['Measure Type'] = ''
-main_tbl['Unit'] = ''
-main_tbl['Marker'] = ''
-main_tbl = main_tbl[['Period', 'ONS Geography Code', 'Nationality', 'Age', 'Gender', 'Measure Type', 'Unit', 'Marker', 'Value']]
+i = 0
+for m in main_tbls:
+    m = m.rename(columns={'OBS': 'Value'})
+    m['Measure Type'] = ''
+    m['Unit'] = ''
+    m['Marker'] = ''
+    main_tbls[i] = m[['Period', 'ONS Geography Code', 'Nationality', 'Age', 'Gender', 'Measure Type', 'Unit', 'Marker', 'Value']]
+    i = i + 1
 
-main_tbl.head(60)
+main_tbls[0].head(60)
+
+datasets[0]
+
+main_tbls
 
 

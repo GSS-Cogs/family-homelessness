@@ -57,7 +57,7 @@ def extract_table(tab, ref1, ref2, ref3, ref4, ref5, ref6, ref7, title1, title2,
         c1 = ConversionSegment(col7, Dimensions, processTIMEUNIT=True)
         tbl = c1.topandas()
         
-        # Get rid of any columns that have the word Spare in their name
+        # Get rid of any columns that have the word Spare in their name as they are not needed
         for col in tbl.columns:
             if 'Spare' in col:
                 tbl = tbl.drop(col, 1)
@@ -120,5 +120,14 @@ for c in main_tbl.columns:
     if 'OBS' not in c:
         print(c)
         print(main_tbl[c].unique())
+
+# Rename, add column and reorder
+main_tbl = main_tbl.rename(columns={'OBS': 'Value'})
+main_tbl['Measure Type'] = ''
+main_tbl['Unit'] = ''
+main_tbl['Marker'] = ''
+main_tbl = main_tbl[['Period', 'ONS Geography Code', 'Nationality', 'Age', 'Gender', 'Measure Type', 'Unit', 'Marker', 'Value']]
+
+main_tbl.head(60)
 
 

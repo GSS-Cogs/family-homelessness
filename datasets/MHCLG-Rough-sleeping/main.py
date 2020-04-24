@@ -126,7 +126,7 @@ for m in main_tbls:
             print(main_tbl[c].unique())
     print('----------------------------------------------------------------------------------------------------')
 
-# Rename, add column and reorder
+# Rename, add columns and reorder
 i = 0
 for m in main_tbls:
     m = m.rename(columns={'OBS': 'Value'})
@@ -138,8 +138,8 @@ for m in main_tbls:
 
 main_tbls[0].head(60)
 
-datasets[0]
 
-main_tbls
+
+
 
 

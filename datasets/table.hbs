@@ -10,6 +10,7 @@
         <th>Tracking</th>
         <th>Transform Status</th>
         <th>Publish Status</th>
+        <th>Publication date</th>
     </tr>
     </thead>
     <tbody>
@@ -21,9 +22,7 @@
             <td>{{info.extract.stage}}</td>
             <td>
                 {{#if info.transform.main_issue}}
-                    <a href="{{../github}}/issues/{{info.transform.main_issue}}"><i style="color: black;"
-                                                                                    class="fab fa-github-alt"></i>
-                        #{{info.transform.main_issue}}</a>
+                    <a href="{{../github}}/issues/{{info.transform.main_issue}}"><img alt="GitHub issue detail" src="{{../issue_badge_base}}/{{info.transform.main_issue}}?style=plastic"></a>
                 {{/if}}
             </td>
             <td>
@@ -39,6 +38,9 @@
                         {{/each}}
                     </ul>
                 </div>
+            </td>
+            <td>
+                {{lastModified}}
             </td>
         </tr>
     {{/each}}

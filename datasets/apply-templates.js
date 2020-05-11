@@ -6,9 +6,13 @@ function datasetFetcher(endpoint, landingPages) {
         data: {
             "query": `PREFIX dcat: <http://www.w3.org/ns/dcat#>
 PREFIX rdfs: <http://www.w3.org/2000/01/rdf-schema#>
-SELECT DISTINCT ?page ?ds ?label WHERE {
+PREFIX dct: <http://purl.org/dc/terms/>
+SELECT DISTINCT ?page ?ds ?label ?modified WHERE {
   ?ds dcat:landingPage ?page;
-  rdfs:label ?label
+  rdfs:label ?label .
+  OPTIONAL {
+    ?ds dct:modified ?modified
+  }
 } VALUES (?page) {
 ${landingPages.map(x => `(<${x}>)`).join(' ')}
 }`
@@ -20,7 +24,8 @@ ${landingPages.map(x => `(<${x}>)`).join(' ')}
             return {
                 landingPage: binding.page.value,
                 uri: binding.ds.value,
-                label: binding.label.value
+                label: binding.label.value,
+                modified: (binding.modified.value !== null) ? new Date(binding.modified.value) : null
             };
         });
     });
@@ -41,7 +46,7 @@ if (dataset) {
         const template = Handlebars.compile(source);
         $.getJSON('info.json', function(mainInfo) {
             $.getJSON(dataset + "/info.json", function (info) {
-                let fetchDatasets;
+                let fetchDatasets, lastPublished=null;
                 if (mainInfo.hasOwnProperty('sparql')) {
                     fetchDatasets = datasetFetcher(mainInfo.sparql, [info.landingPage]);
                 } else {
@@ -51,9 +56,13 @@ if (dataset) {
                 fetchDatasets.done(function(datasets) {
                     if (mainInfo.hasOwnProperty('pmd')) {
                         datasets = datasets.map(function(ds) {
+                            if ((ds.modified !== null) && ((lastPublished === null) || (lastPublished < ds.modified))) {
+                                lastPublished = ds.modified;
+                            }
                             return {
                                 uri: mainInfo.pmd + '/resource?uri=' + encodeURIComponent(ds.uri),
-                                label: ds.label
+                                label: ds.label,
+                                modified: ds.modified
                             }
                         });
                     }
@@ -65,7 +74,8 @@ if (dataset) {
                             return 'job/' + p;
                         }).join('/'),
                         "jenkins_buildicon": 'buildStatus/icon?job=' + encodeURIComponent(mainInfo.jenkins.path.join('/') + '/'),
-                        "datasets": datasets
+                        "datasets": datasets,
+                        "issue_badge_base": `https://img.shields.io/github/issues/detail/state${(new URL(mainInfo.github)).pathname}`
                     }));
                 });
                 document.title = info.title;
@@ -107,20 +117,42 @@ if (dataset) {
                 });
                 let fetchDatasets;
                 if (info.hasOwnProperty('sparql')) {
-                    fetchDatasets = datasetFetcher(info.sparql, collected.map(p => p.info.landingPage));
+                    fetchDatasets = datasetFetcher(info.sparql, collected.flatMap(p => p.info.landingPage));
                 } else {
                     fetchDatasets = $.Deferred();
                     fetchDatasets.resolve([]);
                 }
                 fetchDatasets.done(function(datasets) {
                     collected = collected.map(p => {
-                        p.datasets = datasets.filter(ds => ds.landingPage == p.info.landingPage);
+                        p.datasets = datasets.filter(ds => {
+                            if (typeof(p.info.landingPage) == 'string') {
+                                return ds.landingPage === p.info.landingPage
+                            } else {
+                                return p.info.landingPage.includes(ds.landingPage)
+                            }
+                        }).filter(function(ds, i, s) {
+                            return s.findIndex(d => d.uri === ds.uri) === i
+                        });
+                        let lastModified = p.datasets
+                            .map(a => a.modified)
+                            .reduce(function(a, b) {
+                                    if (a === null) {
+                                        return b;
+                                    } else if (b === null) {
+                                        return a;
+                                    } else {
+                                        return a > b ? a : b
+                                    }
+                                }, null);
                         if (info.hasOwnProperty('pmd')) {
                             p.datasets = p.datasets.map(ds => {
                                 ds.uri = info.pmd + '/resource?uri=' + encodeURIComponent(ds.uri);
                                 return ds;
                             });
                         };
+                        if (lastModified !== null) {
+                            p.lastModified = lastModified.toDateString();
+                        }
                         return p;
                     });
                     $("#body").html(template({
@@ -131,7 +163,8 @@ if (dataset) {
                             return 'job/' + p;
                         }).join('/'),
                         "jenkins_buildicon": 'buildStatus/icon?job=' + encodeURIComponent(info.jenkins.path.join('/') + '/'),
-                        "pipelines": collected
+                        "pipelines": collected,
+                        "issue_badge_base": `https://img.shields.io/github/issues/detail/state${(new URL(info.github)).pathname}`
                     }));
                 });
             });

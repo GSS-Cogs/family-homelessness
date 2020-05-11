@@ -16,7 +16,8 @@
     },
     "transform": {
         "airtable": "recPtjPC7mbwqhVEt",
-        "github": "9"
+        "github": "9",
+        "main_issue": 35
     },
     "sizingNotes": "Although this initially appears to be complex, some work may be required to determine what the dimensions should be named.",
     "notes": ""

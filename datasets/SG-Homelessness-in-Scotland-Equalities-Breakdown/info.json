@@ -17,7 +17,8 @@
     },
     "transform": {
         "airtable": "reczxUaN3bLqZdCXr",
-        "github": "13"
+        "github": "13",
+        "main_issue": 39
     },
     "sizingNotes": "Messy structure with multiple tables and charts on the tabs with footnotes.  May take a while to determine  dimensions.",
     "notes": "There are 2 spreadsheets, one is titled tables and the other charts. There are similarities between the  2 spreadsheets and there may be some duplication, however there are some areas covered by one and not the other.  May also be linked to the Disabilities , Mental Health and Learning disabilities families."

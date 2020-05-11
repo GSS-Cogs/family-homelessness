@@ -16,7 +16,8 @@
     },
     "transform": {
         "airtable": "reckO8LcMRZwEhQtJ",
-        "github": "10"
+        "github": "10",
+        "main_issue": 36
     },
     "sizingNotes": "Messy structure with quite a few tabs, including mixture of data tabs and chart tabs. Multiple tables on some data tabs. Sub-dimensions and footnotes present.",
     "notes": ""

@@ -16,7 +16,8 @@
     },
     "transform": {
         "airtable": "recGLGeVMKni3zKUq",
-        "github": "4"
+        "github": "4",
+        "main_issue": 30
     },
     "sizingNotes": "Data now incorporated into Stautory Homelessness tables",
     "notes": ""

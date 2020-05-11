@@ -16,7 +16,8 @@
     },
     "transform": {
         "airtable": "recqGhObrbTGPi3ON",
-        "github": "12"
+        "github": "12",
+        "main_issue": 38
     },
     "sizingNotes": "Multiple tabs with small tables and simple structure but some sub-dimensions and multiple footnotes.",
     "notes": ""

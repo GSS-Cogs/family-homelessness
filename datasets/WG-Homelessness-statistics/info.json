@@ -16,7 +16,8 @@
     },
     "transform": {
         "airtable": "recP83HYsMuw2tj9C",
-        "github": "8"
+        "github": "8",
+        "main_issue": 34
     },
     "sizingNotes": "Available through the odata route, so simple to get, but may need a number of separate downloads / produce a number of different data sets, so needs a fair amount of up-front analysis",
     "notes": ""

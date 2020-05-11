@@ -16,7 +16,8 @@
     },
     "transform": {
         "airtable": "recJiz20V5VgwYiIS",
-        "github": "5"
+        "github": "5",
+        "main_issue": 31
     },
     "sizingNotes": "12 tables with different aspects.  needs some up front work to determine how to handle the dimensions / split into datasets.  Should be straightforward to extract data. Homelessness data contained in table of Section 3, tabs T3_8 to T3_11 but seems to be purely a summary of data contained in the \"Northern Ireland homelessness bulletin\" dataset (see below).",
     "notes": "The Homelessness element of this data set seems to be purely a summary of data contained in the \"Northern Ireland homelessness bulletin\" data set (see below)."

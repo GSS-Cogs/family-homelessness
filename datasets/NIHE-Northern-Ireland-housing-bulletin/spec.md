@@ -4,7 +4,7 @@ https://www.communities-ni.gov.uk/topics/housing-statistics#toc-2
 
 **Flowchart**
 
-**https://gss-cogs.github.io/gss-data-docs/architecture/homelessness/familymappings.html?nihousingbulletin.ttl**
+https://gss-cogs.github.io/gss-data-docs/architecture/homelessness/familymappings.html?nihousingbulletin.ttl
 
 **End table structure:**
 

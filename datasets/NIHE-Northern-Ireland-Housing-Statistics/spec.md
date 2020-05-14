@@ -8,7 +8,7 @@ https://gss-cogs.github.io/gss-data-docs/architecture/homelessness/familymapping
 
 *Only transform sheets T3_8, T3_9, T3_10, T3_11. 
 
-This data has a lot of similarities with tables  1_1 to 1_6 in dataset NIHE - Homelesssness Presentations for ETL Northern Ireland homelessness bulletin and should be joined up with it. For this add these columns :*
+*This data has a lot of similarities with tables  1_1 to 1_6 in dataset NIHE - Homelessness Presentations for ETL Northern Ireland homelessness bulletin and should be joined up with it. For this add these columns :**
 
 Add ONS Geography code with value N07000001
 

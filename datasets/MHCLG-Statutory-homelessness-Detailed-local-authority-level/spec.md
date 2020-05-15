@@ -4,7 +4,7 @@ https://www.gov.uk/government/statistical-data-sets/live-tables-on-homelessness
 
 **Flowchart**
 
-https://gss-cogs.github.io/gss-data-docs/architecture/homelessness/familymappings.html?mhclgstatutoryhomelessnessla.ttl
+https://gss-cogs.github.io/family-homelessness/datasets/specflowcharts.html?MHCLG-Statutory-homelessness-Detailed-local-authority-level/flowchart.ttl
 
 Important points from the notes on each sheet need to be added to the metadata.
 

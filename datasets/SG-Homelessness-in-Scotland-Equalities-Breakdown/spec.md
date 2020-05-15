@@ -4,7 +4,7 @@ https://www2.gov.scot/Topics/Statistics/Browse/Housing-Regeneration/RefTables#Pu
 
 **Flowchart**
 
-https://gss-cogs.github.io/gss-data-docs/architecture/homelessness/familymappings.html?sghomelessnessequalities.ttl
+https://gss-cogs.github.io/family-homelessness/datasets/specflowcharts.html?SG-Homelessness-in-Scotland-Equalities-Breakdown/flowchart.ttl
 
 10 sheets with 40 tables to be joined and dataset ID to be named SG Homelessness Equalities Breakdown - Applications & Assessments
 

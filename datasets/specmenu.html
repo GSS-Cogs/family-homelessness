@@ -1,0 +1,76 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+    <link rel="shortcut icon" href="../favicon.png">
+    <link href="https://stackpath.bootstrapcdn.com/font-awesome/4.7.0/css/font-awesome.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.4.1/css/bootstrap.min.css" integrity="sha384-Vkoo8x4CGsO3+Hhxv8T/Q5PaXtkKtu6ug5TOeNV6gBiFeWPGFN9MuhOf23Q9Ifjh" crossorigin="anonymous">
+    <title>COGS Architecture</title>
+    <script src="https://cdn.jsdelivr.net/npm/rdflib@1.0.4/dist/rdflib.min.js"></script>
+    <script src="https://d3js.org/d3.v4.min.js" charset="utf-8"></script>
+    <script src="https://cdn.jsdelivr.net/npm/dagre-d3@0.6.3/dist/dagre-d3.min.js"></script>
+  </head>
+  <body style="padding-top: 4.5rem;">
+    <nav class="navbar navbar-expand-lg navbar-light fixed-top" style="background-color: #aaf;">
+      <a class="navbar-brand" href="https://github.com/GSS-Cogs/gss-data-docs/wiki">
+        <img src="../cogs.svg" alt="COGS" width="72"/>
+      </a>
+      <div class="collapse navbar-collapse">
+        <ul class="navbar-nav mr-auto">
+          <li class="nav-item active">
+            <a class="nav-link" href="./">Architecture</a>
+          </li>
+          <li class="nav-item">
+            <a class="nav-link" href="components.html">Components</a>
+          </li>
+          <li class="nav-item dropdown">
+            <a class="nav-link dropdown-toggle" href="#" id="navbarDropdown" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+              Transformation
+            </a>
+            <div class="dropdown-menu" aria-labelledby="navbarDropdown">
+              <a class="dropdown-item" href="transformation.html?transform_v3.ttl">PMDv3 / table2qb</a>
+              <a class="dropdown-item" href="transformation.html?transform_v4.ttl">PMDv4 / CSVW</a>
+            </div>
+          </li>
+          <li class="nav-item dropdown">
+            <a class="nav-link dropdown-toggle" href="#" id="navbarDropdown" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+              Specifications
+            </a>
+            <div class="dropdown-menu" aria-labelledby="navbarDropdown">
+              <a class="dropdown-item" href="familyhomelessness.html?">Homelessness</a>
+              <a class="dropdown-item" href="familyhomelessness.html">Spare</a>
+            </div>
+          </li>
+        </ul>
+      </div>
+    </nav>
+    <div class="container-fluid">
+      <h1>COGS Architecture</h1>
+      <h2>Homelessness Transformation Specifications</h2>
+      </br>
+      </br>
+      <p><b>MHCLG</b></p>
+      <p><a href="specflowcharts.html?MHCLG-Rough-sleeping/flowchart.ttl">MHCLG Rough Sleeping in England</a>.</p>
+      <p><a href="specflowcharts.html?MHCLG-Statutory-homelessness-Detailed-local-authority-level/flowchart.ttl">MHCLG Statutory Homelessness detailed Local Authority-Level</a>.</p>
+      <p><a href="specflowcharts.html?MHCLG-Statutory-homelessness-in-England/flowchart.ttl">MHCLG Statutory Homelessness in England</a>.</p>
+      </br>
+      <p><b>Northern Ireland Housing Executive</b></p>
+      <p><a href="specflowcharts.html?NIHE-Northern-Ireland-homelessness-bulletin/flowchart.ttl">NI Homelessness bulletin</a>. <b style="color:red">(join)</b></p>
+      <p><a href="specflowcharts.html?NIHE-Northern-Ireland-homelessness-bulletin/flowchart.ttl">Housing Statistics</a>. <b style="color:red">(join)</b></p>
+      <p><a href="specflowcharts.html?NIHE-Northern-Ireland-housing-bulletin/flowchart.ttl">NI Housing Bulletin</a>.</p>
+      </br>
+      <p><b>Scottish Government</b></p>
+      <p><a href="specflowcharts.html?SG-Homelessness-in-Scotland-Annual-Publication/flowchart.ttl">SG Homelessness in Scotland: Annual Publication</a>.</p>
+      <p><a href="specflowcharts.html?SG-Homelessness-in-Scotland-Equalities-Breakdown/flowchart.ttl">SG Homelessness in Scotland: Equalities Breakdown</a>.</p>
+      <p><a href="specflowcharts.html?SG-Homelessness-in-Scotland-Update-date/flowchart.ttl">SG Homelessness in Scotland: Update</a>.</p>
+      <p><a href="specflowcharts.html?SG-Housing-Options-PREVENT1-Statistics-in-Scotland/flowchart.ttl">SG Housing Options (PREVENT1) Statistics</a>.</p>
+
+      </br>
+      <p><b>Welsh Government</b></p>
+    </div>
+    <script src="https://code.jquery.com/jquery-3.4.1.slim.min.js" integrity="sha384-J6qa4849blE2+poT4WnyKhv5vZF5SrPo0iEjwBvKU7imGFAV0wwj1yYfoRSJoZ+n" crossorigin="anonymous"></script>
+<script src="https://cdn.jsdelivr.net/npm/popper.js@1.16.0/dist/umd/popper.min.js" integrity="sha384-Q6E9RHvbIyZFJoft+2mJbHaEWldlvI9IOYy5n3zV9zzTtmI3UksdQRVvoxMfooAo" crossorigin="anonymous"></script>
+<script src="https://stackpath.bootstrapcdn.com/bootstrap/4.4.1/js/bootstrap.min.js" integrity="sha384-wfSDF2E50Y2D1uUdj0O3uMBJnjuUD4Ih7YwaYd1iqfktj0Uod8GCExl3Og8ifwB6" crossorigin="anonymous"></script>
+  </body>
+</html>

@@ -4,7 +4,7 @@ https://www.gov.uk/government/statistical-data-sets/live-tables-on-homelessness
 
 **Flowchart**
 
-https://gss-cogs.github.io/gss-data-docs/architecture/homelessness/familymappings.html?mhclgtatutoryhomelessnessengland.ttl
+https://gss-cogs.github.io/family-homelessness/datasets/specflowcharts.html?MHCLG-Statutory-homelessness-in-England/flowchart.ttl
 
 This data can be joined up with the dataset MHCLG - Statutory homelessness Detailed local authority-level apart from a few small differences they should have exactly the same format. Some duplication will be caused from this so remove duplicates before outputting to csv. 
 

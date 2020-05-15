@@ -2,9 +2,11 @@
 
 https://www.communities-ni.gov.uk/topics/housing-statistics#toc-2
 
+**JOIN**
+
 **Flowchart**
 
-https://gss-cogs.github.io/gss-data-docs/architecture/homelessness/familymappings.html?nihomelessnessbulletin.ttl
+https://gss-cogs.github.io/family-homelessness/datasets/specflowcharts.html?NIHE-Northern-Ireland-homelessness-bulletin/flowchart.ttl
 
 *Only transform sheets T3_8, T3_9, T3_10, T3_11. 
 

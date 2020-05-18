@@ -62,7 +62,7 @@ Add Age column with value Total
 
 (D4:O4) Year - change name to Period and format as year/2015
 
-(D5:O5) Sex - (T | M | F | U)
+(D5:O5) Sex - (T, M, F, U)
 
 (B) % of total - move to a column as an attribute and rename
 
@@ -88,7 +88,7 @@ Add Age column with value All
 
 (D4:R4) Year - change name to Period and format as year/2015
 
-(D5:R5) Nationality - (Total | UK | EU non-UK | Non-EU | Unknown)
+(D5:R5) Nationality - (Total, UK, EU non-UK, Non-EU, Unknown)
 
 (Q31) 2018 Method - put in Marker column but only for 2018 figures.
 
@@ -119,7 +119,7 @@ Add Age column with value All
 
 (D4:Q4) Year - change name to Period and format as year/2015
 
-(D5:Q5) Age - (Total | Under 25 | Under 18 | 18 to 25 | 26 + | Unknown)
+(D5:Q5) Age - (Total, Under 25, Under 18, 18 to 25, 26 +, Unknown)
 
 (B) % of total - move to a column as an attribute and rename
 

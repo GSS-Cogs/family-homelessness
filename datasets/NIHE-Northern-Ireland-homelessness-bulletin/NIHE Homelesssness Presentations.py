@@ -249,6 +249,12 @@ next_table.fillna('All', inplace = True)
 next_table['ONS Geography'] = next_table['ONS Geography'].map(lambda cell: cell.replace('All', 'N07000001'))
 next_table['Repeat Homeless Presentations'] = next_table['Repeat Homeless Presentations'].map(lambda cell: cell.replace('All', 'Not Applicable'))
 
+next_table['Marker'] = next_table['Marker'].map(
+    lambda x: {
+        '*' : 'Data Suppressed',
+        'All' : ''        
+        }.get(x, x))
+
 next_table['Period'] = next_table['Period'].str.rstrip('123 ')
 
 next_table['Period'] = next_table['Period'].map(

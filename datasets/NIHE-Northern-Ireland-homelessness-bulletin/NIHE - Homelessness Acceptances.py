@@ -85,27 +85,6 @@ new_table.rename(columns={'OBS': 'Value','DATAMARKER': 'Marker'}, inplace=True)
 next_table = pd.concat([next_table, new_table])
 
 # +
-# tab = tabs['1_1C']
-# cell = tab.excel_ref('A2')
-# reason = cell.fill(RIGHT).is_not_blank().is_not_whitespace()
-# year = cell.fill(DOWN).is_not_blank().is_not_whitespace()  
-# observations = year.fill(RIGHT).is_not_blank().is_not_whitespace() 
-# Dimensions = [
-#             HDim(reason,'Loss of Rented Accommodation reason',DIRECTLY,ABOVE),
-#             HDim(year, 'Period',DIRECTLY,LEFT),
-#             HDimConst('Unit','Count'),  
-#             HDimConst('Measure Type','Household')
-    
-# ]  
-# c1 = ConversionSegment(observations, Dimensions, processTIMEUNIT=True)
-# new_table = c1.topandas()
-# import numpy as np
-# new_table.rename(columns={'OBS': 'Value','DATAMARKER': 'Marker'}, inplace=True)
-
-# +
-# next_table = pd.concat([next_table, new_table])
-
-# +
 tab = tabs['2_2']
 cell = tab.excel_ref('A2')
 htype = cell.shift(0,1).fill(RIGHT).is_not_blank().is_not_whitespace()
@@ -163,11 +142,6 @@ c1 = ConversionSegment(observations, Dimensions, processTIMEUNIT=True)
 new_table = c1.topandas()
 import numpy as np
 new_table.rename(columns={'OBS': 'Value','DATAMARKER': 'Marker'}, inplace=True)
-# new_table['Unit'] = new_table['Unit'].map(
-#     lambda x: {
-#         'Total presenters' : 'Count', 
-#         'Presenters per 1,000 population' : 'Per 1,000 population'
-#         }.get(x, x))
 new_table['ONS Geography'] = new_table['ONS Geography'].map(
     lambda x: {
         'Antrim and Newtownabbey' : 'N09000001', 
@@ -287,14 +261,12 @@ new_table.rename(columns={'OBS': 'Value','DATAMARKER': 'Marker'}, inplace=True)
 
 next_table = pd.concat([next_table, new_table])
 
-list(next_table)
-
 next_table.fillna('All', inplace = True)
 next_table['ONS Geography'] = next_table['ONS Geography'].map(lambda cell: cell.replace('All', 'N07000001'))
 
 next_table['Marker'] = next_table['Marker'].map(
     lambda x: {
-        '*' : 'Data Suppressed',
+        '*' : 'Statistical disclosure',
         'All' : ''        
         }.get(x, x))
 
@@ -312,6 +284,19 @@ next_table['Period'] = next_table['Period'].map(
        'Apr-Jun (Financial year 2019 Q1)¹' : 'government-quarter/2018-2019/Q1', 
         '2018/19' : 'government-year/2018-2019'
         }.get(x, x))
+
+
+# +
+def user_perc2(x,y):
+    
+    if (str(x) ==  'Statistical disclosure'): 
+        
+        return 0
+    else:
+        return y
+    
+next_table['Value'] = next_table.apply(lambda row: user_perc2(row['Marker'], row['Value']), axis = 1)
+# -
 
 next_table = next_table[['Housing Assessment Outcome',
  'Accommodation not Reasonable breakdown',

@@ -251,7 +251,7 @@ next_table['Repeat Homeless Presentations'] = next_table['Repeat Homeless Presen
 
 next_table['Marker'] = next_table['Marker'].map(
     lambda x: {
-        '*' : 'Data Suppressed',
+        '*' : 'Statistical disclosure',
         'All' : ''        
         }.get(x, x))
 
@@ -268,6 +268,19 @@ next_table['Period'] = next_table['Period'].map(
        'Apr-Jun (Financial year 2019 Q1)¹' : 'government-quarter/2018-2019/Q1', 
         '2018/19' : 'government-year/2018-2019'
         }.get(x, x))
+
+
+# +
+def user_perc2(x,y):
+    
+    if (str(x) ==  'Statistical disclosure'): 
+        
+        return 0
+    else:
+        return y
+    
+next_table['Value'] = next_table.apply(lambda row: user_perc2(row['Marker'], row['Value']), axis = 1)
+# -
 
 next_table = next_table[['Period', 'Reason for Homelessness', 'Accommodation not Reasonable breakdown', 'Intimidation Breakdown', 'Loss of Rented Accommodation reason', 'Household Composition', 'ONS Geography', 'Assessment Decision', 'Legislative test Outcome', 'Repeat Homeless Presentations', 'Measure Type', 'Unit', 'Value','Marker']]
 

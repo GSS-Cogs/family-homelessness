@@ -73,3 +73,36 @@ Stirling = S05000024
 West Dunbartonshire = S05000027
 
 West Lothian = S05000028
+
+<br /> 
+
+**Sheet: Table 1 - Approaches 
+Title: Table 1: Total Housing Options approaches by LA and quarter**
+
+(A) Local authority change to ONS code and add Local Authority as attribute - display Local Authority on PMD if possible
+(B - U) Period - change to Quarters year
+(Row 29) Add footnote as attribute - 1 There is a known issue with the number of approaches for Q1 2018/19 and Q3 2018/19 for Perth&Kinross, for this reason please treat any results with caution. 
+(X-AA) - Period change to financial years 
+ 
+Add column Period  
+Add footnote to totals column- Column totals may not sum to total of individual cells due to rounding.
+Add to description - Disclosure Control has been applied to this table.  All cells have been rounded to the nearest five.
+Data marker - 
+Add Unit column with Count
+Add column Housing options approaches with value Total
+Add column Annual change with the value Change, Financial year total and % change
+
+# Draft info below to amend
+
+Add Measure Type column 
+	
+		(B:R)(S) Households
+
+(T) Percentage Change
+
+Add Unit column
+
+		(B:R) Count
+		(S:T) Percent Change
+
+<br />

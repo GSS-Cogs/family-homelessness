@@ -76,33 +76,46 @@ West Lothian = S05000028
 
 <br /> 
 
+1 - Tables 1, 2, 3, 7, 8, 9, 10 can be joined as one cube using ONS Geography code.
+2 - Table 4, 5, 6 can be joined by Period
+
+**End table 1 structure
+Period, ONS Geography Code, Marker, Annual change, Totals, Housing options approaches, Rate of Approaches per 10,000 households,  Housing Options activity, Outcomes by Quarter, Repeat Approaches by household, Measure type, Unit, Value
+
+**End table 2 structure 
+Period, Reasons for approaching homelessness services, Activity type, Housing Option activity type, Measure type, Unit, Value
+
+<br />
+
 **Sheet: Table 1 - Approaches 
 Title: Table 1: Total Housing Options approaches by LA and quarter**
 
 (A) Local authority change to ONS code and add Local Authority as attribute - display Local Authority on PMD if possible
-(B - U) Period - change to Quarters year
-(Row 29) Add footnote as attribute - 1 There is a known issue with the number of approaches for Q1 2018/19 and Q3 2018/19 for Perth&Kinross, for this reason please treat any results with caution. 
-(X-AA) - Period change to financial years 
+(B:U) Period - change to Quarters year
+(Row 29) Add footnote as attribute - 1 There is a known issue with the number of approaches for Q1 2018/19 and Q3 2018/19 for Perth & Kinross, for this reason please treat any results with caution. 
+(X:AA) - Period change to financial years 
  
 Add column Period  
 Add footnote to totals column- Column totals may not sum to total of individual cells due to rounding.
 Add to description - Disclosure Control has been applied to this table.  All cells have been rounded to the nearest five.
-Data marker - 
-Add Unit column with Count
-Add column Housing options approaches with value Total
-Add column Annual change with the value Change, Financial year total and % change
+Add Data marker - 
 
-Draft info below to amend
+XXX Add column Housing options approaches with value Total
+
 
 Add Measure Type column 
 	
-		(B:R)(S) Households
+		(XXX) Housing options approaches
 
-(T) Percentage Change
+Add Annual change Percentage Change
+Add Annual change Financial year total
+Add Annual change
 
 Add Unit column
 
-		(B:R) Count
-		(S:T) Percent Change
+		(XXX) Count
+		(XXXXX) Percent Change
+		(XXXX) Financial year total
+		(XXX) Annual change
 
 <br />

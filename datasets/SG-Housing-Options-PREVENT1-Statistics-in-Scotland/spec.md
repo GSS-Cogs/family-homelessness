@@ -76,18 +76,16 @@ West Lothian = S05000028
 
 <br /> 
 
-1 - Tables 1, 2, 3, 7, 8, 9, 10 can be joined as one cube using ONS Geography code.
-2 - Table 4, 5, 6 can be joined by Period
 
-**End table 1 structure
-Period, ONS Geography Code, Marker, Annual change, Totals, Housing options approaches, Rate of Approaches per 10,000 households,  Housing Options activity, Outcomes by Quarter, Repeat Approaches by household, Measure type, Unit, Value
+**End dataset 1 structure
+Period, ONS Geography Code, Marker, Annual change, Totals, Housing options approaches, Rate of Approaches per 10,000 households,  Housing Options activity, Outcomes by Quarter, Repeat Approaches by household, Measure type, Unit, Value**
 
-**End table 2 structure 
-Period, Reasons for approaching homelessness services, Activity type, Housing Option activity type, Measure type, Unit, Value
+**End dataset 2 structure 
+Period, Reasons for approaching homelessness services, Activity type, Housing Option activity type, Measure type, Unit, Value**
 
 <br />
 
-**Sheet: Table 1 - Approaches 
+**Sheet: Table 1 - Approaches** 
 Title: Table 1: Total Housing Options approaches by LA and quarter**
 
 (A) Local authority change to ONS code and add Local Authority as attribute - display Local Authority on PMD if possible
@@ -100,22 +98,224 @@ Add footnote to totals column- Column totals may not sum to total of individual 
 Add to description - Disclosure Control has been applied to this table.  All cells have been rounded to the nearest five.
 Add Data marker - 
 
-XXX Add column Housing options approaches with value Total
-
+Add column Housing options approaches with value Total
+Erroneous numbers in columns AB, AC, AD - disregard
 
 Add Measure Type column 
 	
-		(XXX) Housing options approaches
-
-Add Annual change Percentage Change
-Add Annual change Financial year total
-Add Annual change
+		Approaches annual change
+		Approaches percentage change
+		Financial year total
 
 Add Unit column
 
-		(XXX) Count
-		(XXXXX) Percent Change
-		(XXXX) Financial year total
-		(XXX) Annual change
+		(X:Y) Count
+		(AA) Percent Change
+		(X) Financial year 2017/18 total
+		(Y) Financial year 2018/19 total
+		(Z) Annual change
 
 <br />
+
+
+**Sheet: Table 2 - Unique Households
+Title: Table 2: Unique household approaches as a percentage of households in each Local Authority**
+
+(A) Local authority change to ONS code and add Local Authority as attribute - display Local Authority on PMD if possible
+
+(Row 29) Add footnote as attribute - 1 There is a known issue with the number of approaches for Q1 2018/19 and Q3 2018/19 for Perth & Kinross, for this reason please treat any results with caution. 
+
+Erroneous numbers in columns A and B from rows 48 to 81 - disregard
+
+Add Measure Type column 
+	
+		(B) Number of Households
+		(C) Unique household approaches 2018/19
+		(D) Unique household approaches within Local Authority percentage 
+		(E) Rate of Approaches per 10,000 households 
+
+Add Unit column
+
+		(B:C) Count
+		(C) Percentage
+		(E) Rate 
+		
+
+Create codelist - Quarterly from last day of month http://reference.data.gov.uk/id/gregorian-interval/2020-04-30T00:00:00/P3M
+
+
+<br />
+
+**Sheet: Table 3 - Open Approaches
+Title: Table 3: Open Approaches at the end of each quarter by LA**
+(A) Local authority change to ONS code and add Local Authority as attribute - display Local Authority on PMD if possible
+(B - U) Period - change to Quarters year
+
+Discard Approaches received 1 April 2014 to 31 March 2018 (from Table1)and Open Approaches as a % of all Approaches (columns X and Y) as derivative
+Add Local authority proportions 2018/19 as column with values as percentages
+Add column Approaches with open cases 
+Add measure type Households
+
+<br />
+
+**Sheet: Table 4 - Reasons
+Title: Table 4a: Reasons for Approach (Number)**
+
+(B - U) Period - change to Quarters year
+(A) Create column with title Reasons for approaching homelessness services changed from Reasons for approach adding the following categories for reasons:
+General housing options advice
+Dispute within household / relationship breakdown: non-violent
+Asked to leave
+Risk of losing accommodation
+Other action by landlord resulting in the termination of the tenancy 
+Dispute within household: violent or abusive
+Discharge from prison / hospital / care / other institution
+Other reason for loss of accommodation
+Other reason for leaving accommodation / household
+Termination of tenancy / mortgage due to rent arrears / default on payments
+Accommodation unsuitable
+Other
+Personal issues – affordability / financial difficulties
+Fleeing non-domestic violence
+Harassment
+Applicant terminated secure accommodation
+Overcrowding
+Benefit issues & Welfare Reform
+Household experiencing anti-social behaviour / neighbour problems
+Property condition
+Household member needing care
+Forced division and sale of matrimonial home
+Loss of service / tied accommodation
+Landlord issue
+Emergency add attribute to cover the following metadata includes fire, flood, storm, and closing order from Environmental Health etc
+
+Add column Total
+Add column with unit value Percent or Count
+Reasons for approach abbreviated number and percent can be removed as derivative 
+
+<br />
+
+**Sheet: Table 5 Maximum Activity Type 
+Title: Table 5a and 5b: Maximum Activity Type change (numbers and percentage) to Table 5 Activity types**
+(B - U) Period - change to Quarters year
+
+Add column unit with value Percent or Count
+Add column to above columns Total 
+Add column Activity type with the following categories:
+Type I – Active Information 
+Sign-posting and Explanation, 
+Type II – Casework and 
+Type III – Advocacy, Representation and Mediation at Tribunal or Court Action Level
+Add measure type Cases 
+Add column Annual change with the value Change, Financial year total and % change
+
+<br />
+
+**Sheet: Table 6: Housing Options activities by Q
+Title: Table 6 Housing Options activities by Quarter change to Table 6 Housing Options assistance activities by quarter**
+
+(B - U) Period - change to Quarters year 
+Remove column V as derivative
+
+Add column Annual change with the value Change, Financial year total and % change
+Add column Housing Option activity type with the following categories:
+General Housing advice/Tenancy rights advice
+Client informed of rights under homelessness legislation
+Help to move property
+Rent/repairs/referrals/negotiation with landlords
+Financial assistance/advice
+Other
+Referral to health/Social Work/employment services
+Help to remain in accommodation
+Tenancy/social care support/adaptations to property
+Mediation/outreach work
+Mortgage/home ownership advice
+Add Total (all activities)
+ 
+Add column with value Percent or Count
+
+<br />
+
+**Sheet: Table 7a and 7b Housing Options activities by Local Authority, during 1 April 2018 to 31 March 2019 (number and percentage)
+Title: Table 7 Housing Options activities by Quarter change to Table 7 Housing Options assistance activities by Local Authority**
+
+(A) Local authority change to ONS code and add Local Authority as attribute - display Local Authority on PMD if possible
+(Row 29 and 70) Add footnote as attribute - 1 There is a known issue with the number of approaches for Q1 2018/19 and Q3 2018/19 for Perth&Kinross, for this reason please treat any results with caution.
+
+Add column named Housing Options activity with the following categories:
+General Housing advice/Tenancy rights advice
+Client informed of rights under homelessness legislation
+Help to move property
+Rent/repairs/referrals/negotiation with landlords
+Financial assistance/advice
+Other
+Referral to health/Social Work/employment services
+Help to remain in accommodation
+Tenancy/social care support/adaptations to property
+Mediation/outreach work
+Mortgage/home ownership advice
+Add Total to replace All
+
+Add column Unit with value Percent or Count
+Add column Period change to financial year 1 April 2018 to 31st March 2019
+
+<br />
+
+**Sheet: Table 8 - Outcomes by Quarter
+Title: Table 8a and 8b  Outcomes by Quarter (number and percentage) change to Table 8 outcomes by Quarter**
+
+(B - U) Period - change to Quarters year
+Add column named Outcomes by Quarter with the following categories:
+Made homelessness application to local authority
+Remained in current accommodation
+Lost Contact/ Not known
+Other (known)
+Local Authority or Registered Social Landlord Tenancy
+Private Rental Sector Tenancy
+Moved-in with friends/ relatives
+
+Add column with value Percent or Count
+Add column Annual change with the value Change, Financial year and % change
+
+<br />
+
+**Sheet: Table 9 - Outcomes by LA
+Title: Table 9: Outcomes by LA: 1 April 2018 to 31 March 2019 change to Table 9: Outcomes by Local Authority - 1 April 2018 to 31 March 2019**
+
+(A) Local authority change to ONS code and add Local Authority as attribute - display Local Authority on PMD if possible
+(Row 29 and 68) Add footnote as attribute - 1 There is a known issue with the number of approaches for Q1 2018/19 and Q3 2018/19 for Perth&Kinross, for this reason please treat any results with caution. 
+
+Add column named Outcomes by Quarter with the following categories:
+Made homelessness application to local authority
+Remained in current accommodation
+Lost Contact/ Not known
+Other (known)
+Local Authority or Registered Social Landlord Tenancy
+Private Rental Sector Tenancy
+Moved-in with friends/ relatives
+Add column with value Percent or Count
+Add Total column
+
+<br />
+
+**Sheet: Table 10 - Table 10 Repeat Approaches
+Title: Table 10: Households making Repeat Approaches change to Table 10: Households making Repeat Approaches to homelessness services**
+
+(A) Local authority change to ONS code and add Local Authority as attribute - display Local Authority on PMD if possible
+(Row 30) Add footnote as attribute - 1 There is a known issue with the number of approaches for Q1 2018/19 and Q3 2018/19 for Perth&Kinross, for this reason please treat any results with caution.
+
+Add column Households making Repeat Approaches change to Repeat Approaches by household with the following categories:
+Made homelessness application to local authority
+Remained in current accommodation
+Lost Contact/ Not known
+Other (known)
+Local Authority or Registered Social Landlord Tenancy
+Private Rental Sector Tenancy
+Moved-in with friends/ relatives
+Add unit as count
+Add Total for All Households
+Add Proportioning of Households making Repeat Approaches measure Percent
+
+
+** Dataset 1 - Tables 1, 2, 3, 7, 8, 9, 10 can be joined as one cube using ONS Geography code with name - SG Housing Options Prevent1 Statistics in Scotland by location
+Dataset 2 - Table 4, 5, 6 can be joined by Period as one cube with name SG Housing Options Prevent1 Statistics in Scotland by Period**

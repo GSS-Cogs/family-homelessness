@@ -5,6 +5,7 @@ https://www2.gov.scot/Topics/Statistics/Browse/Housing-Regeneration/RefTables
 **Flowchart**
 To be created
 
+
 Use ONS Geography Codes to convert from Local Authority 
 
 Scotland = S04000001
@@ -83,6 +84,9 @@ Period, ONS Geography Code, Marker, Annual change, Totals, Housing options appro
 **End dataset 2 structure 
 Period, Reasons for approaching homelessness services, Activity type, Housing Option activity type, Measure type, Unit, Value**
 
+**Dataset 1 - Tables 1, 2, 3, 7, 8, 9, 10 can be joined as one cube using ONS Geography code with name - SG Housing Options Prevent1 Statistics in Scotland by location
+Dataset 2 - Table 4, 5, 6 can be joined by Period as one cube with name SG Housing Options Prevent1 Statistics in Scotland by Period**
+
 <br />
 
 **Sheet: Table 1 - Approaches** 
@@ -142,7 +146,8 @@ Add Unit column
 		
 
 Create codelist - Quarterly from last day of month http://reference.data.gov.uk/id/gregorian-interval/2020-04-30T00:00:00/P3M
-
+ 
+Add metadata as attribute in rows 39 and 40
 
 <br />
 
@@ -154,7 +159,14 @@ Title: Table 3: Open Approaches at the end of each quarter by LA**
 Discard Approaches received 1 April 2014 to 31 March 2018 (from Table1)and Open Approaches as a % of all Approaches (columns X and Y) as derivative
 Add Local authority proportions 2018/19 as column with values as percentages
 Add column Approaches with open cases 
-Add measure type Households
+
+Add Measure Type column 
+	
+		Households
+
+Erroneous numbers in columns AC and AD from rows 7 to 10 and Columns A and B from rows 42 to 77 - disregard
+
+Add metadata as attribute in rows 39 and 40
 
 <br />
 
@@ -193,21 +205,43 @@ Add column Total
 Add column with unit value Percent or Count
 Reasons for approach abbreviated number and percent can be removed as derivative 
 
+
+Add Measure Type column 
+	
+		Reasons for Approach (Percent)
+		Reasons for Approach (Number)
+
+Add Unit column
+
+		(B:U) Count - Rows (4:30)
+		(B:U) Percent - Rows (35:61)
+
 <br />
 
 **Sheet: Table 5 Maximum Activity Type 
 Title: Table 5a and 5b: Maximum Activity Type change (numbers and percentage) to Table 5 Activity types**
 (B - U) Period - change to Quarters year
 
-Add column unit with value Percent or Count
 Add column to above columns Total 
 Add column Activity type with the following categories:
-Type I – Active Information 
-Sign-posting and Explanation, 
-Type II – Casework and 
+Type I – Active Information, Sign-posting and Explanation 
+Type II – Casework
 Type III – Advocacy, Representation and Mediation at Tribunal or Court Action Level
-Add measure type Cases 
-Add column Annual change with the value Change, Financial year total and % change
+
+Add Measure Type column 
+	
+		Cases
+		Annual change percentage change
+		Annual change Financial year total
+		Percent summary
+
+Add Unit column
+
+		(B:U) Count
+		(Z) Percent Change
+		(W) Financial year 2017/18 total
+		(X) Financial year 2018/19 total
+		(Y) Annual change 
 
 <br />
 
@@ -217,7 +251,6 @@ Title: Table 6 Housing Options activities by Quarter change to Table 6 Housing O
 (B - U) Period - change to Quarters year 
 Remove column V as derivative
 
-Add column Annual change with the value Change, Financial year total and % change
 Add column Housing Option activity type with the following categories:
 General Housing advice/Tenancy rights advice
 Client informed of rights under homelessness legislation
@@ -230,9 +263,25 @@ Help to remain in accommodation
 Tenancy/social care support/adaptations to property
 Mediation/outreach work
 Mortgage/home ownership advice
-Add Total (all activities)
+Add column Total (all activities)
  
 Add column with value Percent or Count
+Add column Annual change with the value Change, Financial year total and % change
+
+
+Add Measure Type column 
+	
+		Activities annual change
+		Activities annual percentage change
+		Financial year total
+
+Add Unit column
+
+		(B:V) Count
+		(Z) Percent Change
+		(W) Financial year 2017/18 total
+		(X) Financial year 2018/19 total
+		(Y) Annual change
 
 <br />
 
@@ -259,6 +308,21 @@ Add Total to replace All
 Add column Unit with value Percent or Count
 Add column Period change to financial year 1 April 2018 to 31st March 2019
 
+
+Add Measure Type column 
+	
+		Approaches annual change
+		Approaches percentage change
+		Financial year total
+
+Add Unit column
+
+		(X:Y) Count
+		(AA) Percent Change
+		(X) Financial year 2017/18 total
+		(Y) Financial year 2018/19 total
+		(Z) Annual change
+
 <br />
 
 **Sheet: Table 8 - Outcomes by Quarter
@@ -276,6 +340,21 @@ Moved-in with friends/ relatives
 
 Add column with value Percent or Count
 Add column Annual change with the value Change, Financial year and % change
+
+
+Add Measure Type column 
+	
+		Approaches annual change
+		Approaches percentage change
+		Financial year total
+
+Add Unit column
+
+		(X:Y) Count
+		(AA) Percent Change
+		(X) Financial year 2017/18 total
+		(Y) Financial year 2018/19 total
+		(Z) Annual change
 
 <br />
 
@@ -295,6 +374,21 @@ Private Rental Sector Tenancy
 Moved-in with friends/ relatives
 Add column with value Percent or Count
 Add Total column
+
+
+Add Measure Type column 
+	
+		Approaches annual change
+		Approaches percentage change
+		Financial year total
+
+Add Unit column
+
+		(X:Y) Count
+		(AA) Percent Change
+		(X) Financial year 2017/18 total
+		(Y) Financial year 2018/19 total
+		(Z) Annual change
 
 <br />
 
@@ -317,5 +411,18 @@ Add Total for All Households
 Add Proportioning of Households making Repeat Approaches measure Percent
 
 
-** Dataset 1 - Tables 1, 2, 3, 7, 8, 9, 10 can be joined as one cube using ONS Geography code with name - SG Housing Options Prevent1 Statistics in Scotland by location
-Dataset 2 - Table 4, 5, 6 can be joined by Period as one cube with name SG Housing Options Prevent1 Statistics in Scotland by Period**
+Add Measure Type column 
+	
+		Approaches annual change
+		Approaches percentage change
+		Financial year total
+
+Add Unit column
+
+		(X:Y) Count
+		(AA) Percent Change
+		(X) Financial year 2017/18 total
+		(Y) Financial year 2018/19 total
+		(Z) Annual change
+
+

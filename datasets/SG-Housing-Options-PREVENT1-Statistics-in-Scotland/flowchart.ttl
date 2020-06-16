@@ -1,0 +1,65 @@
+@prefix rdf:  <http://www.w3.org/1999/02/22-rdf-syntax-ns#> .
+@prefix rdfs: <http://www.w3.org/2000/01/rdf-schema#> .
+@prefix owl:  <http://www.w3.org/2002/07/owl#> .
+@prefix cogsgit: <https://github.com/GSS-Cogs/> .
+@prefix cogs: <http://gss-cogs.uk/def/arch/> .
+
+<http://gss-cogs.uk/def/arch> a owl:Ontology;
+  rdfs:label "COGS COVID-19 Transform Mapping" ;
+.
+
+cogs:SoftwarePackage a owl:Class ;
+  rdfs:label "Software package" ;
+.
+cogs:SoftwarePackage a owl:Class ;
+  rdfs:label2 "Label2" ;
+.
+cogs:LandingPage a owl:Class ;
+  rdfs:subClassOf cogs:SoftwarePackage ;
+  rdfs:label "Landing Page" ;
+.
+cogs:Datasets a owl:Class ;
+  rdfs:subClassOf cogs:SoftwarePackage ;
+  rdfs:label "Output Dataset" ;
+.
+cogs:Sheets a owl:Class ;
+  rdfs:subClassOf cogs:SoftwarePackage ;
+  rdfs:label "Sheet Name";
+.
+cogs:Columns a owl:Class ;
+  rdfs:subClassOf cogs:SoftwarePackage ;
+  rdfs:label "Table" ;
+.
+cogs:PMD a owl:Class ;
+  rdfs:subClassOf cogs:SoftwarePackage ;
+  rdfs:label "PMD" ;
+.
+cogs:Rename a owl:Class ;
+  rdfs:subClassOf cogs:SoftwarePackage ;
+  rdfs:label "Rename & Add" ;
+.
+###########################################################################################################
+
+cogsgit:top-level a cogs:LandingPage ;
+  rdfs:label "Landing Page" ;
+  rdfs:label2 "<b>TITLE HERE</b>" ;
+  rdfs:comment "LINK HERE";
+  cogs:scrape cogsgit:sheet1 ;
+.
+
+cogsgit:sheet1 a cogs:Sheets ; rdfs:label "SHEET NAME HERE" ; rdfs:comment "SHEET TITLE HERE" ; cogs:transforms cogsgit:columns1 ; .
+
+
+cogsgit:columns1 a cogs:Columns ; rdfs:label "Output Table 1" ; rdfs:comment "COLUMN LIST HERE" ; cogs:harmonise cogsgit:rename1 ; .
+
+
+cogsgit:rename1 a cogs:Rename ; rdfs:label "Rename & Add" ; rdfs:comment "Not yet specified" ; cogs:joins cogsgit:dataset1 ; .
+
+
+cogsgit:dataset1 a cogs:Datasets ; rdfs:label "Dataset Name 1" ; rdfs:comment "Dataset Name" ; cogs:outputs cogsgit:pmd1 ; .
+
+cogsgit:pmd1 a cogs:PMD ;
+  rdfs:label "PMD" ;
+  rdfs:comment "Publish my Data: http://gss-data.org.uk/data/search" ;
+.
+###################################################################################################

@@ -271,17 +271,18 @@ Add column Annual change with the value Change, Financial year total and % chang
 
 Add Measure Type column 
 	
-		Activities annual change
-		Activities annual percentage change
-		Financial year total
+		Activites
+		Annual change percentage change
+		Annual change Financial year total
+		Percent summary
 
 Add Unit column
 
-		(B:V) Count
+		(B:U) Count
 		(Z) Percent Change
 		(W) Financial year 2017/18 total
 		(X) Financial year 2018/19 total
-		(Y) Annual change
+		(Y) Annual change 
 
 <br />
 
@@ -311,17 +312,11 @@ Add column Period change to financial year 1 April 2018 to 31st March 2019
 
 Add Measure Type column 
 	
-		Approaches annual change
-		Approaches percentage change
-		Financial year total
+		Housing Options activities
 
 Add Unit column
 
 		(X:Y) Count
-		(AA) Percent Change
-		(X) Financial year 2017/18 total
-		(Y) Financial year 2018/19 total
-		(Z) Annual change
 
 <br />
 
@@ -343,18 +338,19 @@ Add column Annual change with the value Change, Financial year and % change
 
 
 Add Measure Type column 
-	
-		Approaches annual change
-		Approaches percentage change
-		Financial year total
+			
+		Outcomes
+		Annual change percentage change
+		Annual change Financial year total
+		Percent summary
 
 Add Unit column
 
-		(X:Y) Count
-		(AA) Percent Change
-		(X) Financial year 2017/18 total
-		(Y) Financial year 2018/19 total
-		(Z) Annual change
+		(B:U) Count
+		(Z) Percent Change
+		(W) Financial year 2017/18 total
+		(X) Financial year 2018/19 total
+		(Y) Annual change 
 
 <br />
 
@@ -364,7 +360,7 @@ Title: Table 9: Outcomes by LA: 1 April 2018 to 31 March 2019 change to Table 9:
 (A) Local authority change to ONS code and add Local Authority as attribute - display Local Authority on PMD if possible
 (Row 29 and 68) Add footnote as attribute - 1 There is a known issue with the number of approaches for Q1 2018/19 and Q3 2018/19 for Perth&Kinross, for this reason please treat any results with caution. 
 
-Add column named Outcomes by Quarter with the following categories:
+Add column named Outcomes by Local Authority with the following categories:
 Made homelessness application to local authority
 Remained in current accommodation
 Lost Contact/ Not known
@@ -372,23 +368,17 @@ Other (known)
 Local Authority or Registered Social Landlord Tenancy
 Private Rental Sector Tenancy
 Moved-in with friends/ relatives
-Add column with value Percent or Count
 Add Total column
-
+Ignore data from columns A to E rows 82 to 116
+Add metadata from rows 78 and 79
 
 Add Measure Type column 
-	
-		Approaches annual change
-		Approaches percentage change
-		Financial year total
+			
+		Outcomes by Local Authority
 
 Add Unit column
 
-		(X:Y) Count
-		(AA) Percent Change
-		(X) Financial year 2017/18 total
-		(Y) Financial year 2018/19 total
-		(Z) Annual change
+		(B:H) Count
 
 <br />
 
@@ -413,16 +403,12 @@ Add Proportioning of Households making Repeat Approaches measure Percent
 
 Add Measure Type column 
 	
-		Approaches annual change
-		Approaches percentage change
-		Financial year total
+		Repeat Approaches
+		Repeat Approaches Proportion of Households
 
 Add Unit column
 
-		(X:Y) Count
-		(AA) Percent Change
-		(X) Financial year 2017/18 total
-		(Y) Financial year 2018/19 total
-		(Z) Annual change
+		(B:D) Count
+		(F) Percent
 
 

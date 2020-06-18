@@ -11,6 +11,9 @@
 cogs:SoftwarePackage a owl:Class ;
   rdfs:label "Software package" ;
 .
+cogs:SoftwarePackage a owl:Class ;
+  rdfs:label2 "Label2" ;
+.
 
 cogs:LandingPage a owl:Class ;
   rdfs:subClassOf cogs:SoftwarePackage ;
@@ -22,7 +25,7 @@ cogs:Datasets a owl:Class ;
 .
 cogs:Sheets a owl:Class ;
   rdfs:subClassOf cogs:SoftwarePackage ;
-  rdfs:label "Sheet names to join";
+  rdfs:label "Sheet name";
 .
 cogs:Columns a owl:Class ;
   rdfs:subClassOf cogs:SoftwarePackage ;
@@ -32,6 +35,11 @@ cogs:PMD a owl:Class ;
   rdfs:subClassOf cogs:SoftwarePackage ;
   rdfs:label "PMD" ;
 .
+
+cogs:Rename a owl:Class ;
+  rdfs:subClassOf cogs:SoftwarePackage ;
+  rdfs:label "Rename & Add" ;
+  .
 ###########################################################################################################
 
 cogsgit:top-level a cogs:LandingPage ;

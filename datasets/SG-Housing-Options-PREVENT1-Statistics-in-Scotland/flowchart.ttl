@@ -5,7 +5,7 @@
 @prefix cogs: <http://gss-cogs.uk/def/arch/> .
 
 <http://gss-cogs.uk/def/arch> a owl:Ontology;
-  rdfs:label "COGS homelessness Transform Mapping" ;
+  rdfs:label "COGS Homelessness Transform Mapping" ;
 .
 
 cogs:SoftwarePackage a owl:Class ;
@@ -41,7 +41,7 @@ cogs:Rename a owl:Class ;
 ###########################################################################################################
 
 cogsgit:top-level a cogs:LandingPage ;
-  rdfs:label "SG Housing Options (PREVENT1) Statistics" ;
+  rdfs:label "Homelessness in Scotland: Housing Options (PREVENT1) Statistics" ;
   rdfs:comment "https://www2.gov.scot/Topics/Statistics/Browse/Housing-Regeneration/RefTables#Publications";
   cogs:splits cogsgit:sheet1 ; cogsgit:sheet2 :
 .
@@ -58,13 +58,13 @@ rdfs:comment "Table 4, Table 5, Table 6" ;
 cogs:transforms cogsgit:dataset2 ;
 .
 
-cogsgit:columns1 a cogs:Datasets ;
+cogsgit:dataset1 a cogs:Datasets ;
 rdfs:label "" ;
 rdfs:comment "SG Housing Options Prevent1 Statistics in Scotland by location" ;
 cogs:outputs cogsgit:column1 ;
 .
 
-cogsgit:columns2 a cogs:Datasets ;
+cogsgit:dataset2 a cogs:Datasets ;
 rdfs:label "" ;
 rdfs:comment "SG Housing Options Prevent1 Statistics in Scotland by Period" ;
 cogs:outputs cogsgit:column2 ;

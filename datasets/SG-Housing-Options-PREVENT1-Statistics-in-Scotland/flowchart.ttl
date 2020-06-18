@@ -5,7 +5,7 @@
 @prefix cogs: <http://gss-cogs.uk/def/arch/> .
 
 <http://gss-cogs.uk/def/arch> a owl:Ontology;
-  rdfs:label "COGS COVID-19 Transform Mapping" ;
+  rdfs:label "COGS homelessness Transform Mapping" ;
 .
 
 cogs:SoftwarePackage a owl:Class ;

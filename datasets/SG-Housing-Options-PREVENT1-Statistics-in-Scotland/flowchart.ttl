@@ -43,7 +43,7 @@ cogs:Rename a owl:Class ;
 cogsgit:top-level a cogs:LandingPage ;
   rdfs:label "Homelessness in Scotland: Housing Options (PREVENT1) Statistics" ;
   rdfs:comment "https://www2.gov.scot/Topics/Statistics/Browse/Housing-Regeneration/RefTables#Publications";
-  cogs:splits cogsgit:sheet1 ; cogsgit:sheet2 ;
+  cogs:splits cogsgit:sheet1, cogsgit:sheet2 ;
 .
 cogsgit:sheet1 a cogs:Sheets ;
 rdfs:label "" ;

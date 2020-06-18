@@ -13,8 +13,7 @@ cogs:SoftwarePackage a owl:Class ;
 .
 cogs:SoftwarePackage a owl:Class ;
   rdfs:label2 "Label2" ;
-.
-
+  .
 cogs:LandingPage a owl:Class ;
   rdfs:subClassOf cogs:SoftwarePackage ;
   rdfs:label "Landing Page" ;
@@ -25,7 +24,7 @@ cogs:Datasets a owl:Class ;
 .
 cogs:Sheets a owl:Class ;
   rdfs:subClassOf cogs:SoftwarePackage ;
-  rdfs:label "Sheet name";
+  rdfs:label "Sheet Name";
 .
 cogs:Columns a owl:Class ;
   rdfs:subClassOf cogs:SoftwarePackage ;
@@ -35,7 +34,6 @@ cogs:PMD a owl:Class ;
   rdfs:subClassOf cogs:SoftwarePackage ;
   rdfs:label "PMD" ;
 .
-
 cogs:Rename a owl:Class ;
   rdfs:subClassOf cogs:SoftwarePackage ;
   rdfs:label "Rename & Add" ;
@@ -47,44 +45,36 @@ cogsgit:top-level a cogs:LandingPage ;
   rdfs:comment "https://www2.gov.scot/Topics/Statistics/Browse/Housing-Regeneration/RefTables#Publications";
   cogs:splits cogsgit:sheet1 ; cogsgit:sheet2 ;
 .
-
 cogsgit:sheet1 a cogs:Sheets ;
 rdfs:label "" ;
 rdfs:comment "Table 1, Table 2, Table 3, Table 7, Table 8, Table 9, Table 10" ;
 cogs:transforms cogsgit:dataset1 ;
 .
-
 cogsgit:sheet2 a cogs:Sheets ;
 rdfs:label "" ;
 rdfs:comment "Table 4, Table 5, Table 6" ;
 cogs:transforms cogsgit:dataset2 ;
 .
-
 cogsgit:dataset1 a cogs:Datasets ;
 rdfs:label "" ;
 rdfs:comment "SG Housing Options Prevent1 Statistics in Scotland by location" ;
 cogs:outputs cogsgit:column1 ;
 .
-
 cogsgit:dataset2 a cogs:Datasets ;
 rdfs:label "" ;
 rdfs:comment "SG Housing Options Prevent1 Statistics in Scotland by Period" ;
 cogs:outputs cogsgit:column2 ;
 .
-
 cogsgit:columns1 a cogs:Columns ;
   rdfs:label "" ;
   rdfs:comment "Period, ONS Geography Code, Marker, Annual change, Totals, Housing options approaches, Rate of Approaches per 10,000 households, Housing Options activity, Outcomes by Quarter, Repeat Approaches by household, Measure type, Unit, Value" ;
   cogs:uploads cogsgit:pmd1 ;
 .
-
 cogsgit:columns2 a cogs:Columns ;
   rdfs:label "" ;
   rdfs:comment "Period, Reasons for approaching homelessness services, Activity type, Housing Option activity type, Measure type, Unit, Value" ;
   cogs:uploads cogsgit:pmd1 ;
 .
-
-
 cogsgit:pmd1 a cogs:PMD ;
   rdfs:label "PMD" ;
   rdfs:comment "Publish my Data: http://gss-data.org.uk/data/search" ;

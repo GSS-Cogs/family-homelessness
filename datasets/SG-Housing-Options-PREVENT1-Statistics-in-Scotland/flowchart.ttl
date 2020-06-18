@@ -58,12 +58,12 @@ cogs:transforms cogsgit:dataset2 ;
 cogsgit:dataset1 a cogs:Datasets ;
 rdfs:label "" ;
 rdfs:comment "SG Housing Options Prevent1 Statistics in Scotland by location" ;
-cogs:outputs cogsgit:column1 ;
+cogs:outputs cogsgit:columns1 ;
 .
 cogsgit:dataset2 a cogs:Datasets ;
 rdfs:label "" ;
 rdfs:comment "SG Housing Options Prevent1 Statistics in Scotland by Period" ;
-cogs:outputs cogsgit:column2 ;
+cogs:outputs cogsgit:columns2 ;
 .
 cogsgit:columns1 a cogs:Columns ;
   rdfs:label "" ;

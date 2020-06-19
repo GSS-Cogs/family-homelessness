@@ -159,6 +159,7 @@ if (dataset) {
                     $("#body").html(template({
                         "family": info.family,
                         "github": info.github,
+                        "githubcogs": info.githubcogs,
                         "jenkins_base": info.jenkins.base,
                         "jenkins_path": info.jenkins.path.map(function (p) {
                             return 'job/' + p;

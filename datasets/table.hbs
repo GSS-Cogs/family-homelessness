@@ -11,6 +11,8 @@
         <th>Transform Status</th>
         <th>Publish Status</th>
         <th>Publication date</th>
+        <th>Specfication</th>
+        <th>Flowchart</th>
     </tr>
     </thead>
     <tbody>
@@ -41,6 +43,16 @@
             </td>
             <td data-order="{{lastModifiedMillis}}">
                 {{lastModified}}
+            </td>
+            <td>
+                <a href='{{../githubcogs}}/datasets/{{directory}}/spec.html'>
+                    <img src='specicon.png' height='60px' width='100px'/>
+                </a>
+            </td>
+             <td>
+                <a href='{{../githubcogs}}/datasets/specflowcharts.html?{{directory}}/flowchart.ttl'>
+                    <img src='fcicon.png' height='60px' width='60px'/>
+                </a>
             </td>
         </tr>
     {{/each}}

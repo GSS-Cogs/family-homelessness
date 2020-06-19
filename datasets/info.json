@@ -1,6 +1,7 @@
 {
     "family": "Homelessness",
     "github": "https://github.com/GSS-Cogs/family-homelessness",
+    "githubcogs": "https://gss-cogs.github.io/family-homelessness",
     "jenkins": {
         "base": "https://ci.floop.org.uk",
         "path": [

@@ -1,5 +1,3 @@
-
-canwaf  9:41 AM
 {
     "image": "gsscogs/databaker:dev",
     "extensions": ["github.vscode-pull-request-github",

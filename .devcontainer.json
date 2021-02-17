@@ -1,0 +1,9 @@
+
+canwaf  9:41 AM
+{
+    "image": "gsscogs/databaker:dev",
+    "extensions": ["github.vscode-pull-request-github",
+                   "ms-toolsai.jupyter",
+                   "ms-python.vscode-pylance",
+                   "ms-python.python"]
+}

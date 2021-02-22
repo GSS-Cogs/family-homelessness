@@ -3,6 +3,7 @@
     "publisher": "Welsh Government",
     "description": "Data on the number of households applying to local authorities for housing assistance and the number of homeless households in temporary accommodation.",
     "landingPage": "https://statswales.gov.wales/Catalogue/Housing/Homelessness?_ga=2.256508107.1961980591.1578476376-1464158188.1573115284",
+    "dataURL": "http://open.statswales.gov.wales/dataset/hous0413",
     "datasetNotes": [
         "Data can be found on this landing page as 4 Power BI data sets."
     ],
@@ -11,7 +12,7 @@
         "Homelessness"
     ],
     "extract": {
-        "source": "Power BI",
+        "source": "application/json",
         "stage": "Documented"
     },
     "transform": {

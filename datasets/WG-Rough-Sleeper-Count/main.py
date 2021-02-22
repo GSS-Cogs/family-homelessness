@@ -48,7 +48,7 @@ df['Value'] = df['Data'].astype(int)
 df.drop('Data', inplace=True, axis=1)
 
 # Geographies!
-df['Geography'] = df['Area_AltCode1'].apply(lambda x: "{}{}".format('http://statistics.data.gov.uk/id/statistical-geography/', x))
+df['Reference Area'] = df['Area_AltCode1'].apply(lambda x: "{}{}".format('http://statistics.data.gov.uk/id/statistical-geography/', x))
 df.drop('Area_AltCode1', inplace=True, axis=1)
 
 # Marker (For the geography though it applies to values as well)
@@ -77,7 +77,8 @@ estimates = {
 df['Period'] = df['Period'].apply(lambda x: '/id/government-year/{}-{}'.format(x[:4], '20'+x[-2:]))
 
 
-df
+# Measures
+df['Measure'] = df['Measure'].apply(lambda x: pathify(x))
 
 # Add dataframe is in the cube
 cubes.add_cube(scraper, df, scraper.title)

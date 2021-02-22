@@ -18,7 +18,33 @@
     "transform": {
         "airtable": "rec62YB0Xi4MEwyGE",
         "github": "1",
-        "main_issue": 27
+        "main_issue": 27,
+        "columns": {
+            "Measure": {
+                "dimension": "http://purl.org/linked-data/cube#measureType",
+                "value": "http://gss-data.org.uk/def/trade/measure/{measure_type}", 
+                "types": [
+
+                ]              
+            },
+            "Period": {
+                "parent": "http://purl.org/linked-data/sdmx/2009/dimension#refPeriod",
+                "value": "http://reference.data.gov.uk{period}",
+                "codelist": false
+            },
+            "Value": {
+                "datatype": "decimal"
+            },
+            "Reference Area": {
+                "parent": "http://purl.org/linked-data/sdmx/2009/dimension#refArea",
+                "value": "{reference_area}",
+                "codelist": false
+            },
+            "Marker": {
+                "attribute": "http://purl.org/linked-data/sdmx/2009/attribute#obsStatus",
+                "value": "http://gss-data.org.uk/def/concept/cogs-markers/{marker}"
+            }
+        }
     },
     "sizingNotes": "Available through the odata route, so simple to get, but may need a number of separate downloads / produce a number of different data sets, so needs a fair amount of up-front analysis",
     "notes": ""

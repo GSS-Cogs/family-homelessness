@@ -1,4 +1,5 @@
 {
+    "id": "wg-homelessness-statistics",
     "title": "Homelessness statistics",
     "publisher": "Welsh Government",
     "description": "Data on the number of households applying to local authorities for housing assistance and the number of homeless households in temporary accommodation.",
@@ -17,8 +18,7 @@
     },
     "transform": {
         "airtable": "recP83HYsMuw2tj9C",
-        "github": "8",
-        "main_issue": 34
+        "main_issue": 8
     },
     "sizingNotes": "Available through the odata route, so simple to get, but may need a number of separate downloads / produce a number of different data sets, so needs a fair amount of up-front analysis",
     "notes": ""

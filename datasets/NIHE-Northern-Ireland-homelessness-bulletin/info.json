@@ -1,8 +1,9 @@
 {
+    "id": "nihe-northern-ireland-homelessness-bulletin",
     "title": "Northern Ireland homelessness bulletin",
     "publisher": "Northern Ireland Housing Executive",
     "description": "The Northern Ireland Homelessness bulletin is a biannual publication which contains information on a range of areas relating to homelessness. The report is currently divided into three sections which are: Homeless Presenters; Homeless Acceptances; and Temporary Accommodation.",
-    "landingPage": "https://www.communities-ni.gov.uk/publications/topic/8178/topic/8182?search=%22Northern%20Ireland%20Homelessness&Search-exposed-form=Go",
+    "landingPage": "https://www.communities-ni.gov.uk/topics/housing-statistics#toc-2",
     "datasetNotes": [
         "Data on this page identified as latest version via link entitled \"Northern Ireland homelessness bulletin [year]\" towards bottom part of page under heading \"Northern Ireland homelessness bulletins\". This opens a new page with the spreadsheet located under the heading \"Documents\"."
     ],
@@ -16,8 +17,7 @@
     },
     "transform": {
         "airtable": "recqGhObrbTGPi3ON",
-        "github": "12",
-        "main_issue": 38
+        "main_issue": 12
     },
     "sizingNotes": "Multiple tabs with small tables and simple structure but some sub-dimensions and multiple footnotes.",
     "notes": ""

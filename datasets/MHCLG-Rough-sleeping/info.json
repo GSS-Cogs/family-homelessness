@@ -1,4 +1,5 @@
 {
+    "id": "mhclg-rough-sleeping",
     "title": "Rough sleeping",
     "publisher": "Ministry for Housing, Communities and Local Government",
     "description": "Annual statistical release evaluating the extent of rough sleeping",
@@ -16,8 +17,7 @@
     },
     "transform": {
         "airtable": "rec8y9CsU6ZNX73Mv",
-        "github": "2",
-        "main_issue": 28
+        "main_issue": 2
     },
     "sizingNotes": "",
     "notes": "",

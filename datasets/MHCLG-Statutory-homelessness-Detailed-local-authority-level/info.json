@@ -1,4 +1,5 @@
 {
+    "id": "mhclg-statutory-homelessness-detailed-local-authority-level",
     "title": "Statutory homelessness Detailed local authority-level",
     "publisher": "Ministry for Housing, Communities and Local Government",
     "description": "These tables include information on new prevention and relief duties owed. They are not comparable with the homelessness decisions figures reported prior to April 2018. This is because amendments to legislation, as introduced by the 2017 HRA, have introduced new duties that mean more people will be eligible for assistance out of homelessness from local authorities.",
@@ -16,8 +17,7 @@
     },
     "transform": {
         "airtable": "recAJWGiTDewVF60Q",
-        "github": "3",
-        "main_issue": 29
+        "main_issue": 3
     },
     "sizingNotes": "",
     "notes": ""

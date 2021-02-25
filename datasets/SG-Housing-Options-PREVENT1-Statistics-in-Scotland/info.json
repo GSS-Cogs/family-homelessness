@@ -1,4 +1,5 @@
 {
+    "id": "sg-housing-options-prevent1-statistics-in-scotland",
     "title": "Housing Options (PREVENT1) Statistics in Scotland",
     "publisher": "Scottish Government",
     "description": "The PREVENT1 data specification contains the core questions to be used in the monitoring of housing options work by local authorities. One month after the end of each quarter, Local Authorities are asked to submit an XML file containing the information.",
@@ -16,8 +17,7 @@
     },
     "transform": {
         "airtable": "reckO8LcMRZwEhQtJ",
-        "github": "10",
-        "main_issue": 36
+        "main_issue": 10
     },
     "sizingNotes": "Messy structure with quite a few tabs, including mixture of data tabs and chart tabs. Multiple tables on some data tabs. Sub-dimensions and footnotes present.",
     "notes": ""

@@ -1,7 +1,9 @@
 {
+    "$schema": "https://gss-cogs.github.io/family-schemas/pipelines-schema.json",
     "family": "Homelessness",
     "github": "https://github.com/GSS-Cogs/family-homelessness",
     "githubcogs": "https://gss-cogs.github.io/family-homelessness",
+    "project": "https://github.com/orgs/GSS-Cogs/projects/9",
     "jenkins": {
         "base": "https://ci.floop.org.uk",
         "path": [
@@ -9,8 +11,8 @@
             "Homelessness"
         ]
     },
-    "sparql": "https://production-drafter-ons-alpha.publishmydata.com/v1/sparql/live",
-    "pmd": "http://gss-data.org.uk",
+    "sparql": "https://staging.gss-data.org.uk/sparql",
+    "pmd": "http://staging.gss-data.org.uk",
     "pipelines": [
         "MHCLG-Families-in-bed-and-breakfast-accommodation-for-more-than-6-weeks",
         "MHCLG-Rough-sleeping",

@@ -1,4 +1,5 @@
 {
+    "id": "mhclg-families-in-bed-and-breakfast-accommodation-for-more-than-6-weeks",
     "title": "Families in bed and breakfast accommodation for more than 6 weeks",
     "publisher": "Ministry for Housing, Communities and Local Government",
     "description": "Table showing quarterly figures for 2007 to 2012 by individual local authorities. On separate tabs and each tab has 4 tables",
@@ -16,8 +17,7 @@
     },
     "transform": {
         "airtable": "recGLGeVMKni3zKUq",
-        "github": "4",
-        "main_issue": 30
+        "main_issue": 4
     },
     "sizingNotes": "Data now incorporated into Stautory Homelessness tables",
     "notes": ""

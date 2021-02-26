@@ -1,4 +1,5 @@
 {
+    "id": "wg-rough-sleeper-count",
     "title": "Rough Sleeper Count",
     "publisher": "Welsh Government",
     "description": "Information on the estimated number of persons sleeping rough over a two week period and the number of persons observed sleeping rough.",
@@ -17,15 +18,12 @@
     },
     "transform": {
         "airtable": "rec62YB0Xi4MEwyGE",
-        "github": "1",
-        "main_issue": 27,
+        "main_issue": 1,
         "columns": {
             "Measure": {
                 "dimension": "http://purl.org/linked-data/cube#measureType",
-                "value": "http://gss-data.org.uk/def/trade/measure/{measure_type}", 
-                "types": [
-
-                ]              
+                "value": "http://gss-data.org.uk/def/trade/measure/{measure_type}",
+                "types": []
             },
             "Period": {
                 "parent": "http://purl.org/linked-data/sdmx/2009/dimension#refPeriod",

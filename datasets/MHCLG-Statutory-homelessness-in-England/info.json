@@ -1,4 +1,5 @@
 {
+    "id": "mhclg-statutory-homelessness-in-england",
     "title": "Statutory homelessness in England",
     "publisher": "Ministry for Housing, Communities and Local Government",
     "description": "These tables include information on new prevention and relief duties owed. They are not comparable with the homelessness decisions figures reported prior to April 2018. This is because amendments to legislation, as introduced by the 2017 HRA, have introduced new duties that mean more people will be eligible for assistance out of homelessness from local authorities.",
@@ -16,8 +17,7 @@
     },
     "transform": {
         "airtable": "recPtjPC7mbwqhVEt",
-        "github": "9",
-        "main_issue": 35
+        "main_issue": 9
     },
     "sizingNotes": "Although this initially appears to be complex, some work may be required to determine what the dimensions should be named.",
     "notes": ""

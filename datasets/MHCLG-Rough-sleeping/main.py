@@ -4,139 +4,141 @@ from gssutils import *
 import json 
 
 # +
-info = json.load(open('info.json')) 
-
-landing_page = info['landingPage'] 
-print(landing_page)
-spreadsheet_title = info['dataset1']['spreadsheetname']
-print(spreadsheet_title)
-
-# +
 #### Add transformation script here #### 
 
-scraper = Scraper(landingPage) 
-scraper.select_dataset(latest=True) 
-scraper 
+trace = TransformTrace()
+
+scraper = Scraper(seed="info.json") 
+wanted = [x.title for x in scraper.distributions if "rough sleeping" in x.title.lower()]
+assert len(wanted) == 1, 'Aborting, more than 1 "Rough sleeping" source file found'
+distro = scraper.distribution(title=wanted[0])
+distro 
+
+# +
+
+cubes = Cubes("info.json")
+
+# We're expecting exactly 4 sheets, track them and blow up if we're
+# mising any
+sheets_transformed = 0
+
+for tab in distro.as_databaker():
+    try:
+        if tab.name == "Table 1 Total":
+            
+            trace.start("mhclg-rough-sleeping", tab.name, ["Value", "Period", "Region", "Area"], distro.downloadURL)
+            
+            trace.Area("Everything below the cell 'Local authority ONS code'.")
+            area = tab.filter("Local authority ONS code").assert_one().fill(DOWN)
+            
+            trace.Region("Everything below the cell 'Region ONS code'.")
+            region = tab.filter("Region ONS code").assert_one().fill(DOWN).is_not_blank().is_not_whitespace()
+            
+            trace.Period('Everything to the right of "Region ONS code"')
+            period = tab.filter("Region ONS code").assert_one().fill(RIGHT)
+            [int(x.value) for x in period] # If this blows up, one of our selected "period" values aint a year
+            
+            obs = period.waffle(region).is_not_blank().is_not_whitespace()
+            
+            dimensions = [
+                HDim(period, "Period", DIRECTLY, ABOVE),
+                HDim(area, "Area", DIRECTLY, LEFT),
+                HDim(region, "Region", DIRECTLY, LEFT)
+            ]
+            
+            cs = ConversionSegment(tab, dimensions, obs)
+            df = cs.topandas()
+            df = df.fillna('')
+            
+            # Where the data is at Region level, bring over the Area then
+            # drop the unnecessary Region column
+            df["Area"][df["Area"] == ""] = df["Region"]
+            df = df.drop("Region", axis=1)
+            
+            df = df.rename(columns={"OBS": "Value"})
+            
+            df["Sex"] = "all"
+            df["Nationality"] = "all"
+            df["Age"] = "all"
+            
+            df["Measure Type"] = "people"
+            df["Unit"] = "count"
+            
+            trace.store("MHCLG Rough Sleeping Final", df)
+
+            
+        # All the Table2's are the same structure, we're just going to take
+        # the "metric" (thing what its talking about) from the tab name
+        if tab.name.lower().strip().startswith("table 2"):
+            
+            metric_name = tab.name.split(" ")[-1].strip()
+            metric_name = "Sex" if metric_name == "Gender" else metric_name
+            
+            trace.start("mhclg-rough-sleeping", tab.name, ["Value", "Period", "Region", "Area", metric_name], distro.downloadURL)
+            
+            trace.Area("Everything below the cell 'Local authority ONS code'.")
+            area = tab.filter("Local authority ONS code").assert_one().fill(DOWN)
+            
+            trace.Region("Everything below the cell 'Region ONS code'.")
+            region = tab.filter("Region ONS code").assert_one().fill(DOWN).is_not_blank().is_not_whitespace()
+            
+            trace.Period('From the single year values above the obvious header row')
+            period = tab.filter("Region ONS code").assert_one().shift(UP).fill(RIGHT).is_not_blank().is_not_whitespace()
+            [int(x.value) for x in period] # If this blows up, one of our selected "period" values aint a year
+            
+            metric_data = tab.filter("Region ONS code").assert_one().fill(RIGHT)
+            trace.multi([metric_name], 'Taken as the values to the right of "Region ONs code".')
+            
+            obs = region.waffle(metric_data).is_not_blank().is_not_whitespace()
+            
+            dimensions = [
+                HDim(period, "Period", CLOSEST, LEFT),
+                HDim(area, "Area", DIRECTLY, LEFT),
+                HDim(region, "Region", DIRECTLY, LEFT),
+                HDim(metric_data, metric_name, DIRECTLY, ABOVE)
+            ]
+            
+            cs = ConversionSegment(tab, dimensions, obs)
+            df = cs.topandas()
+            df = df.fillna('')
+            
+            df[metric_name] = df[metric_name].apply(pathify)
+            trace.multi([metric_name], f"Pathified all values in the {metric_name} column")
+            
+            # Where the data is at Region level, bring over the Area then
+            # drop the unnecessary Region column
+            df["Area"][df["Area"] == ""] = df["Region"]
+            df = df.drop("Region", axis=1)
+            
+            # Fill out the alls
+            if "Sex" not in df.columns.values:
+                df["Sex"] = "all"
+               
+            if "Nationality" not in df.columns.values:
+                df["Nationality"] = "all"
+                
+            if "Age" not in df.columns.values:
+                df["Age"] = "all"
+                
+            df["Measure Type"] = "people"
+            df["Unit"] = "count"
+            
+            df = df.rename(columns={"OBS": "Value"})
+            trace.store("MHCLG Rough Sleeping Final", df)
+        
+    except Exception as err:
+        raise Exception(f'Issue encountered on tab {tab.name}, see above for details.') from err
+    
+df = trace.combine_and_trace("MHCLG Rough Sleeping Final", "MHCLG Rough Sleeping Final")
+
+cubes.add_cube(scraper, df, "observations")
+cubes.output_all()
+trace.output()
 # -
 
-try:
-    for i in scraper.distributions:
-        if spreadsheet_title in i.title:
-            print(i.title)
-            sheets = i
-            break
-except Exception as e:
-         print('Error: ' + str(e))
-
-#### Convert to a DataBaker object
-try:
-    sheets = sheets.as_databaker()
-except Exception as e:
-    print(e.message, e.args)
 
 
-def extract_table(tab, ref1, ref2, ref3, ref4, ref5, ref6, ref7, title1, title2, title3, title4, title5, title6):
-    try:
-        col1 = tab.excel_ref(ref1).fill(DOWN).is_not_blank()
-        col2 = tab.excel_ref(ref2).fill(DOWN).is_not_blank()
-        col3 = tab.excel_ref(ref3).fill(DOWN).is_not_blank()
-        col4 = tab.excel_ref(ref4).expand(RIGHT).is_not_blank() 
-        col5 = tab.excel_ref(ref5).expand(RIGHT).is_not_blank() 
-        col6 = tab.excel_ref(ref6).expand(RIGHT).is_not_blank() 
-        col7 = tab.excel_ref(ref7).is_not_blank()
 
-        Dimensions = [
-            HDim(col1,title1, DIRECTLY, LEFT),
-            HDim(col2,title2, DIRECTLY, LEFT),
-            HDim(col3,title3, DIRECTLY, LEFT),
-            HDim(col4,title4, DIRECTLY, ABOVE),
-            HDim(col5,title5, DIRECTLY, ABOVE),
-            HDim(col6,title6, DIRECTLY, ABOVE)
-            ]
-
-        c1 = ConversionSegment(col7, Dimensions, processTIMEUNIT=True)
-        tbl = c1.topandas()
-        
-        # Get rid of any columns that have the word Spare in their name as they are not needed
-        for col in tbl.columns:
-            if 'Spare' in col:
-                tbl = tbl.drop(col, 1)
-                
-        return tbl
-    except Exception as e:
-        return "extract_sheet: " + str(e)   
-
-
-datasets = []
-tbl_set = []
-no_of_datasets = int(info['noofdatasets'])
-for x in range(no_of_datasets):
-    x = x + 1
-    no_of_sheets = int(info['dataset' + str(x)]['noofsheets'])
-    for y in range(no_of_sheets):
-        try:
-            y = y + 1
-            dataset_title = info['dataset' + str(x)]['name'] 
-            sheet_name = info['dataset' + str(x)]['sheet' + str(y)]['name']
-            col_names = info['dataset' + str(x)]['sheet' + str(y)]['columnnames']
-            coords = info['dataset' + str(x)]['sheet' + str(y)]['coords']
-            print('Title: ' + dataset_title + ' - Sheet Name: ' + sheet_name)
-            print(col_names)
-            print(coords)
-
-            tbl = extract_table([t for t in sheets if t.name == sheet_name][0], 
-                    coords[0], coords[1], coords[2], coords[3], coords[4], coords[5], coords[6],  
-                    col_names[0], col_names[1], col_names[2], col_names[3], col_names[4], col_names[5])
-            tbl_set.append(tbl)
-            del tbl
-        except Exception as e:
-            print('Error: ' + str(e))
-    datasets.append(tbl_set)
-    del tbl_set
-
-# Get all the unique column names
-col_set = []
-for d in datasets:
-    for t in d:
-        for c in t.columns:
-            if c not in col_set:
-                col_set.append(c)
-col_set
-
-# Add missing columns to each table and reorder all the tables to have the same structure and then concat
-k = 0
-main_tbls = []
-for d in datasets:
-    i = 0
-    for t in d:
-        for l in col_set:
-            if l not in t.columns:
-                t[l] = 'All'
-        datasets[k][i] = t[col_set]
-        print('Table ' + str(i))
-        print(datasets[k][i].columns)
-        i = i + 1
-    main_tbls.append(pd.concat(datasets[0]))
-
-# Display unique values to ensure everythng has been included
-for m in main_tbls:
-    for c in m:
-        if 'OBS' not in c:
-            print(c)
-            print(main_tbl[c].unique())
-    print('----------------------------------------------------------------------------------------------------')
-
-# Rename, add columns and reorder
-i = 0
-for m in main_tbls:
-    m = m.rename(columns={'OBS': 'Value'})
-    m['Measure Type'] = ''
-    m['Unit'] = ''
-    m['Marker'] = ''
-    main_tbls[i] = m[['Period', 'ONS Geography Code', 'Nationality', 'Age', 'Gender', 'Measure Type', 'Unit', 'Marker', 'Value']]
-    i = i + 1
-
-main_tbls[0].head(60)
 
 
 

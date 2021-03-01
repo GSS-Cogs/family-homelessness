@@ -130,6 +130,7 @@ for tab in distro.as_databaker():
         raise Exception(f'Issue encountered on tab {tab.name}, see above for details.') from err
     
 df = trace.combine_and_trace("MHCLG Rough Sleeping Final", "MHCLG Rough Sleeping Final")
+df["Period"] = df["Period"].map(lambda x: "year/"+x)
 
 cubes.add_cube(scraper, df, "observations")
 cubes.output_all()

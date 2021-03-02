@@ -95,16 +95,4 @@ df
 
 df['DATAMARKER'].unique()
 
-# +
-COLUMNS_TO_NOT_PATHIFY = ["OBS", "Period", "Age"]
-
-for col in df.columns.values.tolist():
-    if col in COLUMNS_TO_NOT_PATHIFY:
-        continue
-    try:
-        df[col] = df[col].apply(pathify)
-    except Exception as err:
-        raise Exception('Failed to pathify column "{}".'.format(col)) from err
-# -
-
 df

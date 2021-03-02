@@ -71,3 +71,40 @@ for tab_name in tabs_names_to_process:
     savepreviewhtml(tidy_sheet, fname=tab.name + "Preview.html")
     trace.with_preview(tidy_sheet)
     trace.store("combined_dataframe", tidy_sheet.topandas())
+
+df = trace.combine_and_trace(datasetTitle, "combined_dataframe")
+
+df
+
+df['Period'].unique()
+
+
+# +
+def left(s, amount):
+    return s[:amount]
+def date_time (date):
+    if len(date) == 7:
+        return 'financial-year/' + left(date, 4)
+    
+df['Period'] =  df["Period"].apply(date_time)
+# -
+
+df['Period'].unique()
+
+df
+
+df['DATAMARKER'].unique()
+
+# +
+COLUMNS_TO_NOT_PATHIFY = ["OBS", "Period", "Age"]
+
+for col in df.columns.values.tolist():
+    if col in COLUMNS_TO_NOT_PATHIFY:
+        continue
+    try:
+        df[col] = df[col].apply(pathify)
+    except Exception as err:
+        raise Exception('Failed to pathify column "{}".'.format(col)) from err
+# -
+
+df

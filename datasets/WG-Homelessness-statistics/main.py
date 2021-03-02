@@ -73,7 +73,6 @@ df.drop('Area_AltCode1', inplace=True, axis=1)
 
 # Measure
 df.rename({'Measure_ItemName_ENG': 'Measure'}, inplace=True, axis=1)
-df.head()
 
 # For periods
 df['Period_Code'].cat.categories
@@ -98,17 +97,90 @@ df['Period_Code'].cat.categories
 df['Period_Code'].cat.rename_categories(lambda x: {True: f"/id/government-quarter/{x[:4]}-Q{x[-1:]}", False: f"/id/government-year/{x[:4]}-{x[-3:-1]}"}.get("Q" in x), inplace=True)
 df.rename({'Period_Code': 'Period'}, inplace=True)
 
-df.head()
+# # Outcomes
+# This field contains up to three bits of information
+# * The outcome of the intervention (client behaviour)
+# * Whether the household was eligible or ineligible (duty)
+# * The specific duty under which the household is eligible for intervention (grounds for duty)
+#
+# This codelist is manually created. The dictionary has the following format:
+# ```
+# Outcomes_ItemName_ENG (value): (client-behaviour, duty, grounds-for-duty)
+# ```
 
-df['Outcomes_ItemName_ENG'].cat.rename_categories(lambda x: utils.pathify(x), inplace=True)
+outcome = {
+'Unsuccessfully relieved - Eligible, homeless, subject to duty to help to secure (Section 73)': ('Unsuccessfully relieved','Eligible','homeless, subject to duty to help to secure (Section 73)'),
+'Number of outcomes - Eligible, homeless, subject to duty to help to secure (Section 73)': ('DROP','Eligible','homeless, subject to duty to help to secure (Section 73)'),
+'Assistance Refused - Eligible, homeless, subject to duty to help to secure (Section 73)': ('Assistance Refused','Eligible','homeless, subject to duty to help to secure (Section 73)'),
+'Assistance Refused - Eligible, threatened with homelessness, prevention assistance provided (Section 66)': ('Assistance Refused','Eligible','threatened with homelessness, prevention assistance provided (Section 66)'),
+'Assistance Refused - Eligible, unintentionally homeless and in priority need (Section 75)': ('Assistance Refused','Eligible','unintentionally homeless and in priority need (Section 75)'),
+'Eligible, but not homeless or threatened with homelessness': (np.nan,'Eligible','not homeless or threatened with homelessness'),
+'Ineligible households': (np.nan,'Ineligible',np.nan),
+'Non co-operation - Eligible, homeless, subject to duty to help to secure (Section 73)': ('Non co-operation','Eligible','homeless, subject to duty to help to secure (Section 73)'),
+'Non co-operation - Eligible, threatened with homelessness, prevention assistance provided (Section 66)': ('Non co-operation','Eligible','threatened with homelessness, prevention assistance provided (Section 66)'),
+'Non co-operation - Eligible, unintentionally homeless and in priority need (Section 75)': ('Non co-operation','Eligible','unintentionally homeless and in priority need (Section 75)'),
+'Unsuccessful prevention - Eligible, threatened with homelessness, prevention assistance provided (Section 66)': ('Unsuccessful prevention','Eligible','threatened with homelessness, prevention assistance provided (Section 66)'),
+'Number of outcomes - Eligible, homeless but not in priority need': (np.nan,'Eligible','homeless but not in priority need'),
+'Number of outcomes - Eligible, homeless and in a priority need but intentionally so': (np.nan,'Eligible','homeless and in a priority need but intentionally so'),
+'Number of outcomes - Eligible, threatened with homelessness, prevention assistance provided (Section 66)': ('DROP','Eligible','threatened with homelessness, prevention assistance provided (Section 66)'),
+'Number of outcomes - Eligible, unintentionally homeless and in priority need (Section 75)': ('DROP','Eligible','unintentionally homeless and in priority need (Section 75)'),
+'Other Reasons - Eligible, homeless, subject to duty to help to secure (Section 73)': ('Other Reasons','Eligible','homeless, subject to duty to help to secure (Section 73)'),
+'Other Reasons - Eligible, threatened with homelessness, prevention assistance provided (Section 66)': ('Other Reasons','Eligible','threatened with homelessness, prevention assistance provided (Section 66)'),
+'Other Reasons - Eligible, unintentionally homeless and in priority need (Section 75)': ('Other Reasons','Eligible','unintentionally homeless and in priority need (Section 75)'),
+'Positively discharged - Eligible, unintentionally homeless and in priority need (Section 75)': ('Positively discharged','Eligible','unintentionally homeless and in priority need (Section 75)'),
+'Successful prevention - Eligible, threatened with homelessness, prevention assistance provided (Section 66)': ('Successful prevention','Eligible','threatened with homelessness, prevention assistance provided (Section 66)'),
+'Successfully relieved - Eligible, homeless, subject to duty to help to secure (Section 73)': ('Successfully relieved','Eligible','homeless, subject to duty to help to secure (Section 73)'),
+'Total Outcomes': ('DROP',np.nan,np.nan),
+'Total prevention / Relief': ('DROP',np.nan,np.nan),
+'Application withdrawn due to loss of contact  - Eligible, unintentionally homeless and in priority need (Section 75)': ('Application withdrawn due to loss of contact ','Eligible','unintentionally homeless and in priority need (Section 75)'),
+'Application withdrawn due to loss of contact  - Eligible, threatened with homelessness, prevention assistance provided (Section 66)': ('Application withdrawn due to loss of contact ','Eligible','threatened with homelessness, prevention assistance provided (Section 66)'),
+'Application withdrawn due to loss of contact  - Eligible, homeless, subject to duty to help to secure (Section 73)': ('Application withdrawn due to loss of contact ','Eligible','homeless, subject to duty to help to secure (Section 73)'),
+'Application Withdrawn  - Eligible, unintentionally homeless and in priority need (Section 75)': ('Application Withdrawn','Eligible','unintentionally homeless and in priority need (Section 75)'),
+'Application Withdrawn  - Eligible, threatened with homelessness, prevention assistance provided (Section 66)': ('Application Withdrawn','Eligible','threatened with homelessness, prevention assistance provided (Section 66)'),
+'Application Withdrawn  - Eligible, homeless, subject to duty to help to secure (Section 73)': ('Application Withdrawn','Eligible','homeless, subject to duty to help to secure (Section 73)')
+}
+outcome_df = pd.DataFrame(outcome).T.reset_index()
+outcome_df.columns = (['outcome','client-behaviour', 'duty', 'grounds-for-duty'])
+for col in outcome_df.columns:
+    outcome_df[col] = outcome_df[col].astype('category')
+df = df.merge(outcome_df, left_on='Outcomes_ItemName_ENG', right_on='outcome')
+df.drop(['Outcomes_ItemName_ENG', 'outcome'], inplace=True, axis=1)
+del outcome, outcome_df
 
-df.head()
+# drop the summary values from the dataset, end users can summarise themselves
+df = df.drop(df[df['client-behaviour'] == 'DROP'].index)
+
+# +
+# Clean up the Value column
+df['Value'] = df['Value'].astype('int64')
+df.loc[df['Value'] == -999999999, 'Marker'] = 'suppressed'
+df.loc[df['Value'] == -999999999, 'Value'] = np.nan
+
+
+
+# +
+
+for col in df.columns:
+    if col not in ['Value', 'Geography']:
+        df[col] = df[col].astype('category')
+        df[col].cat.rename_categories(lambda x: pathify(x), inplace=True)
+# -
+
+# Fix the Household column
+df.rename({'Household_ItemName_ENG': 'household-type'}, axis=1, inplace=True)
+df['household-type'].cat.rename_categories({'total': 'all-household'}, inplace=True)
+
+# Pathify the column heads
+df.rename(lambda x: pathify(x), axis=1, inplace=True)
+
+# # Test cell for welsh national statistics for year 2019-2020 to aide in pivot table creation and cross referencing
+#
+# test = df.loc[(df['Geography'] == 'http-//statistics-data-gov-uk/id/statistical-geography/w92000004') & (df['Period_Code'] == '/id/government-year/2019-20'), ['client-behaviour', 'duty', 'grounds-for-duty', 'Value', 'Household_ItemName_ENG']]
+#
+# test.to_excel('text.xlsx')
 
 # Add dataframe is in the cube
 cubes.add_cube(scraper, df, scraper.title)
 
 
-# Write cube
 cubes.output_all()
-
-

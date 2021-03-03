@@ -1,5 +1,4 @@
 .DS_Store
 *.ipynb
 **/out
-**/.vscode
 **/.cache

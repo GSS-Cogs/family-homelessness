@@ -1,5 +1,5 @@
 # Homelessness Datasets
-Welcome to the GSS-COGS's family-homelessness repo. It is comprised of 13 datasets, several of which are targetted for Sprint 31.
+Welcome to the GSS-COGS's family-homelessness repo. It is comprised of 13 datasets, several of which are targetted for Sprint 31. The [main project board](https://github.com/orgs/GSS-Cogs/projects/9) is at the [organisation level](https://github.com/GSS-Cogs).
 
 # [Sprint 31](https://github.com/GSS-Cogs/family-homelessness/milestone/1)
 | Issue                                                           | Title/Code                                                                                                                                                                                                              | Build Status                                                                                                                                                                                                                                                                                          |

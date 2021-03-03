@@ -5,6 +5,7 @@ import json
 import pandas as pd
 from gssutils import *
 from pandas import ExcelWriter
+import numpy as np
 
 scraper = Scraper(seed = "info.json")
 scraper.distributions = [x for x in scraper.distributions if hasattr(x, "mediaType")]
@@ -95,4 +96,13 @@ df
 
 df['DATAMARKER'].unique()
 
-df
+df.dtypes
+
+for col in df.columns:
+    print(f"Total columns - {col}")
+    if col not in ['OBS', 'DATAMARKER', 'Period']:
+        print(f"New column - {col}")
+        df[col] = df[col].astype('category')
+        df[col].cat.rename_categories(lambda x: pathify(x), inplace=True)
+
+

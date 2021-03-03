@@ -98,11 +98,22 @@ df['DATAMARKER'].unique()
 
 df.dtypes
 
+"""I have two dimensions from two different tabs which has names "outcome" and "homelessness reason" 
+but values are extracted from the same x and y axis. In the dataframe, dimension "outcome" 
+(The first dimension mentioned) appears with values of both "outcome"  and "homelessness reason".
+"Outcome" is related to result of homlessness application whereas " Homelessness Reason" is related 
+to the reason for homelessness so these two dimensions can't be combined.
+The problem is to be addressed latter but for now, I am moving on to get transformation to final state"""
 for col in df.columns:
     print(f"Total columns - {col}")
-    if col not in ['OBS', 'DATAMARKER', 'Period']:
-        print(f"New column - {col}")
+    if col in ['House_Hold_Type', 'DATAMARKER']:
+        print(f"\"COLUMNS TO BE PATHIFIED\" - {col}")
         df[col] = df[col].astype('category')
         df[col].cat.rename_categories(lambda x: pathify(x), inplace=True)
+print(f"COLUMN YET TO BE PATHIFIED ----------------------- \"Outcome\"")      
 
+cubes.add_cube(scraper, df, scraper.title)
 
+cubes.output_all()
+
+trace.render("spec_v1.html")

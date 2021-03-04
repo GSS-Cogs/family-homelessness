@@ -43,7 +43,8 @@ for tab_name in tabs_names_to_process:
     period = cell.shift(0, 2).fill(RIGHT).is_not_whitespace()
 
     if tab.name == 'T3_10_':
-        remove = tab.filter(contains_string("1. See Appendix 3: Data Sources - Social Renting Demand.")).expand(RIGHT).expand(DOWN)
+#footnotes and Total column is captured in remove
+        remove = tab.filter(contains_string("1. See Appendix 3: Data Sources - Social Renting Demand.")).expand(RIGHT).expand(DOWN)|tab.filter(contains_string('Total'))
         outcome = cell.shift(0, 2).fill(DOWN).is_not_whitespace()-remove
         observations = period.waffle(outcome)
         dimensions = [
@@ -51,7 +52,8 @@ for tab_name in tabs_names_to_process:
             HDim(outcome, "Outcome", DIRECTLY, LEFT)
         ]
     elif tab.name == 'T3_9':
-        remove = tab.filter(contains_string("SOURCE: NIHE")).expand(LEFT).expand(DOWN)
+#footnotes and Total column is captured in remove
+        remove = tab.filter(contains_string("SOURCE: NIHE")).expand(LEFT).expand(DOWN)|tab.filter(contains_string('Total')).expand(RIGHT)
         age = cell.shift(1, 2).fill(DOWN)-remove
         house_hold_type = age.shift(LEFT).is_not_blank()
         observations = period.waffle(age)-remove
@@ -59,9 +61,11 @@ for tab_name in tabs_names_to_process:
             HDim(period, "Period", DIRECTLY, ABOVE),
             HDim(age, "Age", DIRECTLY, LEFT),
             HDim(house_hold_type, "House_Hold_Type", CLOSEST, ABOVE)
-        ]   
+        ]  
+#         #['T3_8', 'T3_11']
     else:
-        remove = tab.filter(contains_string("1. See Appendix 3: Data Sources - Social Renting Demand.")).expand(RIGHT).expand(DOWN)
+#footnotes and Total column is captured in remove
+        remove = tab.filter(contains_string("1. See Appendix 3: Data Sources - Social Renting Demand.")).expand(RIGHT).expand(DOWN)|tab.filter(contains_string('Total'))
         homelessness_reason = cell.shift(0, 2).fill(DOWN).is_not_whitespace()-remove
         observations = period.waffle(homelessness_reason)
         dimensions = [
@@ -77,26 +81,42 @@ df = trace.combine_and_trace(datasetTitle, "combined_dataframe")
 
 df
 
-df['Period'].unique()
-
 
 # +
 def left(s, amount):
     return s[:amount]
+def right(s, amount):
+    return s[-amount:]
 def date_time (date):
-    if len(date) == 7:
-        return 'financial-year/' + left(date, 4)
-    
+    if len(date)  == 7:
+        #id/government-year/{year1}-{year2}
+        return 'id/government-year/' + left(date, 4) + '-' + left(date, 2) + right(date, 2)
+
 df['Period'] =  df["Period"].apply(date_time)
 # -
 
-df['Period'].unique()
+#Replace empty string with nan
+df.loc[df['Age'] == '', 'Age'] = np.nan
+
+
+# pattern for "Age" is number-number so we have to remove brackets () and yrs
+def converter(x):
+    try:
+        return str(x).strip("(yrs)")
+    except AttributeError:
+        return None
+
+
+df['Age'] = df['Age'].apply(converter)
+
+#remove empty space
+df['Age'] = df['Age'].str.strip()
+
+df = df.rename(columns={'OBS': 'Value', 'DATAMARKER': 'MARKER'})
+
+df['MARKER'].unique()
 
 df
-
-df['DATAMARKER'].unique()
-
-df.dtypes
 
 """I have two dimensions from two different tabs which has names "outcome" and "homelessness reason" 
 but values are extracted from the same x and y axis. In the dataframe, dimension "outcome" 
@@ -105,12 +125,11 @@ but values are extracted from the same x and y axis. In the dataframe, dimension
 to the reason for homelessness so these two dimensions can't be combined.
 The problem is to be addressed latter but for now, I am moving on to get transformation to final state"""
 for col in df.columns:
-    print(f"Total columns - {col}")
-    if col in ['House_Hold_Type', 'DATAMARKER']:
-        print(f"\"COLUMNS TO BE PATHIFIED\" - {col}")
-        df[col] = df[col].astype('category')
-        df[col].cat.rename_categories(lambda x: pathify(x), inplace=True)
-print(f"COLUMN YET TO BE PATHIFIED ----------------------- \"Outcome\"")      
+# Transform by saying the columns which are not required to be transformed
+# as the number of columns not to be transformed is less than the ones to be transformed.
+    if col not in ['Value', 'Age']:       
+        df[col] = df[col].apply(lambda x: pathify(str(x)))
+        df[col] = df[col].astype('category')      
 
 cubes.add_cube(scraper, df, scraper.title)
 

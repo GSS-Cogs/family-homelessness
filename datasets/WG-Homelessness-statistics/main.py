@@ -36,7 +36,7 @@ df.columns
 for col in ['Household_ItemNotes_ENG', 'Period_ItemNotes_ENG']:
     if df[col].count() != 0:
         print(col, df[col].count())
-        raise Exception('New Datamakers not transformed')
+        raise Exception(f"New Datamakers found in {col} but not transformed in pipeline")
 
 # Likely not required or dupliate
 drop_list = [
@@ -68,7 +68,7 @@ df['Value'] = df['Data'].astype(int)
 df.drop('Data', inplace=True, axis=1)
 
 # Geographies!
-df['Geography'] = df['Area_AltCode1'].apply(lambda x: "{}{}".format('http://statistics.data.gov.uk/id/statistical-geography/', x))
+df['Geography'] = df['Area_AltCode1'].apply(lambda x: f"http://statistics.data.gov.uk/id/statistical-geography/{x}")
 df.drop('Area_AltCode1', inplace=True, axis=1)
 
 # Measure
@@ -152,7 +152,7 @@ df = df.drop(df[df['client-behaviour'] == 'DROP'].index)
 
 # +
 # Clean up the Value column
-df['Value'] = df['Value'].astype('int64')
+df['Value'] = df['Value'].astype(int)
 df.loc[df['Value'] == -999999999, 'Marker'] = 'suppressed'
 df.loc[df['Value'] == -999999999, 'Value'] = np.nan
 

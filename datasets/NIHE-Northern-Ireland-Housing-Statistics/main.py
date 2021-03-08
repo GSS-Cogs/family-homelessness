@@ -26,7 +26,7 @@ distribution = scraper.distribution(latest=True)
 datasetTitle = 'Northern Ireland Housing Statistics 2019-20'
 distribution
 
-columns = ["Period", "Homelessness Reason", "Outcome"]
+columns = ["Period", "Age", "Homelessness Reason", "House Hold Type", "Outcome"]
 
 tabs_names_to_process = ['T3_8', 'T3_9', 'T3_10_', 'T3_11']
 for tab_name in tabs_names_to_process:
@@ -41,12 +41,17 @@ for tab_name in tabs_names_to_process:
     trace.start(datasetTitle, tab, columns, distribution.downloadURL)
     
     cell = tab.excel_ref("A1")
-    period = cell.shift(0, 2).fill(RIGHT).is_not_whitespace()
 
     if tab.name == 'T3_10_':
-#footnotes and Total column is captured in remove
+# footnotes and Total column is captured in remove
+        period = cell.shift(0, 2).fill(RIGHT).is_not_whitespace()
+        trace.Period("Defined from cell B3 right")
+        
         remove = tab.filter(contains_string("1. See Appendix 3: Data Sources - Social Renting Demand.")).expand(RIGHT).expand(DOWN)|tab.filter(contains_string('Total'))
+        
         outcome = cell.shift(0, 2).fill(DOWN).is_not_whitespace()-remove
+        trace.Outcome("Defined from cell A4 and down")
+        
         observations = period.waffle(outcome)
         dimensions = [
             HDim(period, "Period", DIRECTLY, ABOVE),
@@ -55,20 +60,32 @@ for tab_name in tabs_names_to_process:
         ]
     elif tab.name == 'T3_9':
 #footnotes and Total column is captured in remove
+        period = cell.shift(1, 2).fill(RIGHT).is_not_whitespace()
+        trace.Period("Defined from cell C3 right")
+        
         remove = tab.filter(contains_string("SOURCE: NIHE")).expand(LEFT).expand(DOWN)|tab.filter(contains_string('Total')).expand(RIGHT)
         age = cell.shift(1, 2).fill(DOWN)-remove
+        trace.Age("Defined from cell B4 and down excluding remove")
+        
         house_hold_type = age.shift(LEFT).is_not_blank()
+        trace.House_Hold_Type("Defined from cell A4 and down")
+                  
         observations = period.waffle(age)-remove
         dimensions = [
             HDim(period, "Period", DIRECTLY, ABOVE),
             HDim(age, "Age", DIRECTLY, LEFT),
             HDim(house_hold_type, "House_Hold_Type", CLOSEST, ABOVE)
         ]  
-#         #['T3_8', 'T3_11']
+#['T3_8', 'T3_11']
     else:
 #footnotes and Total column is captured in remove
+        period = cell.shift(0, 2).fill(RIGHT).is_not_whitespace()
+        trace.Period("Defined from cell B3 right")
+        
         remove = tab.filter(contains_string("1. See Appendix 3: Data Sources - Social Renting Demand.")).expand(RIGHT).expand(DOWN)|tab.filter(contains_string('Total'))
         homelessness_reason = cell.shift(0, 2).fill(DOWN).is_not_whitespace()-remove
+        trace.Homelessness_Reason("Defined from cell A4 and down")
+        
         observations = period.waffle(homelessness_reason)
         dimensions = [
             HDim(period, "Period", DIRECTLY, ABOVE),
@@ -96,10 +113,12 @@ def date_time (date):
         return 'id/government-year/' + left(date, 4) + '-' + left(date, 2) + right(date, 2)
 
 df['Period'] =  df["Period"].apply(date_time)
+trace.Period("formatted as id/government-year/{year1}-{Year2}")
 # -
 
 #Replace empty string with nan
 df.loc[df['Age'] == '', 'Age'] = np.nan
+trace.Age("Empty string in Age column is replaced by np.nan")
 
 
 # pattern for "Age" is number-number so we have to remove brackets () and yrs
@@ -111,6 +130,7 @@ def converter(x):
 
 
 df['Age'] = df['Age'].apply(converter)
+trace.Age("(yrs) is removed and age has a pattern number-number")
 
 #remove empty space
 df['Age'] = df['Age'].str.strip()
@@ -126,7 +146,8 @@ for col in df.columns:
 # as the number of columns not to be transformed is less than the ones to be transformed.
     if col not in ['Value', 'Age']:       
         df[col] = df[col].apply(lambda x: pathify(str(x)))
-        df[col] = df[col].astype('category')      
+        df[col] = df[col].astype('category')
+#         df[col].cat.rename_categories(lambda x: pathify(str(x)))
 
 cubes.add_cube(scraper, df, scraper.title)
 

@@ -6,6 +6,7 @@ import pandas as pd
 from gssutils import *
 from pandas import ExcelWriter
 import numpy as np
+from io import StringIO
 
 scraper = Scraper(seed = "info.json")
 scraper.distributions = [x for x in scraper.distributions if hasattr(x, "mediaType")]
@@ -49,7 +50,8 @@ for tab_name in tabs_names_to_process:
         observations = period.waffle(outcome)
         dimensions = [
             HDim(period, "Period", DIRECTLY, ABOVE),
-            HDim(outcome, "Outcome", DIRECTLY, LEFT)
+            HDim(outcome, "Outcome", DIRECTLY, LEFT),
+            HDimConst("Age", "All")
         ]
     elif tab.name == 'T3_9':
 #footnotes and Total column is captured in remove
@@ -70,7 +72,8 @@ for tab_name in tabs_names_to_process:
         observations = period.waffle(homelessness_reason)
         dimensions = [
             HDim(period, "Period", DIRECTLY, ABOVE),
-            HDim(homelessness_reason, "Outcome", DIRECTLY, LEFT)
+            HDim(homelessness_reason, "Homelessness Reason", DIRECTLY, LEFT),
+            HDimConst("Age", "All"),
         ]
     tidy_sheet = ConversionSegment(tab, dimensions, observations)
     savepreviewhtml(tidy_sheet, fname=tab.name + "Preview.html")
@@ -80,6 +83,10 @@ for tab_name in tabs_names_to_process:
 df = trace.combine_and_trace(datasetTitle, "combined_dataframe")
 
 df
+
+df['Outcome'].unique()
+
+df['Homelessness Reason'].unique()
 
 
 # +
@@ -113,6 +120,10 @@ df['Age'] = df['Age'].apply(converter)
 df['Age'] = df['Age'].str.strip()
 
 df = df.rename(columns={'OBS': 'Value', 'DATAMARKER': 'MARKER'})
+
+df['Value'] = df['Value'].apply(lambda x: None if pd.isnull(x) else '{0:.0f}'.format(pd.to_numeric(x)))
+
+df['MARKER'].unique()
 
 df['MARKER'].unique()
 

@@ -1,7 +1,12 @@
 # # WG Rough Sleeper Count 
 
-from gssutils import * 
+# +
+import pandas as pd
+import numpy as np
 import json 
+
+from gssutils import * 
+# -
 
 infoFileName = 'info.json'
 info    = json.load(open(infoFileName))
@@ -15,11 +20,21 @@ df = distro.as_pandas()
 
 df.head()
 
-# Quick check on what columns we need to keep
-for c in df.columns:
-    print(df[c].value_counts())
+# # Quick check on what columns we need to keep
+# for c in df.columns:
+#     print(df[c].value_counts())
 
-df.columns
+# df.columns
+
+# Clearing all blank strings
+df = df.replace(r'^\s*$', np.nan, regex=True)
+
+# Throw an error if item notes which we don't expect have any values
+# df['Household_ItemNotes_ENG'].count()
+for col in ['Year_ItemNotes_ENG', 'Measure_ItemNotes_ENG']:
+    if df[col].count() != 0:
+        print(col, df[col].count())
+        raise Exception(f"New Datamakers found in {col} but not transformed in pipeline")
 
 # Likely not required or dupliate
 drop_list = ['Area_Code', # Not required
@@ -47,12 +62,16 @@ for col in df.columns:
 df['Value'] = df['Data'].astype(int)
 df.drop('Data', inplace=True, axis=1)
 
+# +
 # Geographies!
-df['Reference Area'] = df['Area_AltCode1'].apply(lambda x: "{}{}".format('http://statistics.data.gov.uk/id/statistical-geography/', x))
+df['Geography'] = df['Area_AltCode1'].apply(lambda x: f"http://statistics.data.gov.uk/id/statistical-geography/{x}")
+
 df.drop('Area_AltCode1', inplace=True, axis=1)
+# -
 
 # Marker (For the geography though it applies to values as well)
-df['Marker'] = df['Area_ItemNotes_ENG'].apply(lambda x: " ".join(x.split()))
+# Stored as a path now but there are some whitespace issues, which are fixed by splitting on spaces, and then rejoining
+df['Marker'] = df['Area_ItemNotes_ENG'].apply(lambda x: pathify(" ".join(x.split())))
 df.drop('Area_ItemNotes_ENG', inplace=True, axis=1)
 
 # Measure

@@ -51,7 +51,7 @@ for tab_name in tabs_names_to_process:
         dimensions = [
             HDim(period, "Period", DIRECTLY, ABOVE),
             HDim(outcome, "Outcome", DIRECTLY, LEFT),
-            HDimConst("Age", "All")
+            HDimConst("Age", "all")
         ]
     elif tab.name == 'T3_9':
 #footnotes and Total column is captured in remove
@@ -73,7 +73,7 @@ for tab_name in tabs_names_to_process:
         dimensions = [
             HDim(period, "Period", DIRECTLY, ABOVE),
             HDim(homelessness_reason, "Homelessness Reason", DIRECTLY, LEFT),
-            HDimConst("Age", "All"),
+            HDimConst("Age", "all"),
         ]
     tidy_sheet = ConversionSegment(tab, dimensions, observations)
     savepreviewhtml(tidy_sheet, fname=tab.name + "Preview.html")
@@ -83,10 +83,6 @@ for tab_name in tabs_names_to_process:
 df = trace.combine_and_trace(datasetTitle, "combined_dataframe")
 
 df
-
-df['Outcome'].unique()
-
-df['Homelessness Reason'].unique()
 
 
 # +
@@ -125,16 +121,6 @@ df['Value'] = df['Value'].apply(lambda x: None if pd.isnull(x) else '{0:.0f}'.fo
 
 df['MARKER'].unique()
 
-df['MARKER'].unique()
-
-df
-
-"""I have two dimensions from two different tabs which has names "outcome" and "homelessness reason" 
-but values are extracted from the same x and y axis. In the dataframe, dimension "outcome" 
-(The first dimension mentioned) appears with values of both "outcome"  and "homelessness reason".
-"Outcome" is related to result of homlessness application whereas " Homelessness Reason" is related 
-to the reason for homelessness so these two dimensions can't be combined.
-The problem is to be addressed latter but for now, I am moving on to get transformation to final state"""
 for col in df.columns:
 # Transform by saying the columns which are not required to be transformed
 # as the number of columns not to be transformed is less than the ones to be transformed.

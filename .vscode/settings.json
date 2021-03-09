@@ -11,20 +11,20 @@
             "query": "author:${user} state:open repo:${owner}/${repository} sort:created-desc"
         },
         {
-            "label": "Milestone Issues - Unassigned",
-            "query": "state:open repo:${owner}/${repository} archived:false no:assignee milestone:\"Sprint 31\""
+            "label": "Issues - Unassigned",
+            "query": "state:open repo:${owner}/${repository} archived:false no:assignee"
         },
         {
-            "label": "Milestone Issues - Needs DM",
-            "query": "state:open repo:${owner}/${repository} archived:false milestone:\"Sprint 31\" label:\"Needs DM\""
+            "label": "Issues - Needs DM",
+            "query": "state:open repo:${owner}/${repository} archived:false label:\"Needs DM\""
         },
         {
-            "label": "Milestone Issues - Needs DE",
-            "query": "state:open repo:${owner}/${repository} archived:false milestone:\"Sprint 31\" label:\"Needs DE\""
+            "label": "Issues - Needs DE",
+            "query": "state:open repo:${owner}/${repository} archived:false label:\"Needs DE\""
         },
         {
-            "label": "Milestone Issues - Needs BA",
-            "query": "state:open repo:${owner}/${repository} archived:false milestone:\"Sprint 31\" label:\"Needs BA\""
+            "label": "Issues - Needs BA",
+            "query": "state:open repo:${owner}/${repository} archived:false label:\"Needs BA\""
         }
     ],
     "jupyter.jupyterServerType": "local"

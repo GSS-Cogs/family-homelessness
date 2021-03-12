@@ -276,7 +276,7 @@ activity_tier = tab.filter('a) Number').shift(DOWN).expand(DOWN).is_not_blank() 
 period = tab.filter('Number').shift(LEFT).expand(LEFT).is_not_blank()
 values = activity_tier.waffle(period)
 
-tmp_df = wrap(tab=tab, x_bag=period, x_name='period', y_bag=activity_tier, y_name='activity_tier', val_bag=values)
+tmp_df = wrap(tab=tab, x_bag=period, x_name='period', y_bag=activity_tier, y_name='activity-tier', val_bag=values)
 
 # Date format
 tmp_df['period'] = tmp_df['period'].apply(lambda x: f"/id/government-year/{x[-7:-3]}-20{x[-2:]}")

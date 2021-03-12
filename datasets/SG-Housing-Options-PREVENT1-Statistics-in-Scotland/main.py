@@ -162,17 +162,289 @@ tmp_df['period'] = tmp_df['period'].apply(lambda x: f"/id/government-year/{x[-7:
 # Clean up the measure a bit
 tmp_df['measure'] = 'Reason for PREVENT1 approach'
 
-# Geography is Scotland-wide
-tmp_df['geography'] = 'Scotland'
+# Marker
+tmp_df['marker'] = 'Figures have been rounded to the nearest 5 for disclosure control purposes'
 
 df = df.append(tmp_df, ignore_index=True, sort=False)
 
 del tmp_df, tab, reasons, period, values, headers, dimensions
 
+
+# +
+# Table 7: Reason for PREVENT1 approach by local authority, 2019/20
+tab = ws['Table 7']
+
+geography = tab.filter('a) Number').shift(DOWN).expand(DOWN).is_not_blank() - tab.filter('Note: Figures have been rounded to the nearest 5 for disclosure control purposes.').expand(DOWN)
+reason = tab.filter('a) Number').shift(DOWN).shift(DOWN).expand(RIGHT).is_not_blank()
+values = geography.waffle(reason)
+
+tmp_df = wrap(tab=tab, x_bag=reason, x_name='reason', y_bag=geography, y_name='geography', val_bag=values)
+
+# Date format
+tmp_df['period'] = tmp_df['measure'].apply(lambda x: f"/id/government-year/{x[-7:-3]}-20{x[-2:]}")
+
+# Clear up the measure a bit
+tmp_df['measure'] = 'Reason of PREVENT1 approaches'
+
+# Geography is Scotland-wide
+tmp_df['geography'] = 'Scotland'
+
+# Marker
+tmp_df['marker'] = 'Figures have been rounded to the nearest 5 for disclosure control purposes'
+
+df = df.append(tmp_df, ignore_index=True, sort=False)
+
+del tab, geography, reason, values, tmp_df
+
+# +
+# Table 8: Number of PREVENT1 approaches by property of applicant, 2014/15 to 2019/20
+tab = ws['Table 8']
+
+prevention = tab.filter('a) Number').shift(DOWN).expand(DOWN).is_not_blank() - tab.filter('Note: Applicants may select multiple responses, which is why total figures are greater than the number of approaches').expand(DOWN)
+period = tab.filter('Number').shift(LEFT).expand(LEFT).is_not_blank()
+values = prevention.waffle(period)
+
+tmp_df = wrap(tab=tab, x_bag=period, x_name='period', y_bag=prevention, y_name='prevention', val_bag=values)
+
+# Date format
+tmp_df['period'] = tmp_df['period'].apply(lambda x: f"/id/government-year/{x[-7:-3]}-20{x[-2:]}")
+
+# Clear up the measure a bit
+tmp_df['measure'] = 'Prevention activities carried out'
+
+# Geography is Scotland-wide
+tmp_df['geography'] = 'Scotland'
+
+df = df.append(tmp_df, ignore_index=True, sort=False)
+
+del tab, prevention, period, values, tmp_df
+
+# +
+# Table 9: Prevention activities carried out by local authority, 2019/20
+tab = ws['Table 9']
+
+geography = tab.filter('a) Number').shift(DOWN).expand(DOWN).is_not_blank() - tab.filter('Note: Figures have been rounded to the nearest 5 for disclosure control purposes.').expand(DOWN)
+prevention = tab.filter('a) Number').shift(DOWN).shift(DOWN).expand(RIGHT).is_not_blank()
+values = geography.waffle(prevention)
+
+tmp_df = wrap(tab=tab, x_bag=prevention, x_name='prevention', y_bag=geography, y_name='geography', val_bag=values)
+
+# Date format
+tmp_df['period'] = tmp_df['measure'].apply(lambda x: f"/id/government-year/{x[-7:-3]}-20{x[-2:]}")
+
+# Clear up the measure a bit
+tmp_df['measure'] = 'Prevention activities carried out'
+
+# Marker
+tmp_df['marker'] = 'Figures have been rounded to the nearest 5 for disclosure control purposes'
+
+df = df.append(tmp_df, ignore_index=True, sort=False)
+
+del tab, geography, prevention, values, tmp_df
+
+# +
+# Table 10: Organisation carrying out prevention activities, 2014/15 to 2019/20
+tab = ws['Table 10']
+
+organisation = tab.filter('a) Number').shift(DOWN).expand(DOWN).is_not_blank() - tab.filter('NNote: Figures have been rounded to the nearest 5 for disclosure control purposes.').expand(DOWN)
+period = tab.filter('Number').shift(LEFT).expand(LEFT).is_not_blank()
+values = organisation.waffle(period)
+
+tmp_df = wrap(tab=tab, x_bag=period, x_name='period', y_bag=organisation, y_name='organisation', val_bag=values)
+
+# Date format
+tmp_df['period'] = tmp_df['period'].apply(lambda x: f"/id/government-year/{x[-7:-3]}-20{x[-2:]}")
+
+# Clear up the measure a bit
+tmp_df['measure'] = 'Organisation carrying out prevention activites'
+
+# Geography is Scotland-wide
+tmp_df['geography'] = 'Scotland'
+
+# Marker
+tmp_df['marker'] = 'Figures have been rounded to the nearest 5 for disclosure control purposes'
+
+df = df.append(tmp_df, ignore_index=True, sort=False)
+
+del tab, organisation, period, values, tmp_df
+
+# +
+# Table 11: Maximum type of activity, 2014/15 to 2019/20
+tab = ws['Table 11']
+
+activity_tier = tab.filter('a) Number').shift(DOWN).expand(DOWN).is_not_blank() - tab.filter('b) Percentage').expand(DOWN)
+period = tab.filter('Number').shift(LEFT).expand(LEFT).is_not_blank()
+values = activity_tier.waffle(period)
+
+tmp_df = wrap(tab=tab, x_bag=period, x_name='period', y_bag=activity_tier, y_name='activity_tier', val_bag=values)
+
+# Date format
+tmp_df['period'] = tmp_df['period'].apply(lambda x: f"/id/government-year/{x[-7:-3]}-20{x[-2:]}")
+
+# Clear up the measure a bit
+tmp_df['measure'] = 'maximum-activity-tier'
+
+# Geography is Scotland-wide
+tmp_df['geography'] = 'Scotland'
+
+df = df.append(tmp_df, ignore_index=True, sort=False)
+
+del tab, activity_tier, period, values, tmp_df
+
+# +
+# Table 12: Maximum type of activity by local authority, 2019/20
+tab = ws['Table 12']
+
+geography = tab.filter('a) Number').shift(DOWN).expand(DOWN).is_not_blank() - tab.filter('Note: Figures have been rounded to the nearest 5 for disclosure control purposes.').expand(DOWN)
+activity_tier = tab.filter('b) Percentage').shift(DOWN).shift(DOWN).shift(LEFT).expand(LEFT).is_not_blank()
+values = geography.waffle(activity_tier)
+
+tmp_df = wrap(tab=tab, x_bag=activity_tier, x_name='activity tier', y_bag=geography, y_name='geography', val_bag=values)
+
+# Date format
+tmp_df['period'] = tmp_df['measure'].apply(lambda x: f"/id/government-year/{x[-7:-3]}-20{x[-2:]}")
+
+# Clear up the measure a bit
+tmp_df['measure'] = 'maximum-activity-tier'
+
+# Geography is Scotland-wide
+tmp_df['geography'] = 'Scotland'
+
+# Marker
+tmp_df['marker'] = 'Figures have been rounded to the nearest 5 for disclosure control purposes'
+
+df = df.append(tmp_df, ignore_index=True, sort=False)
+
+del tab, geography, activity_tier, values, tmp_df
+
+# +
+# Table 13: Outcome of PREVENT1 approach, 2014/15 to 2019/20
+tab = ws['Table 13']
+
+outcome = tab.filter('a) Number').shift(DOWN).expand(DOWN).is_not_blank() - tab.filter('b) Percentage').expand(DOWN)
+period = tab.filter('Number').shift(LEFT).expand(LEFT).is_not_blank()
+values = outcome.waffle(period)
+
+tmp_df = wrap(tab=tab, x_bag=period, x_name='period', y_bag=outcome, y_name='outcome', val_bag=values)
+
+# Date format
+tmp_df['period'] = tmp_df['period'].apply(lambda x: f"/id/government-year/{x[-7:-3]}-20{x[-2:]}")
+
+# Clear up the measure a bit
+tmp_df['measure'] = 'outcomes'
+
+# Geography is Scotland-wide
+tmp_df['geography'] = 'Scotland'
+
+df = df.append(tmp_df, ignore_index=True, sort=False)
+
+del tab, outcome, period, values, tmp_df
+
+# +
+# Table 14: Maximum type of activity by local authority, 2019/20
+tab = ws['Table 14']
+
+geography = tab.filter('a) Number').shift(DOWN).expand(DOWN).is_not_blank() - tab.filter('Note: Figures have been rounded to the nearest 5 for disclosure control purposes.').expand(DOWN)
+outcome = tab.filter('a) Number').shift(DOWN).shift(DOWN).expand(RIGHT).is_not_blank()
+values = geography.waffle(outcome)
+
+tmp_df = wrap(tab=tab, x_bag=outcome, x_name='outcome', y_bag=geography, y_name='geography', val_bag=values)
+
+# Date format
+tmp_df['period'] = tmp_df['measure'].apply(lambda x: f"/id/government-year/{x[-7:-3]}-20{x[-2:]}")
+
+# Clear up the measure a bit
+tmp_df['measure'] = 'outcomes'
+
+# Geography is Scotland-wide
+tmp_df['geography'] = 'Scotland'
+
+# Marker
+tmp_df['marker'] = 'Figures have been rounded to the nearest 5 for disclosure control purposes'
+
+df = df.append(tmp_df, ignore_index=True, sort=False)
+
+del tab, geography, outcome, values, tmp_df
+
+# +
+# Table 15: Average time taken (days) to complete PREVENT1 approach by local authority, 2019/20
+tab = ws['Table 15']
+
+geography = tab.filter('Scotland').expand(DOWN).is_not_blank() - tab.filter('b) Percentage').expand(DOWN)
+period = tab.filter('Scotland').shift(UP).expand(RIGHT).is_not_blank()
+values = geography.waffle(period)
+
+tmp_df = wrap(tab=tab, x_bag=period, x_name='period', y_bag=geography, y_name='geography', val_bag=values)
+
+# Date format
+tmp_df['period'] = tmp_df['period'].apply(lambda x: f"/id/government-year/{x[-7:-3]}-20{x[-2:]}")
+
+# Clear up the measure a bit
+tmp_df['measure'] = 'days to complete PREVENT1 approach'
+
+df = df.append(tmp_df, ignore_index=True, sort=False)
+
+del tab, geography, period, values, tmp_df
 # -
 
 df
 
-tab.excel_ref('A8')
+# Column name formatting
+df.rename({'OBS': 'Value'}, axis=1, inplace=True)
+df.rename(columns=lambda x: pathify(x), inplace=True)
+
+for col in df.columns:
+    if col != 'Value':
+        df[col] = df[col].astype('category')
+
+# Geograpy fix
+map = {
+    'Scotland': 'S04000001',
+    'Aberdeen City': 'S05000001',
+    'Aberdeenshire': 'S05000002',
+    'Angus': 'S05000003',
+    'Argyll & Bute': 'S05000004',
+    'Clackmannanshire': 'S05000005',
+    'Dumfries & Galloway': 'S05000006',
+    'Dundee City': 'S05000007',
+    'East Ayrshire': 'S05000008',
+    'East Dunbartonshire': 'S05000009',
+    'East Lothian': 'S05000010',
+    'East Renfrewshire': 'S05000011',
+    'Edinburgh': 'S05000012',
+    'Eilean Siar': 'S12000013',
+    'Falkirk': 'S05000013',
+    'Fife': 'S05000014',
+    'Glasgow City': 'S05000015',
+    'Highland': 'S05000016',
+    'Inverclyde': 'S05000017',
+    'Midlothian': 'S05000018',
+    'Moray': 'S12000020',
+    'North Ayrshire': 'S05000019',
+    'North Lanarkshire': 'S05000020',
+    'Orkney': 'S08000025',
+    'Perth & Kinross': 'S05000021',
+    'Renfrewshire': 'S05000022',
+    'Scottish Borders': 'S12000026',
+    'Shetland': 'S05000023',
+    'South Ayrshire': 'S05000025',
+    'South Lanarkshire': 'S05000026',
+    'Stirling': 'S05000024',
+    'West Dunbartonshire': 'S05000027',
+    'West Lothian': 'S05000028'
+}
+df['geography'].cat.rename_categories(lambda x: f"http://statistics.data.gov.uk/id/statistical-geography/{map[x]}", inplace=True)
+
+df.geography.value_counts()
+
+for col in df.columns:
+    if col not in ('value','geography','period'):
+        df[col].cat.rename_categories(lambda x: pathify(x), inplace=True)
+
+# Add dataframe is in the cube
+cubes.add_cube(scraper, df, scraper.title)
+
+# Write cube
+cubes.output_all()
 
 

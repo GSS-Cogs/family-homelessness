@@ -21,5 +21,6 @@
         "main_issue": 10
     },
     "sizingNotes": "Messy structure with quite a few tabs, including mixture of data tabs and chart tabs. Multiple tables on some data tabs. Sub-dimensions and footnotes present.",
-    "notes": ""
+    "notes": "",
+    "scraper_state": "https://github.com/GSS-Cogs/gss-utils/issues/197"
 }

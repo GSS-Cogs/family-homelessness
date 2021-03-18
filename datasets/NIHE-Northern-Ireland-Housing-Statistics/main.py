@@ -1,46 +1,51 @@
 # # NIHE Northern Ireland Housing Statistics 
 
 # +
-import json
 import pandas as pd
 from gssutils import *
-from pandas import ExcelWriter
-import numpy as np
-from io import StringIO
+import json
 
+info = json.load(open("info.json"))
 scraper = Scraper(seed = "info.json")
 scraper.distributions = [x for x in scraper.distributions if hasattr(x, "mediaType")]
 scraper
 
 trace = TransformTrace()
 cubes = Cubes("info.json")
-# -
+# +
+# The source data is published  in ODS format. ODS is converted to xls with the below lines of code as databaker is compatible with xls
+
 xls = pd.ExcelFile(scraper.distributions[0].downloadURL, engine="odf")
-with ExcelWriter("data.xls") as writer:
+with pd.ExcelWriter("data.xls") as writer:
     for sheet in xls.sheet_names:
         pd.read_excel(xls, sheet).to_excel(writer,sheet, index = False)
     writer.save()
 tabs = loadxlstabs("data.xls")
+# -
 
 distribution = scraper.distribution(latest=True)
-datasetTitle = 'Northern Ireland Housing Statistics 2019-20'
+datasetTitle = info["title"]
 distribution
+datasetTitle
 
-columns = ["Period", "Age", "Homelessness Reason", "House Hold Type", "Outcome"]
+columns = ["Period", "Age", "Homelessness Reason", "House Hold Type", "Outcome", "Unit"]
 
 tabs_names_to_process = ['T3_8', 'T3_9', 'T3_10_', 'T3_11']
 for tab_name in tabs_names_to_process:
-
     # Raise an exception if one of our required tabs is missing
     if tab_name not in [x.name for x in tabs]:
         raise ValueError(f'Aborting. A tab named {tab_name} required but not found')
 
     # Select the tab in question
     tab = [x for x in tabs if x.name == tab_name][0]
+    
     print(tab.name)
     trace.start(datasetTitle, tab, columns, distribution.downloadURL)
     
     cell = tab.excel_ref("A1")
+
+    unit = "household"
+    trace.Unit("Hardcoded as household")
 
     if tab.name == 'T3_10_':
 # footnotes and Total column is captured in remove
@@ -56,7 +61,8 @@ for tab_name in tabs_names_to_process:
         dimensions = [
             HDim(period, "Period", DIRECTLY, ABOVE),
             HDim(outcome, "Outcome", DIRECTLY, LEFT),
-            HDimConst("Age", "all")
+            HDimConst("Age", "all"),
+            HDimConst("Unit", "household")
         ]
     elif tab.name == 'T3_9':
 #footnotes and Total column is captured in remove
@@ -74,7 +80,8 @@ for tab_name in tabs_names_to_process:
         dimensions = [
             HDim(period, "Period", DIRECTLY, ABOVE),
             HDim(age, "Age", DIRECTLY, LEFT),
-            HDim(house_hold_type, "House_Hold_Type", CLOSEST, ABOVE)
+            HDim(house_hold_type, "House_Hold_Type", CLOSEST, ABOVE),
+            HDimConst("Unit", "household")
         ]  
 #['T3_8', 'T3_11']
     else:
@@ -91,49 +98,42 @@ for tab_name in tabs_names_to_process:
             HDim(period, "Period", DIRECTLY, ABOVE),
             HDim(homelessness_reason, "Homelessness Reason", DIRECTLY, LEFT),
             HDimConst("Age", "all"),
+            HDimConst("Unit", "household")
         ]
     tidy_sheet = ConversionSegment(tab, dimensions, observations)
     savepreviewhtml(tidy_sheet, fname=tab.name + "Preview.html")
     trace.with_preview(tidy_sheet)
     trace.store("combined_dataframe", tidy_sheet.topandas())
 
+    #One thing I've noticed is you haven't defined what the count is in each of these it's households presenting as homeless, so that needs to be in an additonal column -- Not completed
+
 df = trace.combine_and_trace(datasetTitle, "combined_dataframe")
 
 df
 
+df['Period'] = df['Period'].astype('category')
 
-# +
-def left(s, amount):
-    return s[:amount]
-def right(s, amount):
-    return s[-amount:]
-def date_time (date):
-    if len(date)  == 7:
-        #id/government-year/{year1}-{year2}
-        return 'id/government-year/' + left(date, 4) + '-' + left(date, 2) + right(date, 2)
+df['Period'].cat.categories
 
-df['Period'] =  df["Period"].apply(date_time)
-trace.Period("formatted as id/government-year/{year1}-{Year2}")
-# -
+df['Period'].unique()
+
+df['Period'] =  df["Period"].cat.rename_categories(lambda x: f"id/government-year/{x[:4]}-{x[:2]}{x[-2:]}")
+
+df['Period'].unique()
 
 #Replace empty string with nan
 df.loc[df['Age'] == '', 'Age'] = np.nan
 trace.Age("Empty string in Age column is replaced by np.nan")
 
-
 # pattern for "Age" is number-number so we have to remove brackets () and yrs
-def converter(x):
-    try:
-        return str(x).strip("(yrs)")
-    except AttributeError:
-        return None
+df['Age'] = df['Age'].apply(lambda x: str(x).strip("(yrs)"))
 
-
-df['Age'] = df['Age'].apply(converter)
 trace.Age("(yrs) is removed and age has a pattern number-number")
 
 #remove empty space
 df['Age'] = df['Age'].str.strip()
+
+df['Age'].value_counts()
 
 df = df.rename(columns={'OBS': 'Value', 'DATAMARKER': 'MARKER'})
 
@@ -149,7 +149,7 @@ for col in df.columns:
         df[col] = df[col].astype('category')
 #         df[col].cat.rename_categories(lambda x: pathify(str(x)))
 
-cubes.add_cube(scraper, df, scraper.title)
+cubes.add_cube(scraper, df, datasetTitle)
 
 cubes.output_all()
 

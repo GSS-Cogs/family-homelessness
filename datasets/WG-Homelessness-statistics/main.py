@@ -9,9 +9,10 @@ infoFileName = 'info.json'
 info    = json.load(open(infoFileName))
 scraper = Scraper(seed=infoFileName)
 cubes   = Cubes(infoFileName)
-scraper.dataset.family = info['families']
-distro = scraper.distribution(latest=True)
-distro._mediaType = 'application/json'
+scraper
+
+distro = scraper.distribution(title=lambda x: "Dataset" in x)
+distro
 
 df = distro.as_pandas()
 
@@ -150,7 +151,6 @@ del outcome, outcome_df
 # drop the summary values from the dataset, end users can summarise themselves
 df = df.drop(df[df['client-behaviour'] == 'DROP'].index)
 
-# +
 # Clean up the Value column
 df['Value'] = df['Value'].astype(int)
 df.loc[df['Value'] == -999999999, 'Marker'] = 'suppressed'

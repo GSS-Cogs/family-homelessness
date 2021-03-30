@@ -85,6 +85,7 @@ for tab in tabs:
 
 # # +
 df = trace.combine_and_trace(datasetTitle, "combined_dataframe")
+df
 df.rename(columns={'OBS' : 'Value', 'DATAMARKER' : 'Marker'}, inplace=True)
 df["Period"]= df["Period"].str.split(",", n = 1, expand = True)[1]
 #Bring the 3 temp columns together - we will then decide the Duty Type Owed values based on them
@@ -134,4 +135,38 @@ df.head()
 # Hope this helps. 
 # -
 # --
+for tab in tabs:
+    columns=['TO DO']
+    trace.start(datasetTitle, tab, columns, original_tabs.downloadURL)
+    if tab.name in ['A2P']: #only transforming tab A2P for now
+        print(tab.name)
+        
+        remove_notes = tab.filter(contains_string('Notes')).expand(DOWN).expand(RIGHT)
+        ons_geo = tab.excel_ref('A6').fill(DOWN).is_not_blank() - remove_notes
+        period = tab.excel_ref('A1').is_not_blank() #period can be extracted from this cell 
+        sheet_name = tab.name
 
+        reason_for_loss_of_home_1 = tab.excel_ref('C3').expand(RIGHT)
+        end_of_tenancy_2 = tab.excel_ref('C4').expand(RIGHT)
+        reason_for_end_of_tenancy_3 = tab.excel_ref('C5').expand(RIGHT)
+        change_of_circumstances_4 = tab.excel_ref('C6').expand(RIGHT)
+        observations = tab.excel_ref('C7').expand(DOWN).expand(RIGHT).is_not_blank() - remove_notes
+#         savepreviewhtml(observations, fname= tab.name + "PREVIEW.html")
+        
+        dimensions = [
+            HDim(ons_geo,'ONS Geography Code',DIRECTLY,LEFT),
+            HDim(period,'Period',CLOSEST,ABOVE),
+            HDim(reason_for_loss_of_home_1,'reason_for_loss_of_home_1',DIRECTLY, ABOVE),
+            HDim(end_of_tenancy_2,'end_of_tenancy_2',DIRECTLY, ABOVE),
+            HDim(reason_for_end_of_tenancy_3,'reason_for_end_of_tenancy_3',DIRECTLY, ABOVE),
+            HDim(change_of_circumstances_4,'change_of_circumstances_4',DIRECTLY, ABOVE),
+            #HDimConst("sheet_name", sheet_name) #Might be handy to have for post processing when other tabs are running also 
+        ]
+        tidy_sheet = ConversionSegment(tab, dimensions, observations)
+        savepreviewhtml(tidy_sheet, fname= tab.name + "PREVIEW.html")
+        trace.with_preview(tidy_sheet)
+        trace.store("combined_dataframe", tidy_sheet.topandas())
+
+
+df = trace.combine_and_trace(datasetTitle, "combined_dataframe")
+df

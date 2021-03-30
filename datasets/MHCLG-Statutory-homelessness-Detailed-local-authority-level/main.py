@@ -37,6 +37,8 @@ with original_tabs.open() as ods_obj:
     tableset = messytables.excel.XLSTableSet(fileobj = excel_obj)
     tabs = list(xypath.loader.get_sheets(tableset, "*"))
 
+tab = tabs['A1']
+
 datasetTitle = original_tabs.title
 datasetTitle
 # + endofcell="--"
@@ -140,7 +142,7 @@ for tab in tabs:
     trace.start(datasetTitle, tab, columns, original_tabs.downloadURL)
     if tab.name in ['A2P']: #only transforming tab A2P for now
         print(tab.name)
-        
+    
         remove_notes = tab.filter(contains_string('Notes')).expand(DOWN).expand(RIGHT)
         ons_geo = tab.excel_ref('A6').fill(DOWN).is_not_blank() - remove_notes
         period = tab.excel_ref('A1').is_not_blank() #period can be extracted from this cell 
@@ -166,7 +168,12 @@ for tab in tabs:
         savepreviewhtml(tidy_sheet, fname= tab.name + "PREVIEW.html")
         trace.with_preview(tidy_sheet)
         trace.store("combined_dataframe", tidy_sheet.topandas())
-
-
 df = trace.combine_and_trace(datasetTitle, "combined_dataframe")
+df['reason_for_loss_or_loss_of_tenancy'] = df['reason_for_loss_of_home_1']+df['end_of_tenancy_2']+df['reason_for_end_of_tenancy_3']+df['change_of_circumstances_4']
+df.drop(['reason_for_loss_of_home_1', 'end_of_tenancy_2', 'reason_for_end_of_tenancy_3', 'change_of_circumstances_4'], axis=1, inplace=True)
+df["Period"]= df["Period"].str.split(",", n = -1, expand = True)[3]
+
+df.drop(['temp_assessment_duty_type_1', 'temp_assessment_duty_type_2', 'temp_assessment_duty_type_3'], axis=1, inplace=True)
+#Check the outputs of the temp column
+
 df

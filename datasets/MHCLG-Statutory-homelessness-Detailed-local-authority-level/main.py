@@ -37,8 +37,6 @@ with original_tabs.open() as ods_obj:
     tableset = messytables.excel.XLSTableSet(fileobj = excel_obj)
     tabs = list(xypath.loader.get_sheets(tableset, "*"))
 
-tab = tabs['A1']
-
 datasetTitle = original_tabs.title
 datasetTitle
 # + endofcell="--"

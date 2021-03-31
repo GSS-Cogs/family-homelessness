@@ -172,6 +172,44 @@ df.drop(['reason_for_loss_of_home_1', 'end_of_tenancy_2', 'reason_for_end_of_ten
 df["Period"]= df["Period"].str.split(",", n = -1, expand = True)[3]
 
 df.drop(['temp_assessment_duty_type_1', 'temp_assessment_duty_type_2', 'temp_assessment_duty_type_3'], axis=1, inplace=True)
-#Check the outputs of the temp column
+
+df
+
+for tab in tabs:
+    columns=['TO DO']
+    trace.start(datasetTitle, tab, columns, original_tabs.downloadURL)
+    if tab.name in ['A3']: #only transforming tab A1 for now
+        print(tab.name)
+        
+        remove_notes = tab.filter(contains_string('Notes')).expand(DOWN).expand(RIGHT)
+        ons_geo = tab.excel_ref('A4').fill(DOWN).is_not_blank() - remove_notes # "-" suppressed in geography code to be processed in stage-2 transformation
+        period = tab.excel_ref('A1').is_not_blank() #period can be extracted from this cell 
+        sheet_name = tab.name
+        
+        total_no_of_households = tab.excel_ref('C2').expand(RIGHT)
+        reason_of_households_with_support_needs = tab.excel_ref('C3').expand(RIGHT)
+        total_households_and_no_of_people_with_support_needs = tab.excel_ref('C4').expand(RIGHT)
+        observations = tab.excel_ref('C5').expand(DOWN).expand(RIGHT).is_not_blank() - remove_notes
+#         savepreviewhtml(observations, fname= tab.name + "PREVIEW.html")
+        
+        dimensions = [
+            HDim(ons_geo,'ONS Geography Code',DIRECTLY,LEFT),
+            HDim(period,'Period',CLOSEST,ABOVE),
+            HDim(total_no_of_households,'total_no_of_households',DIRECTLY, ABOVE),
+            HDim(reason_of_households_with_support_needs,'reason_of_households_with_support_needs',DIRECTLY, ABOVE),
+            HDim(total_households_and_no_of_people_with_support_needs,'total_households_and_no_of_people_with_support_needs',DIRECTLY, ABOVE)
+            #HDimConst("sheet_name", sheet_name) #Might be handy to have for post processing when other tabs are running also 
+        ]
+        tidy_sheet = ConversionSegment(tab, dimensions, observations)
+        savepreviewhtml(tidy_sheet, fname= tab.name + "PREVIEW.html")
+        trace.with_preview(tidy_sheet)
+        trace.store("combined_dataframe", tidy_sheet.topandas())
+df = trace.combine_and_trace(datasetTitle, "combined_dataframe")
+df['total_no_of_households_with_support_needs'] = df['total_no_of_households'] + df['reason_of_households_with_support_needs'] + df['total_households_and_no_of_people_with_support_needs']
+df.drop(['total_no_of_households', 'reason_of_households_with_support_needs', 'total_households_and_no_of_people_with_support_needs'], axis=1, inplace=True)
+df["Period"]= df["Period"].str.split(",", n = 1, expand = True)[1]
+
+df.drop(['temp_assessment_duty_type_1', 'temp_assessment_duty_type_2', 'temp_assessment_duty_type_3'], axis=1, inplace=True)
+df.drop(['reason_for_loss_of_home_1', 'end_of_tenancy_2', 'reason_for_end_of_tenancy_3', 'change_of_circumstances_4'], axis=1, inplace=True)
 
 df

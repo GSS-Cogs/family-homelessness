@@ -206,30 +206,39 @@ for tab in tabs:
         trace.with_preview(tidy_sheet)
         trace.store("combined_dataframe", tidy_sheet.topandas())
 df = trace.combine_and_trace(datasetTitle, "combined_dataframe")
-df['total_no_of_households_with_support_needs'] = df['total_no_of_households'] + df['reason_of_households_with_support_needs'] + df['total_households_and_no_of_people_with_support_needs']
-df.drop(['total_no_of_households', 'reason_of_households_with_support_needs', 'total_households_and_no_of_people_with_support_needs'], axis=1, inplace=True)
-df["Period"]= df["Period"].str.split(",", n = 1, expand = True)[1]
 
-# df['total_no_of_households_with_support_needs'] = df['total_no_of_households_with_support_needs'].map(lambda x: 'Households with one support need' if '1' in x)
-#                                                                                                           else ('Households with two support needs' if '2' in x 
-#                                                                                                               else ('Households with three or more support needs' if '3+' in x)))
-# -
-
-df['total_no_of_households_with_support_needs'] == 1
-
-
-
+#sheet:A1
 df.drop(['temp_assessment_duty_type_1', 'temp_assessment_duty_type_2', 'temp_assessment_duty_type_3'], axis=1, inplace=True)
+#sheet:A2P
 df.drop(['reason_for_loss_of_home_1', 'end_of_tenancy_2', 'reason_for_end_of_tenancy_3', 'change_of_circumstances_4'], axis=1, inplace=True)
-
 df
 
 
+#This output csv file has 3+ value
+pd.DataFrame(df['total_households_and_no_of_people_with_support_needs'].unique()).to_csv('output.csv')
+
+#sheet:A3 - combine three series into one series in the dataframe
+df['total_no_of_households_with_support_needs'] = df['total_no_of_households'] + df['reason_of_households_with_support_needs'] + df['total_households_and_no_of_people_with_support_needs']
+
+# sheet:3
+df.drop(['total_no_of_households', 'reason_of_households_with_support_needs', 'total_households_and_no_of_people_with_support_needs'], axis=1, inplace=True)
+
+#This output CSv doesn't have 3+ or has Number of households3+. Needs further investigation
+pd.DataFrame(df['total_no_of_households_with_support_needs'].unique()).to_csv('output.csv')
 
 
+df["Period"]= df["Period"].str.split(",", n = 1, expand = True)[1]
 
+# df['total_households_with_support_needs'] = df['total_no_of_households_with_support_needs'].map(lambda x: "Households with one support need" if '1.0' in x else x)
 
+# The Requirement
+# H  - Total households with support needs (Already extracted from spreadsheet)
+# I4 - Households with one support need
+# J4 - Households with two support needs
+# K4 - Households with three or more support needs
 
+# Above three column values needs to be processed. Blocked. Needs investigation
 
+# pd.api.types.is_string_dtype(df['total_households_and_no_of_people_with_support_needs'])
 
-
+# For now moving on to the next tab or sheet

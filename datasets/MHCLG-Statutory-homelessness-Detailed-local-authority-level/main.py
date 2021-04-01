@@ -175,10 +175,11 @@ df.drop(['temp_assessment_duty_type_1', 'temp_assessment_duty_type_2', 'temp_ass
 
 df
 
+# +
 for tab in tabs:
     columns=['TO DO']
     trace.start(datasetTitle, tab, columns, original_tabs.downloadURL)
-    if tab.name in ['A3']: #only transforming tab A1 for now
+    if tab.name in ['A3']: #only transforming tab A3 for now
         print(tab.name)
         
         remove_notes = tab.filter(contains_string('Notes')).expand(DOWN).expand(RIGHT)
@@ -209,7 +210,26 @@ df['total_no_of_households_with_support_needs'] = df['total_no_of_households'] +
 df.drop(['total_no_of_households', 'reason_of_households_with_support_needs', 'total_households_and_no_of_people_with_support_needs'], axis=1, inplace=True)
 df["Period"]= df["Period"].str.split(",", n = 1, expand = True)[1]
 
+# df['total_no_of_households_with_support_needs'] = df['total_no_of_households_with_support_needs'].map(lambda x: 'Households with one support need' if '1' in x)
+#                                                                                                           else ('Households with two support needs' if '2' in x 
+#                                                                                                               else ('Households with three or more support needs' if '3+' in x)))
+# -
+
+df['total_no_of_households_with_support_needs'] == 1
+
+
+
 df.drop(['temp_assessment_duty_type_1', 'temp_assessment_duty_type_2', 'temp_assessment_duty_type_3'], axis=1, inplace=True)
 df.drop(['reason_for_loss_of_home_1', 'end_of_tenancy_2', 'reason_for_end_of_tenancy_3', 'change_of_circumstances_4'], axis=1, inplace=True)
 
 df
+
+
+
+
+
+
+
+
+
+

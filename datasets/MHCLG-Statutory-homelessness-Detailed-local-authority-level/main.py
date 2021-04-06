@@ -39,6 +39,11 @@ with original_tabs.open() as ods_obj:
 
 datasetTitle = original_tabs.title
 datasetTitle
+for tab in tabs:
+    print(tab.name)
+
+
+
 # + endofcell="--"
 for tab in tabs:
     columns=['TO DO']
@@ -135,6 +140,7 @@ df.head()
 # Hope this helps. 
 # -
 # --
+# +
 for tab in tabs:
     columns=['TO DO']
     trace.start(datasetTitle, tab, columns, original_tabs.downloadURL)
@@ -169,7 +175,10 @@ for tab in tabs:
 df = trace.combine_and_trace(datasetTitle, "combined_dataframe")
 df['reason_for_loss_or_loss_of_tenancy'] = df['reason_for_loss_of_home_1']+df['end_of_tenancy_2']+df['reason_for_end_of_tenancy_3']+df['change_of_circumstances_4']
 df.drop(['reason_for_loss_of_home_1', 'end_of_tenancy_2', 'reason_for_end_of_tenancy_3', 'change_of_circumstances_4'], axis=1, inplace=True)
+
+df.rename(columns={'OBS' : 'Value', 'DATAMARKER' : 'Marker'}, inplace=True)
 df["Period"]= df["Period"].str.split(",", n = -1, expand = True)[3]
+# -
 
 df.drop(['temp_assessment_duty_type_1', 'temp_assessment_duty_type_2', 'temp_assessment_duty_type_3'], axis=1, inplace=True)
 
@@ -220,13 +229,13 @@ pd.DataFrame(df['total_households_and_no_of_people_with_support_needs'].unique()
 #sheet:A3 - combine three series into one series in the dataframe
 df['total_no_of_households_with_support_needs'] = df['total_no_of_households'] + df['reason_of_households_with_support_needs'] + df['total_households_and_no_of_people_with_support_needs']
 
-# sheet:3
+# sheet:A3
 df.drop(['total_no_of_households', 'reason_of_households_with_support_needs', 'total_households_and_no_of_people_with_support_needs'], axis=1, inplace=True)
 
 #This output CSv doesn't have 3+ or has Number of households3+. Needs further investigation
 pd.DataFrame(df['total_no_of_households_with_support_needs'].unique()).to_csv('output.csv')
 
-
+df.rename(columns={'OBS' : 'Value', 'DATAMARKER' : 'Marker'}, inplace=True)
 df["Period"]= df["Period"].str.split(",", n = 1, expand = True)[1]
 
 # df['total_households_with_support_needs'] = df['total_no_of_households_with_support_needs'].map(lambda x: "Households with one support need" if '1.0' in x else x)
@@ -237,8 +246,106 @@ df["Period"]= df["Period"].str.split(",", n = 1, expand = True)[1]
 # J4 - Households with two support needs
 # K4 - Households with three or more support needs
 
-# Above three column values needs to be processed. Blocked. Needs investigation
+# Above three column names needs to be processed. Blocked. Needs investigation
 
 # pd.api.types.is_string_dtype(df['total_households_and_no_of_people_with_support_needs'])
 
 # For now moving on to the next tab or sheet
+df
+
+# +
+#Number of households owed a prevention duty by accommodation at time of application England
+for tab in tabs:
+    columns=['TO DO']
+    trace.start(datasetTitle, tab, columns, original_tabs.downloadURL)
+    if tab.name in ['A4P']: #only transforming tab A4P for now
+        print(tab.name)
+        
+        remove_notes = tab.filter(contains_string('Notes')).expand(DOWN).expand(RIGHT)
+        ons_geo = tab.excel_ref('A4').fill(DOWN).is_not_blank() - remove_notes # "-" suppressed in geography code to be processed in stage-2 transformation
+        period = tab.excel_ref('A1').is_not_blank() #period can be extracted from this cell 
+        sheet_name = tab.name
+        
+        prevention_duty_owed_by_sector = tab.excel_ref('C3').expand(RIGHT)
+        prs_srs_homeless_on_departure_from_institution = tab.excel_ref('C4').expand(RIGHT)
+        status_of_occupation = tab.excel_ref('C5').expand(RIGHT)
+        observations = tab.excel_ref('C6').expand(DOWN).expand(RIGHT).is_not_blank() - remove_notes
+#         savepreviewhtml(observations, fname= tab.name + "PREVIEW.html")
+        dimensions = [
+            HDim(ons_geo,'ONS Geography Code',DIRECTLY,LEFT),
+            HDim(period,'Period',CLOSEST,ABOVE),
+            HDim(prevention_duty_owed_by_sector,'prevention_duty_owed_by_sector',DIRECTLY, ABOVE),
+            HDim(prs_srs_homeless_on_departure_from_institution,'prs_srs_homeless_on_departure_from_institution',DIRECTLY, ABOVE),
+            HDim(status_of_occupation,'status_of_occupation',DIRECTLY, ABOVE)
+#             HDimConst("sheet_name", sheet_name) #Might be handy to have for post processing when other tabs are running also 
+        ]
+        tidy_sheet = ConversionSegment(tab, dimensions, observations)
+        savepreviewhtml(tidy_sheet, fname= tab.name + "PREVIEW.html")
+        trace.with_preview(tidy_sheet)
+        trace.store("combined_dataframe", tidy_sheet.topandas())
+df = trace.combine_and_trace(datasetTitle, "combined_dataframe")
+df['total_prevention'] = df['prevention_duty_owed_by_sector']+df['prs_srs_homeless_on_departure_from_institution']+df['status_of_occupation']
+#sheet:A4P
+df.drop(['prevention_duty_owed_by_sector', 'prs_srs_homeless_on_departure_from_institution', 'status_of_occupation'],axis=1,inplace=True)
+# df
+#sheet:A1
+df.drop(['temp_assessment_duty_type_1', 'temp_assessment_duty_type_2', 'temp_assessment_duty_type_3'], axis=1, inplace=True)
+#sheet:A2P
+df.drop(['reason_for_loss_of_home_1', 'end_of_tenancy_2', 'reason_for_end_of_tenancy_3', 'change_of_circumstances_4'], axis=1, inplace=True)
+# sheet:A3
+df.drop(['total_no_of_households', 'reason_of_households_with_support_needs', 'total_households_and_no_of_people_with_support_needs'], axis=1, inplace=True)
+
+df.rename(columns={'OBS' : 'Value', 'DATAMARKER' : 'Marker'}, inplace=True)
+df["Period"]= df["Period"].str.split(",", n = 1, expand = True)[1]
+
+df
+
+# +
+# Number of households owed a relief duty by accommodation at time of application England
+
+for tab in tabs:
+    columns=['TO DO']
+    trace.start(datasetTitle, tab, columns, original_tabs.downloadURL)
+    if tab.name in ['A4R']: #only transforming tab A4P for now
+        print(tab.name)
+        
+        remove_notes = tab.filter(contains_string('Notes')).expand(DOWN).expand(RIGHT)
+        ons_geo = tab.excel_ref('A4').fill(DOWN).is_not_blank() - remove_notes # "-" suppressed in geography code to be processed in stage-2 transformation
+        period = tab.excel_ref('A1').is_not_blank() #period can be extracted from this cell 
+        sheet_name = tab.name
+        
+        relief_duty_owed_by_sector = tab.excel_ref('C3').expand(RIGHT)
+        relief_prs_srs_homeless_on_departure_from_institution = tab.excel_ref('C4').expand(RIGHT)
+        relief_status_of_occupation = tab.excel_ref('C5').expand(RIGHT)
+        observations = tab.excel_ref('C6').expand(DOWN).expand(RIGHT).is_not_blank() - remove_notes
+#         savepreviewhtml(observations, fname= tab.name + "PREVIEW.html")
+        dimensions = [
+            HDim(ons_geo,'ONS Geography Code',DIRECTLY,LEFT),
+            HDim(period,'Period',CLOSEST,ABOVE),
+            HDim(relief_duty_owed_by_sector,'relief_duty_owed_by_sector',DIRECTLY, ABOVE),
+            HDim(relief_prs_srs_homeless_on_departure_from_institution,'relief_prs_srs_homeless_on_departure_from_institution',DIRECTLY, ABOVE),
+            HDim(relief_status_of_occupation,'relief_status_of_occupation',DIRECTLY, ABOVE)
+#             HDimConst("sheet_name", sheet_name) #Might be handy to have for post processing when other tabs are running also 
+        ]
+        tidy_sheet = ConversionSegment(tab, dimensions, observations)
+        savepreviewhtml(tidy_sheet, fname= tab.name + "PREVIEW.html")
+        trace.with_preview(tidy_sheet)
+        trace.store("combined_dataframe", tidy_sheet.topandas())
+df = trace.combine_and_trace(datasetTitle, "combined_dataframe")
+#Sheet = A2R
+df['Relief_Total'] = df['relief_duty_owed_by_sector']+df['relief_prs_srs_homeless_on_departure_from_institution']+df['relief_status_of_occupation']
+df.drop(['relief_duty_owed_by_sector', 'relief_prs_srs_homeless_on_departure_from_institution', 'relief_status_of_occupation'], axis=1, inplace=True)
+
+#sheet:A1
+df.drop(['temp_assessment_duty_type_1', 'temp_assessment_duty_type_2', 'temp_assessment_duty_type_3'], axis=1, inplace=True)
+#sheet:A2P
+df.drop(['reason_for_loss_of_home_1', 'end_of_tenancy_2', 'reason_for_end_of_tenancy_3', 'change_of_circumstances_4'], axis=1, inplace=True)
+# sheet:A3
+df.drop(['total_no_of_households', 'reason_of_households_with_support_needs', 'total_households_and_no_of_people_with_support_needs'], axis=1, inplace=True)
+#sheet:A4P
+df.drop(['prevention_duty_owed_by_sector', 'prs_srs_homeless_on_departure_from_institution', 'status_of_occupation'],axis=1,inplace=True)
+
+df.rename(columns={'OBS' : 'Value', 'DATAMARKER' : 'Marker'}, inplace=True)
+df["Period"]= df["Period"].str.split(",", n = 1, expand = True)[1]
+
+df

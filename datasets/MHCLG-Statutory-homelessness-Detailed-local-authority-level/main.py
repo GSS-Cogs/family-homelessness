@@ -42,8 +42,6 @@ datasetTitle
 for tab in tabs:
     print(tab.name)
 
-
-
 # + endofcell="--"
 for tab in tabs:
     columns=['TO DO']
@@ -178,10 +176,54 @@ df.drop(['reason_for_loss_of_home_1', 'end_of_tenancy_2', 'reason_for_end_of_ten
 
 df.rename(columns={'OBS' : 'Value', 'DATAMARKER' : 'Marker'}, inplace=True)
 df["Period"]= df["Period"].str.split(",", n = -1, expand = True)[3]
-# -
 
 df.drop(['temp_assessment_duty_type_1', 'temp_assessment_duty_type_2', 'temp_assessment_duty_type_3'], axis=1, inplace=True)
+df
 
+# +
+#Number of households owed a relief duty by reason for loss, or threat of loss, of last settled home England
+for tab in tabs:
+    columns=['TO DO']
+    trace.start(datasetTitle, tab, columns, original_tabs.downloadURL)
+    if tab.name in ['A2R_']: #only transforming tab A2P for now
+        print(tab.name)
+    
+        remove_notes = tab.filter(contains_string('Notes')).expand(DOWN).expand(RIGHT)
+        ons_geo = tab.excel_ref('A6').fill(DOWN).is_not_blank() - remove_notes
+        period = tab.excel_ref('A1').is_not_blank() #period can be extracted from this cell 
+        sheet_name = tab.name
+#         savepreviewhtml(period, fname= tab.name + "PREVIEW.html")
+
+        relief_duty_by_reason = tab.excel_ref('C3').expand(RIGHT)
+        end_of_AST = tab.excel_ref('C4').expand(RIGHT)
+        reason_for_end_of_AST = tab.excel_ref('C5').expand(RIGHT)
+        reason_for_rent_arrears = tab.excel_ref('C6').expand(RIGHT)
+        observations = tab.excel_ref('C7').expand(DOWN).expand(RIGHT).is_not_blank() - remove_notes
+#         savepreviewhtml(observations, fname= tab.name + "PREVIEW.html")
+        
+        dimensions = [
+            HDim(ons_geo,'ONS Geography Code',DIRECTLY,LEFT),
+            HDim(period,'Period',CLOSEST,ABOVE),
+            HDim(relief_duty_by_reason,'relief_duty_by_reason',DIRECTLY, ABOVE),
+            HDim(end_of_AST,'end_of_AST',DIRECTLY, ABOVE),
+            HDim(reason_for_end_of_AST,'reason_for_end_of_AST',DIRECTLY, ABOVE),
+            HDim(reason_for_rent_arrears,'reason_for_rent_arrears',DIRECTLY, ABOVE),
+            #HDimConst("sheet_name", sheet_name) #Might be handy to have for post processing when other tabs are running also 
+        ]
+        tidy_sheet = ConversionSegment(tab, dimensions, observations)
+        savepreviewhtml(tidy_sheet, fname= tab.name + "PREVIEW.html")
+        trace.with_preview(tidy_sheet)
+        trace.store("combined_dataframe", tidy_sheet.topandas())
+df = trace.combine_and_trace(datasetTitle, "combined_dataframe")
+
+df['total_relief_duty_by_reason'] = df['relief_duty_by_reason'] + df['end_of_AST']+df['reason_for_end_of_AST']+df['reason_for_rent_arrears']
+df.drop(['relief_duty_by_reason', 'end_of_AST', 'reason_for_end_of_AST', 'reason_for_rent_arrears'], axis =1, inplace=True)
+
+df.drop(['temp_assessment_duty_type_1', 'temp_assessment_duty_type_2', 'temp_assessment_duty_type_3'], axis=1, inplace=True)
+df.drop(['reason_for_loss_of_home_1', 'end_of_tenancy_2', 'reason_for_end_of_tenancy_3', 'change_of_circumstances_4'], axis=1, inplace=True)
+
+df.rename(columns={'OBS' : 'Value', 'DATAMARKER' : 'Marker'}, inplace=True)
+df["Period"]= df["Period"].str.split(",", n = -1, expand = True)[3]
 df
 
 # +

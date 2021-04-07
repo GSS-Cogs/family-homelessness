@@ -375,7 +375,7 @@ for tab in tabs:
             HDim(period,'Period',CLOSEST,ABOVE),
             HDim(prevention_duty_owed_by_household,'prevention_duty_owed_by_household',DIRECTLY, ABOVE),
             HDim(single_parent_adult_male_female,'single_parent_adult_male_female',DIRECTLY, ABOVE),
-            HDimConst("sheet_name", sheet_name) #Might be handy to have for post processing when other tabs are running also 
+#             HDimConst("sheet_name", sheet_name) #Might be handy to have for post processing when other tabs are running also 
         ]
         tidy_sheet = ConversionSegment(tab, dimensions, observations)
         savepreviewhtml(tidy_sheet, fname= tab.name + "PREVIEW.html")
@@ -398,8 +398,63 @@ df.drop(['relief_duty_owed_by_sector', 'relief_prs_srs_homeless_on_departure_fro
 
 df.rename(columns={'OBS' : 'Value', 'DATAMARKER' : 'Marker'}, inplace=True)
 df["Period"]= df["Period"].str.split(",", n = 1, expand = True)[1]
-# -
+df
+# +
+# Number of households owed a relief duty by household composition England
 
+for tab in tabs:
+    columns=['TO DO']
+    trace.start(datasetTitle, tab, columns, original_tabs.downloadURL)
+    if tab.name in ['A5R']: #only transforming tab A4P for now
+        print(tab.name)
+        
+        remove_notes = tab.filter(contains_string('Notes')).expand(DOWN).expand(RIGHT)
+        remove_notes_1 = tab.excel_ref("C334").expand(DOWN).expand(RIGHT).shift(LEFT).shift(LEFT)
+        remove_total = remove_notes|remove_notes_1
+        ons_geo = tab.excel_ref('A4').fill(DOWN).is_not_blank() - remove_total # "-" suppressed in geography code to be processed in stage-2 transformation
+        period = tab.excel_ref('A1').is_not_blank() #period can be extracted from this cell 
+        sheet_name = tab.name
+        
+#         savepreviewhtml(ons_geo, fname= tab.name + "PREVIEW.html")
+        
+        relief_duty_owed_by_household = tab.excel_ref('E3').expand(RIGHT)
+        relief_single_parent_adult_male_female = tab.excel_ref('E4').expand(RIGHT)
+        observations = tab.excel_ref('E6').expand(DOWN).expand(RIGHT).is_not_blank() - remove_total
+#         savepreviewhtml(observations, fname= tab.name + "PREVIEW.html")
+        dimensions = [
+            HDim(ons_geo,'ONS Geography Code',DIRECTLY,LEFT),
+            HDim(period,'Period',CLOSEST,ABOVE),
+            HDim(relief_duty_owed_by_household,'relief_duty_owed_by_household',DIRECTLY, ABOVE),
+            HDim(relief_single_parent_adult_male_female,'relief_single_parent_adult_male_female',DIRECTLY, ABOVE),
+#             HDimConst("sheet_name", sheet_name) #Might be handy to have for post processing when other tabs are running also 
+        ]
+        tidy_sheet = ConversionSegment(tab, dimensions, observations)
+        savepreviewhtml(tidy_sheet, fname= tab.name + "PREVIEW.html")
+        trace.with_preview(tidy_sheet)
+        trace.store("combined_dataframe", tidy_sheet.topandas())
+df = trace.combine_and_trace(datasetTitle, "combined_dataframe")
+df['relief_duty_owed'] = df['relief_duty_owed_by_household']+df['relief_single_parent_adult_male_female']
+df.drop(['relief_duty_owed_by_household', 'relief_single_parent_adult_male_female'], axis=1, inplace=True)
+
+
+
+#sheet:A1
+df.drop(['temp_assessment_duty_type_1', 'temp_assessment_duty_type_2', 'temp_assessment_duty_type_3'], axis=1, inplace=True)
+#sheet:A2P
+df.drop(['reason_for_loss_of_home_1', 'end_of_tenancy_2', 'reason_for_end_of_tenancy_3', 'change_of_circumstances_4'], axis=1, inplace=True)
+# sheet:A3
+df.drop(['total_no_of_households', 'reason_of_households_with_support_needs', 'total_households_and_no_of_people_with_support_needs'], axis=1, inplace=True)
+#sheet:A4P
+df.drop(['prevention_duty_owed_by_sector', 'prs_srs_homeless_on_departure_from_institution', 'status_of_occupation'],axis=1,inplace=True)
+#Sheet = A2R
+df.drop(['relief_duty_owed_by_sector', 'relief_prs_srs_homeless_on_departure_from_institution', 'relief_status_of_occupation'], axis=1, inplace=True)
+# Sheet = A5P
+df.drop(['prevention_duty_owed_by_household', 'single_parent_adult_male_female'], axis=1, inplace=True)
+
+df.rename(columns={'OBS' : 'Value', 'DATAMARKER' : 'Marker'}, inplace=True)
+df["Period"]= df["Period"].str.split(",", n = 1, expand = True)[1]
+df
+# -
 
 
 

@@ -262,6 +262,9 @@ df = trace.combine_and_trace(datasetTitle, "combined_dataframe")
 df.drop(['temp_assessment_duty_type_1', 'temp_assessment_duty_type_2', 'temp_assessment_duty_type_3'], axis=1, inplace=True)
 #sheet:A2P
 df.drop(['reason_for_loss_of_home_1', 'end_of_tenancy_2', 'reason_for_end_of_tenancy_3', 'change_of_circumstances_4'], axis=1, inplace=True)
+#sheet:A2R_
+df.drop(['relief_duty_by_reason', 'end_of_AST', 'reason_for_end_of_AST', 'reason_for_rent_arrears'], axis =1, inplace=True)
+
 df
 
 
@@ -334,6 +337,8 @@ df.drop(['prevention_duty_owed_by_sector', 'prs_srs_homeless_on_departure_from_i
 df.drop(['temp_assessment_duty_type_1', 'temp_assessment_duty_type_2', 'temp_assessment_duty_type_3'], axis=1, inplace=True)
 #sheet:A2P
 df.drop(['reason_for_loss_of_home_1', 'end_of_tenancy_2', 'reason_for_end_of_tenancy_3', 'change_of_circumstances_4'], axis=1, inplace=True)
+#sheet:A2R_
+df.drop(['relief_duty_by_reason', 'end_of_AST', 'reason_for_end_of_AST', 'reason_for_rent_arrears'], axis =1, inplace=True)
 # sheet:A3
 df.drop(['total_no_of_households', 'reason_of_households_with_support_needs', 'total_households_and_no_of_people_with_support_needs'], axis=1, inplace=True)
 
@@ -382,6 +387,8 @@ df.drop(['relief_duty_owed_by_sector', 'relief_prs_srs_homeless_on_departure_fro
 df.drop(['temp_assessment_duty_type_1', 'temp_assessment_duty_type_2', 'temp_assessment_duty_type_3'], axis=1, inplace=True)
 #sheet:A2P
 df.drop(['reason_for_loss_of_home_1', 'end_of_tenancy_2', 'reason_for_end_of_tenancy_3', 'change_of_circumstances_4'], axis=1, inplace=True)
+#sheet:A2R_
+df.drop(['relief_duty_by_reason', 'end_of_AST', 'reason_for_end_of_AST', 'reason_for_rent_arrears'], axis =1, inplace=True)
 # sheet:A3
 df.drop(['total_no_of_households', 'reason_of_households_with_support_needs', 'total_households_and_no_of_people_with_support_needs'], axis=1, inplace=True)
 #sheet:A4P
@@ -431,6 +438,8 @@ df.drop(['prevention_duty_owed_by_household', 'single_parent_adult_male_female']
 df.drop(['temp_assessment_duty_type_1', 'temp_assessment_duty_type_2', 'temp_assessment_duty_type_3'], axis=1, inplace=True)
 #sheet:A2P
 df.drop(['reason_for_loss_of_home_1', 'end_of_tenancy_2', 'reason_for_end_of_tenancy_3', 'change_of_circumstances_4'], axis=1, inplace=True)
+#sheet:A2R_
+df.drop(['relief_duty_by_reason', 'end_of_AST', 'reason_for_end_of_AST', 'reason_for_rent_arrears'], axis =1, inplace=True)
 # sheet:A3
 df.drop(['total_no_of_households', 'reason_of_households_with_support_needs', 'total_households_and_no_of_people_with_support_needs'], axis=1, inplace=True)
 #sheet:A4P
@@ -484,6 +493,8 @@ df.drop(['relief_duty_owed_by_household', 'relief_single_parent_adult_male_femal
 df.drop(['temp_assessment_duty_type_1', 'temp_assessment_duty_type_2', 'temp_assessment_duty_type_3'], axis=1, inplace=True)
 #sheet:A2P
 df.drop(['reason_for_loss_of_home_1', 'end_of_tenancy_2', 'reason_for_end_of_tenancy_3', 'change_of_circumstances_4'], axis=1, inplace=True)
+#sheet:A2R_
+df.drop(['relief_duty_by_reason', 'end_of_AST', 'reason_for_end_of_AST', 'reason_for_rent_arrears'], axis =1, inplace=True)
 # sheet:A3
 df.drop(['total_no_of_households', 'reason_of_households_with_support_needs', 'total_households_and_no_of_people_with_support_needs'], axis=1, inplace=True)
 #sheet:A4P

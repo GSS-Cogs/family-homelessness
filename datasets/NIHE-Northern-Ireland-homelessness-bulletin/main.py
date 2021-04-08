@@ -8,21 +8,20 @@ import json
 import pandas as pd
 import numpy as np
 
-
 import pyexcel
 import messytables
 from io import BytesIO
 # -
 
-cubes = Cubes('info.json')
+cubes = Cubes("info.json")
 
 pd.set_option('display.float_format', lambda x: '%.0f' % x)
 
 # +
 
 info = json.load(open('info.json')) 
-dataURL = info['dataURL']
-dataURL
+landingPage = info['landingPage']
+landingPage
 # -
 
 scraper = Scraper(seed='info.json') 
@@ -35,10 +34,25 @@ from pandas import ExcelWriter
 xls = pd.ExcelFile(distribution.downloadURL, engine="odf")
 with ExcelWriter("data.xls") as writer:
     for sheet in xls.sheet_names:
-        # pd.read_excel(xls, sheet).to_excel(writer,sheet, index_col=None)
         pd.read_excel(xls, sheet).to_excel(writer,sheet, index=False)
     writer.save()
 tabs = loadxlstabs("data.xls")
+
+
+def period_format(x):
+    if 'g-H1' in x:
+        return 'government-half' + '/' + x.split(':')[0] + '/' + 'H1'
+    elif 'g-H2' in x:
+        return 'government-half' + '/' + x.split(':')[0] + '/' + 'H2'
+    elif 'g-Q1' in x:
+        return 'government-quarter' + '/' + x.split(':')[0] + '/' + 'Q1'
+    elif 'c-H1' in x:
+        return 'calendar-half' + '/' + x.split(':')[0] + '/' + 'H1'
+    elif 'c-H2' in x:
+        return 'calendar-half' + '/' + x.split(':')[0] + '/' + 'H2'
+    elif 'g-year' in x:
+        return 'government-year' + '/' + x.split(':')[0]   
+
 
 # +
 tab_names = [tab.name for tab in tabs]
@@ -79,7 +93,6 @@ for tab in presentations_tabs:
       
         quarter = cell.fill(DOWN).regex('[^0-9]+') - remove_total - footnote
         year = cell.fill(DOWN).is_not_blank() - remove_total - quarter - footnote
-        # yearAlt = tab.excel_ref('A4').expand(DOWN).regex('[0-9]') - footnote
 
         observations = reason.fill(DOWN).is_not_blank() - footnote
 
@@ -99,19 +112,14 @@ for tab in presentations_tabs:
                     HDimConst('Measure Type','Household'),
                     HDimConst('Unit','Count'),  
                     HDimConst('ONS Geography code', "N07000001"),
-                    HDim(year, 'Period', CLOSEST, UP), #CLOSEST,ABOVE
+                    HDim(year, 'Period', CLOSEST, UP), 
                     HDim(quarter, 'Quarter', DIRECTLY,LEFT),
                     HDim(reason, reason_title, DIRECTLY, ABOVE)         
         ]  
        
         tidy_sheet = ConversionSegment(tab, dimensions, observations)
         table = tidy_sheet.topandas()
-        # table['Period'] = table['Period'].str.replace('\.0', '')
-        # table['Period'] = table['Period'].str.replace(r'\(.*\).*', '') + '/' + table['Quarter'].str.replace(r'\(.*\)+', '')
-        # table = table.drop(columns='Quarter')
-        # table.drop(['Quarter'], axis =1, inplace=True)
         trace.store('combined_dataframe_presentation', table)
-    
 
     elif tab.name == '1_2':
         print(tab.name)
@@ -142,12 +150,8 @@ for tab in presentations_tabs:
         tidy_sheet = ConversionSegment(tab, dimensions, observations)
         table = tidy_sheet.topandas()
 
-        # table['Period'] = table['Period'].str.replace('\.0', '')
-        # table['Period'] = table['Period'].str.replace(r'\(.*\).*', '') + '/' + table['Quarter'].str.replace(r'\(.*\)+', '')
-        
         table['Household Composition'] = table['Household Composition'].astype(str) + ' ' + table['Age Group'].astype(str).replace(r'\(.*\)', ' ')
         table.drop(['Age Group'],axis=1, inplace=True)
-        # table.drop(columns=['Quarter', 'Age Group'], inplace=True)
         trace.store('combined_dataframe_presentation', table)
 
     elif tab.name == '1_3':
@@ -171,14 +175,10 @@ for tab in presentations_tabs:
         ]  
         tidy_sheet = ConversionSegment(tab, dimensions, observations)
         table = tidy_sheet.topandas()
-        # table['Period'] = table['Period'].str.replace('\.0', '')
-        # table['Period'] = table['Period'].str.replace(r'\(.*\).*', '') + '/' + table['Quarter'].str.replace(r'\(.*\)+', '')
-        # table = table.drop(columns='Quarter')
        
         table.loc[(table['Homeless Presenters'] == 'Total presenter'), 'Unit'] = 'Count'
         table.loc[(table['Homeless Presenters'] == 'Presenters per 1,000 population'), 'Unit'] = 'Per 1,000 population'
         table.drop(['Homeless Presenters'], axis=1, inplace=True)
-        
         trace.store('combined_dataframe_presentation', table)
 
  
@@ -203,10 +203,6 @@ for tab in presentations_tabs:
                 ]  
         tidy_sheet = ConversionSegment(tab, dimensions, observations)
         table = tidy_sheet.topandas()
-        # table['Period'] = table['Period'].str.replace('\.0', '')
-        # table['Period'] = table['Period'].str.replace(r'\(.*\).*', '') + '/' + table['Quarter'].str.replace(r'\(.*\)+', '')
-        # table.drop(['Quarter'], axis=1, inplace=True) 
-        
         trace.store('combined_dataframe_presentation', table) 
 
 
@@ -234,6 +230,7 @@ df = trace.combine_and_trace(title, 'combined_dataframe_presentation').fillna(''
 
 df['Period'] = df['Period'].str.replace('\.0', '')
 df['Period'] = df['Period'].str.replace(r'\(.*\).*', '') 
+df['Period'] = df['Period'].str.rstrip() 
 df['Quarter'] = df['Quarter'].str.replace(r'\(.*\).*', '')
 df['Quarter'] = df['Quarter'].str.rstrip('123 ')
 
@@ -248,15 +245,10 @@ df = df.replace({'Quarter':
 '' : 'g-year'
 }})
 
-# next_table['Period'] = next_table['Period'].map(
-#     lambda x: {
-#         'Apr-Sep' : 'government-half/2018-2019/H1', 
-#         'Oct-Mar' : 'government-half/2018-2019/H2',
-#         'Apr-Jun': 'government-quarter/2018-2019/Q1' ,
-#         'Jul-Dec': 'government-quarter/2018-2019/Q2',
-#         'Jul-Dec³' : 'government-quarter/2018-2019/Q2', 
-#        'Apr-Jun (Financial year Q1)²' : 'government-quarter/2018-2019/Q1' ,
-#        'Apr-Jun (Financial year 2019 Q1)¹' : 'government-quarter/2018-2019/Q1', 
+df['Period'] = df['Period'] + ':' + df['Quarter']
+df['Period'] = df['Period'].apply(period_format)
+df.drop(['Quarter'], axis=1, inplace=True)
+
 
 df = df.replace({'ONS Geography code': 
 {'Antrim and Newtownabbey' : 'N09000001', 
@@ -290,7 +282,7 @@ df = df.replace({
 'Repeat Homeless Presentations': {'' : 'All'},
 })
 
-df = df[['Period', 'Quarter', 'Reason for Homelessness', 'Accommodation not Reasonable breakdown', 'Intimidation breakdown', 'Loss of rented Accommodation reason', 'Release from facilities breakdown', 'Household Composition', 'ONS Geography code', 'Assessment Decision', 'Legislative test Outcome', 'Repeat Homeless Presentations', 'Measure Type', 'Unit', 'Value','Marker']]
+df = df[['Period', 'Reason for Homelessness', 'Accommodation not Reasonable breakdown', 'Intimidation breakdown', 'Loss of rented Accommodation reason', 'Release from facilities breakdown', 'Household Composition', 'ONS Geography code', 'Assessment Decision', 'Legislative test Outcome', 'Repeat Homeless Presentations', 'Measure Type', 'Unit', 'Value','Marker']]
 
 cubes.add_cube(scraper, df, scraper.dataset.title)
 # -
@@ -315,12 +307,12 @@ for tab in acceptance_tabs:
         quarter = cell.fill(DOWN).regex('[^0-9]+').is_not_blank() - total - footnote
         year = cell.fill(DOWN).is_not_blank() - total - quarter - footnote
         
-        # reason_override = {}
-        # for x in reason:
-        #     if xypath.contrib.excel.excel_location(x) in 'P2':
-        #         reason_override[x.value] = 'Status of Household Duty Discharged'
-        #     elif xypath.contrib.excel.excel_location(x) == 'Q2':
-        #         reason_override[x.value] = 'Status of Household Live full duty applicants'
+        reason_override = {}
+        for x in reason:
+            if xypath.contrib.excel.excel_location(x) == 'P2':
+                reason_override[x.value] = 'Status of Household Duty Discharged'
+            elif xypath.contrib.excel.excel_location(x) == 'Q2':
+                reason_override[x.value] = 'Status of Household Live full duty applicants'
     
         reason_title = 'Reason for Homelessness'
 
@@ -331,23 +323,17 @@ for tab in acceptance_tabs:
                         HDimConst('ONS Geography code', "N07000001"),
                         HDim(year, 'Period', CLOSEST, UP), 
                         HDim(quarter, 'Quarter', DIRECTLY, LEFT),
-                        HDim(reason, reason_title, DIRECTLY, ABOVE)
-                        # HDim(reason, reason_title, DIRECTLY, ABOVE, cellvalueoverride = reason_override)        
+                        HDim(reason, reason_title, DIRECTLY, ABOVE, cellvalueoverride = reason_override)        
             ] 
 
         tidy_sheet = ConversionSegment(tab, dimensions, observations)
         table = tidy_sheet.topandas()
-        # table['Period'] = table['Period'].str.replace('\.0', '')
-        # table['Period'] = table['Period'].str.replace(r'\(.*\).*', '') + '/' + table['Quarter'].str.replace(r'\(.*\)+', '')
-        # table = table.drop(columns='Quarter')
         trace.store('combined_dataframe_acceptance', table)
-        
        
     if tab.name in ['2_1A', '2_1B', '2_1C', '2_5', '2_6']:
         print(tab.name)
         trace.start(title, tab, columns, distribution.downloadURL)
         cell = tab.excel_ref('A2')
-        
         
         if tab.name in ['2_1A', '2_1B', '2_1C']:
             reason = cell.fill(RIGHT).is_not_blank()
@@ -385,9 +371,6 @@ for tab in acceptance_tabs:
     
         tidy_sheet = ConversionSegment(tab, dimensions, observations)
         table = tidy_sheet.topandas()
-        # table['Period'] = table['Period'].str.replace('\.0', '')
-        # table['Period'] = table['Period'].str.replace(r'\(.*\).*', '') + '/' + table['Quarter'].str.replace(r'\(.*\)+', '')
-        # table = table.drop(columns='Quarter')
     
         trace.store('combined_dataframe_acceptance', table)
      
@@ -407,13 +390,6 @@ for tab in acceptance_tabs:
         observations = tab.excel_ref('B5').expand(DOWN).expand(RIGHT).is_not_blank() - footnote
         observations_alt = year.fill(RIGHT).is_not_blank()
 
-        # household_override = {}
-        # for x in household:
-        #     if xypath.contrib.excel.excel_location(x) in ['C2', 'D2', 'E2']:
-        #         household_override[x.value] = 'Single males'
-        #     elif xypath.contrib.excel.excel_location(x) in ['G2', 'H2', 'I2']:
-        #         household_override[x.value] = 'Single females'
-
         dimensions = [
                     HDimConst('Measure Type','Household'),
                     HDimConst('Unit','Count'),
@@ -426,8 +402,7 @@ for tab in acceptance_tabs:
         ]  
         tidy_sheet = ConversionSegment(tab, dimensions, observations)
         table = tidy_sheet.topandas()
-        # table['Period'] = table['Period'].str.replace('\.0', '')
-        # table['Period'] = table['Period'].str.replace(r'\(.*\).*', '') + '/' + table['Quarter'].str.replace(r'\(.*\)+', '')
+       
         table['Household Composition'] = table['Household Composition'].astype(str) + ' ' + table['Age'].astype(str).replace(r'\(.*\).*', '')
         table.drop(columns='Age', inplace=True)
         trace.store('combined_dataframe_acceptance', table)
@@ -452,9 +427,7 @@ for tab in acceptance_tabs:
         ]  
         tidy_sheet = ConversionSegment(tab, dimensions, observations)
         table = tidy_sheet.topandas()
-        # table['Period'] = table['Period'].str.replace('\.0', '')
-        # table['Period'] = table['Period'].str.replace(r'\(.*\).*', '') + '/' + table['Quarter'].str.replace(r'\(.*\)+', '')
-        # table.drop(['Quarter'], axis=1, inplace=True)
+       
         trace.store('combined_dataframe_acceptance', table) 
 
     elif tab.name == '2_4':
@@ -477,7 +450,6 @@ for tab in acceptance_tabs:
         
         tidy_sheet = ConversionSegment(tab, dimensions, observations)
         table = tidy_sheet.topandas()
-        # table['Period'] = table['Period'].str.replace('\.0', '')
         trace.store('combined_dataframe_acceptance', table) 
 
     elif tab.name == '2_7':
@@ -501,15 +473,13 @@ for tab in acceptance_tabs:
         ]  
         tidy_sheet = ConversionSegment(tab, dimensions, observations)
         table = tidy_sheet.topandas()
-        # table['Period'] = table['Period'].str.replace('\.0', '')
-        # table['Period'] = table['Period'].str.replace(r'\(.*\).*', '') + '/' + table['Quarter'].str.replace(r'\(.*\)+', '')
-        # table.drop(['Quarter'], axis=1, inplace=True)
         trace.store('combined_dataframe_acceptance', table) 
 
 df = trace.combine_and_trace(title, 'combined_dataframe_acceptance').fillna('')
 
 df['Period'] = df['Period'].str.replace('\.0', '')
 df['Period'] = df['Period'].str.replace(r'\(.*\).*', '') 
+df['Period'] = df['Period'].str.rstrip()
 df['Quarter'] = df['Quarter'].str.replace(r'\(.*\).*', '')
 df['Quarter'] = df['Quarter'].str.rstrip('123 ')
 
@@ -523,6 +493,10 @@ df = df.replace({'Quarter':
 'Jul-Dec³' : 'c-H2',
 '' : 'g-year'
 }})
+
+df['Period'] = df['Period'] + ':' + df['Quarter']
+df['Period'] = df['Period'].apply(period_format)
+df.drop(['Quarter'], axis=1, inplace=True)
 
 df = df.replace({'ONS Geography code': 
 {'Antrim and Newtownabbey' : 'N09000001', 
@@ -564,72 +538,71 @@ cubes.add_cube(scraper, df, scraper.dataset.title)
 # -
 
 def with_year_overrides(year_dimension):
+    year_cells = [cell for cell in year_dimension.hbagset if cell.value in [2019.0, 2020.0, 2021.0]]
     for cell in year_dimension.hbagset:
         # If a dimension cell is not year
-        if cell.value not in year_values: #cell.regex('[0-9]+')   
-            print('cell value:', cell.value, ' ', 'y cell value:', cell.y)
-            
+        if cell.value in ['', 'Jan', 'Jul', 'Total']:  
             # Is there a value two cells down? if so use that value
-            cell_checked = [cell2 for cell2 in year_dimension.hbagset if cell2.y == cell.y+2 and cell2.value in year_values]
+            cell_checked = [cell2 for cell2 in year_cells if cell2.y == cell.y+2] 
             if len(cell_checked) > 0:
-                year_dimension.AddCellValueOverride(cell, cell_checked[0].value)
+                year_dimension.AddCellValueOverride(cell, str(cell_checked[0].value))
         
             # Is there a value one cell down? if so use that value
-            cell_checked = [cell2 for cell2 in year_dimension.hbagset if cell2.y == cell.y+1 and cell2.value in year_values]
+            cell_checked = [cell2 for cell2 in year_cells if cell2.y == cell.y+1] 
             if len(cell_checked) > 0:
-                year_dimension.AddCellValueOverride(cell, cell_checked[0].value)
-
+                year_dimension.AddCellValueOverride(cell, str(cell_checked[0].value))
+        
             # Is there a value one cell up? if so use that value
-            cell_checked = [cell2 for cell2 in year_dimension.hbagset if cell2.y == cell.y-1 and cell2.value in year_values]
+            cell_checked = [cell2 for cell2 in year_cells if cell2.y == cell.y-1] 
             if len(cell_checked) > 0:
-                year_dimension.AddCellValueOverride(cell, cell_checked[0].value)
-
+                year_dimension.AddCellValueOverride(cell, str(cell_checked[0].value))
+        
             # Is there a value two cells up? if so use that value
-            cell_checked = [cell2 for cell2 in year_dimension.hbagset if cell2.y == cell.y-2 and cell2.value in year_values]
+            cell_checked = [cell2 for cell2 in year_cells if cell2.y == cell.y-2] 
             if len(cell_checked) > 0:
-                year_dimension.AddCellValueOverride(cell, cell_checked[0].value)
-            
+                year_dimension.AddCellValueOverride(cell, str(cell_checked[0].value))
+
             # Is there a value three cells up? if so use that value
-            cell_checked = [cell2 for cell2 in year_dimension.hbagset if cell2.y == cell.y-3 and cell2.value in year_values]
+            cell_checked = [cell2 for cell2 in year_cells if cell2.y == cell.y-3] 
             if len(cell_checked) > 0:
-                year_dimension.AddCellValueOverride(cell, cell_checked[0].value)
-            
+                year_dimension.AddCellValueOverride(cell, str(cell_checked[0].value))
+       
     return year_dimension
+    
 
 
 def with_month_overrides(month_dimension):
-   
+    month_cells = [cell for cell in month_dimension.hbagset if cell.value in ['Jan', 'Jul']]
     for cell in month_dimension.hbagset:
-        # If a dimension cell is blank
-        if cell.value not in ['Jan', 'Jul']: #cell.regex('[0-9]+')   
-            print(cell.value, ':cell value', '', cell.y, ':y cell value')
-            
+        # If a dimension cell is not month
+        if cell.value not in ['Jan', 'Jul']:  
             # Is there a value one cell down? if so use that value
-            cell_checked = [cell2 for cell2 in month_dimension.hbagset if cell2.y == cell.y+1 and cell2.value in ['Jan', 'Jul']]
+            cell_checked = [cell2 for cell2 in month_cells if cell2.y == cell.y+1] 
             if len(cell_checked) > 0:
                 month_dimension.AddCellValueOverride(cell, cell_checked[0].value)
         
             # Is there a value one cell up? if so use that value
-            cell_checked = [cell2 for cell2 in month_dimension.hbagset if cell2.y == cell.y-1 and cell2.value in ['Jan', 'Jul']]
+            cell_checked = [cell2 for cell2 in month_cells if cell2.y == cell.y-1] 
             if len(cell_checked) > 0:
                 month_dimension.AddCellValueOverride(cell, cell_checked[0].value)
-
+        
             # Is there a value two cells up? if so use that value
-            cell_checked = [cell2 for cell2 in month_dimension.hbagset if cell2.y == cell.y-2 and cell2.value in ['Jan', 'Jul']]
+            cell_checked = [cell2 for cell2 in month_cells if cell2.y == cell.y-2] 
             if len(cell_checked) > 0:
                 month_dimension.AddCellValueOverride(cell, cell_checked[0].value)
-            
+        
             # Is there a value three cells up? if so use that value
-            cell_checked = [cell2 for cell2 in month_dimension.hbagset if cell2.y == cell.y-3 and cell2.value in ['Jan', 'Jul']]
+            cell_checked = [cell2 for cell2 in month_cells if cell2.y == cell.y-3] 
             if len(cell_checked) > 0:
                 month_dimension.AddCellValueOverride(cell, cell_checked[0].value)
-
-             # Is there a value four cells up? if so use that value
-            cell_checked = [cell2 for cell2 in month_dimension.hbagset if cell2.y == cell.y-4 and cell2.value in ['Jan', 'Jul']]
+                
+            # Is there a value four cells up? if so use that value
+            cell_checked = [cell2 for cell2 in month_cells if cell2.y == cell.y-4] 
             if len(cell_checked) > 0:
                 month_dimension.AddCellValueOverride(cell, cell_checked[0].value)
-
+       
     return month_dimension
+    
 
 
 # +
@@ -662,8 +635,7 @@ for tab in accommodation_tabs:
 
         tidy_sheet = ConversionSegment(tab, dimensions, observations)
         table = tidy_sheet.topandas()
-        # table['Period'] = table['Period'].str.replace('\.0', '')
-        # table['Period'] = table['Period'].str.replace(r'\(.*\).*', '') + '/' + table['Quarter'].str.replace(r'\(.*\)+', '')
+
         table['Household Composition'] = table['Household Composition'].astype(str) + ' ' + table['Age'].astype(str)
         table.drop(columns='Age', inplace=True)
         trace.store('combined_dataframe_accommodation', table) 
@@ -691,9 +663,6 @@ for tab in accommodation_tabs:
 
         tidy_sheet = ConversionSegment(tab, dimensions, observations)
         table = tidy_sheet.topandas()
-        # table['Period'] = table['Period'].str.replace('\.0', '') 
-        # table['Period'] = table['Period'].str.replace(r'\(.*\).*', '') + '/' + table['Quarter'].str.replace(r'\(.*\)+', '')
-        # table.drop(['Quarter'], axis =1, inplace=True)
         trace.store('combined_dataframe_accommodation', table)   
 
     elif tab.name == '3_3':
@@ -717,11 +686,10 @@ for tab in accommodation_tabs:
         tidy_sheet = ConversionSegment(tab, dimensions, observations)
         table = tidy_sheet.topandas()
         table['Period'] = table['Period'].str.replace('\.0', '')
-        table['Period'] = table['Period'].str.replace(r'\(.*\).*', '')  
-        table['Quarter'] = table['Period'][:3]
-        table['Period'] = table['Period'][-4:]
+        table['Period'] = table['Period'].str.replace(r'\(.*\).*', '') 
+        table['Quarter'] = table['Period'].map(lambda x: x[:3])
+        table['Period'] = table['Period'].map(lambda x: x[-4:])
         
-       
         trace.store('combined_dataframe_accommodation', table) 
         
     elif tab.name == '3_4':
@@ -745,8 +713,8 @@ for tab in accommodation_tabs:
         table = tidy_sheet.topandas()
         table['Period'] = table['Period'].str.replace('\.0', '') 
         table['Period'] = table['Period'].str.replace(r'\(.*\).*', '') 
-        table['Quarter'] = table['Period'][:3]
-        table['Period'] = table['Period'][-4:]
+        table['Quarter'] = table['Period'].map(lambda x: x[:3])
+        table['Period'] = table['Period'].map(lambda x: x[-4:])
         
         trace.store('combined_dataframe_accommodation', table) 
         
@@ -766,24 +734,15 @@ for tab in accommodation_tabs:
         remove_year = cell.fill(DOWN).regex('[0-9]+') - footnote
         year_values = [x.value for x in remove_year]
 
-        # quarter = accommodation.fill(LEFT).regex('[^0-9]+').is_not_blank()- total 
-        # year = accommodation.fill(LEFT).is_not_blank() - remove_quarter -total 
-        # year = accommodation.fill(LEFT)  - remove_quarter - total
-        # quarter = accommodation.fill(LEFT) - remove_year - total
-
         year = accommodation.fill(LEFT)
         quarter = accommodation.fill(LEFT)
-        
-        # year_override = {}
-        # for y_cell in year:
-        #     if y_cell not in remove_year:
-        #         year_override[y_cell.value] = ''
 
-        # quarter_override = {}
-        # for q_cell in quarter:
-        #     if q_cell not in remove_quarter:
-        #         quarter_override[q_cell.value] = ''
-
+        year_override = {}
+        quarter_override = {}
+        for y in year:
+            if xypath.contrib.excel.excel_location(y) in ['A34', 'A35']:
+                year_override[y.value] = '2021.0'
+                quarter_override[y.value] = 'Jan'   
 
         observations = length_of_stay.fill(DOWN).is_not_blank() - footnote
 
@@ -791,8 +750,8 @@ for tab in accommodation_tabs:
                 HDimConst('Measure Type','Households'),
                 HDimConst('Unit','Count'),  
                 HDim(length_of_stay, 'Length of Stay', DIRECTLY, ABOVE),
-                HDim(year, 'Period', DIRECTLY, LEFT), 
-                HDim(quarter, 'Quarter', DIRECTLY, LEFT),
+                HDim(year, 'Period', CLOSEST, ABOVE, cellvalueoverride = year_override), 
+                HDim(quarter, 'Quarter', DIRECTLY, LEFT, cellvalueoverride = quarter_override),
                 HDim(accommodation, 'Accommodation Type', DIRECTLY, LEFT)   
         ]  
         
@@ -802,18 +761,17 @@ for tab in accommodation_tabs:
         tidy_sheet = ConversionSegment(tab, dimensions, observations)
         table = tidy_sheet.topandas()
         print(table['Period'].unique())
+        print(table['Quarter'].unique())
 
-        # table['Period'] = table['Period'].str.replace('\.0', '') 
-        # table['Period'] = table['Period'].str.replace(r'\(.*\).*', '') + '/' + table['Quarter'].str.replace(r'\(.*\)+', '')
-       
         trace.store('combined_dataframe_accommodation', table) 
 
 df = trace.combine_and_trace(title, 'combined_dataframe_accommodation').fillna('')
 
 df['Period'] = df['Period'].str.replace('\.0', '')
-# df['Period'] = df['Period'].str.replace(r'\(.*\).*', '') 
-# df['Quarter'] = df['Quarter'].str.replace(r'\(.*\).*', '')
-# df['Quarter'] = df['Quarter'].str.rstrip('123 ')
+df['Period'] = df['Period'].str.replace(r'\(.*\).*', '') 
+df['Period'] = df['Period'].str.rstrip()
+df['Quarter'] = df['Quarter'].str.replace(r'\(.*\).*', '')
+df['Quarter'] = df['Quarter'].str.rstrip('123 ')
 
 df = df.replace({'Quarter':
 {'Apr-Sep' : 'g-H1', 
@@ -823,8 +781,13 @@ df = df.replace({'Quarter':
 'Jan-Jun': 'c-H1',
 'Jul-Dec' : 'c-H2', 
 'Jul-Dec³' : 'c-H2',
-'' : 'g-year'
+'Jan' : 'c-H1',
+'Jul' : 'c-H2'
 }})
+
+df['Period'] = df['Period'] + ':' + df['Quarter']
+df['Period'] = df['Period'].apply(period_format)
+df.drop(['Quarter'], axis=1, inplace=True)
 
 df.rename(columns={'OBS':'Value', 'DATAMARKER':'Marker'}, inplace=True)
 df = df.replace({'Value': {'' : '0'}})
@@ -838,12 +801,12 @@ df = df.replace({
 'Length of Stay' : {'' : 'All'}
 })
 
-df = df[['Period', 'Quarter', 'Household Composition', 'Accommodation Type', 'Age Bracket', 'Length of Stay', 'Measure Type', 'Unit', 'Value', 'Marker']]
+df = df[['Period', 'Household Composition', 'Accommodation Type', 'Age Bracket', 'Length of Stay', 'Measure Type', 'Unit', 'Value', 'Marker']]
 
 cubes.add_cube(scraper, df, scraper.dataset.title)
 # -
 
-list(dimensions[3].hbagset)
+scraper.dataset.license = "".join([x.strip().replace('"', '') for x in scraper.dataset.license.split(" ")])
 
 cubes.output_all()
 

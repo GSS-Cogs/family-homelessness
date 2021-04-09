@@ -824,6 +824,70 @@ df.drop(['sexual_identification'], axis=1, inplace=True)
 df.rename(columns={'OBS' : 'Value', 'DATAMARKER' : 'Marker'}, inplace=True)
 df["Period"]= df["Period"].str.split(",", n = 1, expand = True)[1]
 df
+
+# +
+#Number of households whose prevention duty ended by type of accommodation secured England
+
+for tab in tabs:
+    columns=['TO DO']
+    trace.start(datasetTitle, tab, columns, original_tabs.downloadURL)
+    if tab.name in ['P2']: #only transforming tab A4P for now
+        print(tab.name)
+        
+        remove_notes = tab.filter(contains_string('Notes')).expand(DOWN).expand(RIGHT)
+        ons_geo = tab.excel_ref('A3').fill(DOWN).is_not_blank() - remove_notes # "-" suppressed in geography code to be processed in stage-2 transformation
+        period = tab.excel_ref('A1').is_not_blank() #period can be extracted from this cell 
+        sheet_name = tab.name
+        
+        prevention_duty_ended_accomodation_secured = tab.excel_ref('D3').expand(RIGHT)
+        prs_and_srs = tab.excel_ref('D4').expand(RIGHT)
+        tenancy_type = tab.excel_ref('D5').expand(RIGHT)
+        observations = tab.excel_ref('D6').expand(DOWN).expand(RIGHT).is_not_blank() - remove_notes
+#         savepreviewhtml(tenancy_type, fname= tab.name + "PREVIEW.html")
+        dimensions = [
+            HDim(ons_geo,'ONS Geography Code',DIRECTLY,LEFT),
+            HDim(period,'Period',CLOSEST,ABOVE),
+            HDim(prevention_duty_ended_accomodation_secured,'prevention_duty_ended_accomodation_secured',DIRECTLY, ABOVE),
+            HDim(prs_and_srs,'prs_and_srs',DIRECTLY, ABOVE),
+            HDim(tenancy_type,'tenancy_type',DIRECTLY, ABOVE),
+#             HDimConst("sheet_name", sheet_name) #Might be handy to have for post processing when other tabs are running also 
+        ]
+        tidy_sheet = ConversionSegment(tab, dimensions, observations)
+        savepreviewhtml(tidy_sheet, fname= tab.name + "PREVIEW.html")
+        trace.with_preview(tidy_sheet)
+        trace.store("combined_dataframe", tidy_sheet.topandas())
+df = trace.combine_and_trace(datasetTitle, "combined_dataframe")
+
+#sheet:A1
+df.drop(['temp_assessment_duty_type_1', 'temp_assessment_duty_type_2', 'temp_assessment_duty_type_3'], axis=1, inplace=True)
+#sheet:A2P
+df.drop(['reason_for_loss_of_home_1', 'end_of_tenancy_2', 'reason_for_end_of_tenancy_3', 'change_of_circumstances_4'], axis=1, inplace=True)
+#sheet:A2R_
+df.drop(['relief_duty_by_reason', 'end_of_AST', 'reason_for_end_of_AST', 'reason_for_rent_arrears'], axis =1, inplace=True)
+# sheet:A3
+df.drop(['total_no_of_households', 'reason_of_households_with_support_needs', 'total_households_and_no_of_people_with_support_needs'], axis=1, inplace=True)
+#sheet:A4P
+df.drop(['prevention_duty_owed_by_sector', 'prs_srs_homeless_on_departure_from_institution', 'status_of_occupation'],axis=1,inplace=True)
+#Sheet = A2R
+df.drop(['relief_duty_owed_by_sector', 'relief_prs_srs_homeless_on_departure_from_institution', 'relief_status_of_occupation'], axis=1, inplace=True)
+# Sheet = A5P
+df.drop(['prevention_duty_owed_by_household', 'single_parent_adult_male_female'], axis=1, inplace=True)
+# Sheet = A5R
+df.drop(['relief_duty_owed_by_household', 'relief_single_parent_adult_male_female'], axis=1, inplace=True)
+#Sheet = A6_
+df.drop(['age_of_main_applicants'], axis=1, inplace=True)
+#Sheet = A8
+df.drop(['ethnicgroup', 'breakdown_of_ethnicgroup'], axis=1, inplace=True)
+#Sheet = A10
+df.drop(['employment_status'],axis=1, inplace=True)
+#Sheet = A12
+df.drop(['sexual_identification'], axis=1, inplace=True)
+#Sheet = P2
+df.drop(['prevention_duty_ended', 'accomodation'], axis=1, inplace=True)
+
+df.rename(columns={'OBS' : 'Value', 'DATAMARKER' : 'Marker'}, inplace=True)
+df["Period"]= df["Period"].str.split(",", n = 1, expand = True)[1]
+df
 # -
 
 

@@ -1240,7 +1240,7 @@ df
 for tab in tabs:
     columns=['TO DO']
     trace.start(datasetTitle, tab, columns, original_tabs.downloadURL)
-    if tab.name in ['R5']: #only transforming tab R2 for now
+    if tab.name in ['R5']: #only transforming tab R5 for now
         print(tab.name)
               
         remove_notes = tab.filter(contains_string('Notes')).expand(DOWN).expand(RIGHT)
@@ -1315,7 +1315,7 @@ df
 for tab in tabs:
     columns=['TO DO']
     trace.start(datasetTitle, tab, columns, original_tabs.downloadURL)
-    if tab.name in ['MD1']: #only transforming tab R2 for now
+    if tab.name in ['MD1']: #only transforming tab MD1 for now
         print(tab.name)
               
         remove_notes = tab.filter(contains_string('Notes')).expand(DOWN).expand(RIGHT)
@@ -1392,7 +1392,7 @@ df
 for tab in tabs:
     columns=['TO DO']
     trace.start(datasetTitle, tab, columns, original_tabs.downloadURL)
-    if tab.name in ['MD2']: #only transforming tab R2 for now
+    if tab.name in ['MD2']: #only transforming tab MD2 for now
         print(tab.name)
               
         remove_notes = tab.filter(contains_string('Notes')).expand(DOWN).expand(RIGHT)
@@ -1470,7 +1470,7 @@ df
 for tab in tabs:
     columns=['TO DO']
     trace.start(datasetTitle, tab, columns, original_tabs.downloadURL)
-    if tab.name in ['MD3']: #only transforming tab R2 for now
+    if tab.name in ['MD3']: #only transforming tab MD3 for now
         print(tab.name)
               
         remove_notes = tab.filter(contains_string('Notes')).expand(DOWN).expand(RIGHT)
@@ -1538,7 +1538,7 @@ df.drop(['secured_accomodation_at_end_of_relief_duty', 'male_female_other_gender
 #Sheet = MD1
 df.drop(['eligible_house_holds'], axis=1, inplace=True)
 #Sheet = MD2
-df.drop(['house_holds_duty_ended'])
+df.drop(['house_holds_duty_ended', 'status'], axis=1, inplace=True)
 
 df.rename(columns={'OBS' : 'Value', 'DATAMARKER' : 'Marker'}, inplace=True)
 df["Period"]= df["Period"].str.split(",", n = 1, expand = True)[1]

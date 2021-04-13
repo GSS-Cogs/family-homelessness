@@ -1,7 +1,7 @@
 #!/usr/bin/env python
 # coding: utf-8
 
-# In[53]:
+# In[89]:
 
 
 # # MHCLG Rough sleeping
@@ -19,7 +19,7 @@ def mid(s, offset, amount):
     return s[offset:offset+amount]
 
 
-# In[54]:
+# In[90]:
 
 
 #### Add transformation script here ####
@@ -33,7 +33,7 @@ distro = scraper.distribution(title=wanted[0])
 distro
 
 
-# In[55]:
+# In[91]:
 
 
 cubes = Cubes("info.json")
@@ -143,6 +143,17 @@ for tab in distro.as_databaker():
             df["Measure Type"] = "people"
             df["Unit"] = "count"
 
+            indexNames = df[ df['Sex'] == 'total' ].index
+            df.drop(indexNames, inplace = True)
+
+            indexNames = df[ df['Nationality'] == 'total' ].index
+            df.drop(indexNames, inplace = True)
+
+            indexNames = df[ df['Age'] == 'total' ].index
+            df.drop(indexNames, inplace = True)
+
+            #The total values are all included in the table 1 tab
+
             df = df.rename(columns={"OBS": "Value"})
             trace.store("MHCLG Rough Sleeping Final", df)
 
@@ -150,7 +161,7 @@ for tab in distro.as_databaker():
         raise Exception(f'Issue encountered on tab {tab.name}, see above for details.') from err
 
 
-# In[56]:
+# In[92]:
 
 
 df = trace.combine_and_trace("MHCLG Rough Sleeping Final", "MHCLG Rough Sleeping Final")
@@ -171,7 +182,7 @@ df = df.replace({'Sex' : {'male' : 'm',
 df['Value'] = df['Value'].astype(float).astype(int)
 
 
-# In[57]:
+# In[93]:
 
 
 cubes.add_cube(scraper, df, "observations")
@@ -179,7 +190,7 @@ cubes.output_all()
 trace.output()
 
 
-# In[58]:
+# In[94]:
 
 
 from IPython.core.display import HTML

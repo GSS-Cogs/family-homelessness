@@ -1,7 +1,7 @@
 #!/usr/bin/env python
 # coding: utf-8
 
-# In[89]:
+# In[95]:
 
 
 # # MHCLG Rough sleeping
@@ -19,7 +19,7 @@ def mid(s, offset, amount):
     return s[offset:offset+amount]
 
 
-# In[90]:
+# In[96]:
 
 
 #### Add transformation script here ####
@@ -33,7 +33,7 @@ distro = scraper.distribution(title=wanted[0])
 distro
 
 
-# In[91]:
+# In[97]:
 
 
 cubes = Cubes("info.json")
@@ -161,7 +161,7 @@ for tab in distro.as_databaker():
         raise Exception(f'Issue encountered on tab {tab.name}, see above for details.') from err
 
 
-# In[92]:
+# In[98]:
 
 
 df = trace.combine_and_trace("MHCLG Rough Sleeping Final", "MHCLG Rough Sleeping Final")
@@ -181,8 +181,10 @@ df = df.replace({'Sex' : {'male' : 'm',
 
 df['Value'] = df['Value'].astype(float).astype(int)
 
+df = df.drop(['Measure Type', 'Unit'], axis=1)
 
-# In[93]:
+
+# In[99]:
 
 
 cubes.add_cube(scraper, df, "observations")
@@ -190,7 +192,7 @@ cubes.output_all()
 trace.output()
 
 
-# In[94]:
+# In[100]:
 
 
 from IPython.core.display import HTML

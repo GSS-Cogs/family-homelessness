@@ -1,0 +1,106 @@
+@prefix rdf:  <http://www.w3.org/1999/02/22-rdf-syntax-ns#> .
+@prefix rdfs: <http://www.w3.org/2000/01/rdf-schema#> .
+@prefix owl:  <http://www.w3.org/2002/07/owl#> .
+@prefix cogsgit: <https://github.com/GSS-Cogs/> .
+@prefix cogs: <http://gss-cogs.uk/def/arch/> .
+
+<http://gss-cogs.uk/def/arch> a owl:Ontology;
+  rdfs:label "COGS Homelessness Transform Mapping" ;
+.
+
+cogs:SoftwarePackage a owl:Class ;
+  rdfs:label "Software package" ;
+.
+cogs:LandingPage a owl:Class ;
+  rdfs:subClassOf cogs:SoftwarePackage ;
+  rdfs:label "Landing Page" ;
+.
+cogs:Datasets a owl:Class ;
+  rdfs:subClassOf cogs:SoftwarePackage ;
+  rdfs:label "Output Dataset" ;
+.
+cogs:Sheets a owl:Class ;
+  rdfs:subClassOf cogs:SoftwarePackage ;
+  rdfs:label "Sheet names to join";
+.
+cogs:Columns a owl:Class ;
+  rdfs:subClassOf cogs:SoftwarePackage ;
+  rdfs:label "Table" ;
+.
+cogs:PMD a owl:Class ;
+  rdfs:subClassOf cogs:SoftwarePackage ;
+  rdfs:label "PMD" ;
+.
+###########################################################################################################
+
+cogsgit:top-level1 a cogs:LandingPage ;
+  rdfs:label "Northern Ireland homelessness bulletin" ;
+  rdfs:comment "https://www.communities-ni.gov.uk/topics/housing-statistics#toc-2";
+  cogs:splits cogsgit:sheet1, cogsgit:sheet2, cogsgit:sheet3 ;
+.
+cogsgit:top-level2 a cogs:LandingPage ;
+  rdfs:label "Northern Ireland Housing Statistics" ;
+  rdfs:comment "https://www.communities-ni.gov.uk/topics/housing-statistics#toc-2";
+  cogs:splits cogsgit:sheet4 ;
+.
+
+cogsgit:sheet1 a cogs:Sheets ;
+  rdfs:label "" ;
+  rdfs:comment "1_1, 1_1A, 1_1B, 1_1C, 1_2, 1_3, 1_4, 1_5, 1_6" ;
+  cogs:transforms cogsgit:dataset1 ;
+.
+cogsgit:sheet2 a cogs:Sheets ;
+  rdfs:label "" ;
+  rdfs:comment "2_1, 2_1A, 2_1B, 2_2, 2_3, 2_4, 2_5, 2_6, 2_7" ;
+  cogs:transforms cogsgit:dataset2 ;
+.
+cogsgit:sheet3 a cogs:Sheets ;
+  rdfs:label "" ;
+  rdfs:comment "3_1, 3_2, 3_3, 3_4, 3_5" ;
+  cogs:transforms cogsgit:dataset3 ;
+.
+cogsgit:sheet4 a cogs:Sheets ;
+  rdfs:label "" ;
+  rdfs:comment "T3_8, T3_9, T3_10, T3_11" ;
+  cogs:joins cogsgit:sheet1 ;
+.
+
+cogsgit:dataset1 a cogs:Datasets ;
+  rdfs:label "" ;
+  rdfs:comment "NIHE Homelessness Presentations" ;
+  cogs:outputs cogsgit:columns1 ;
+.
+cogsgit:dataset2 a cogs:Datasets ;
+  rdfs:label "" ;
+  rdfs:comment "NIHE Homelessness Acceptances" ;
+  cogs:outputs cogsgit:columns2 ;
+.
+cogsgit:dataset3 a cogs:Datasets ;
+  rdfs:label "" ;
+  rdfs:comment "NIHE Temporary Accommodation" ;
+  cogs:outputs cogsgit:columns3 ;
+.
+
+
+cogsgit:columns1 a cogs:Columns ;
+  rdfs:label "" ;
+  rdfs:comment "Period, ONS geography code, Household composition, Accommodation not reasonable breakdown, Intimidation breakdown, Reason for homelessness, Loss of rented accommodation reason, Assessment decision, Legislative test outcome, Repeat homeless presentations, Measure Type, Unit, Marker, Value" ;
+  cogs:uploads cogsgit:pmd1 ;
+.
+cogsgit:columns2 a cogs:Columns ;
+  rdfs:label "" ;
+  rdfs:comment "Period, ONS geography code, Household composition, Age, Accommodation not reasonable breakdown, Intimidation breakdown, Reason for homelessness, Priority need category, Assessment Outcome, Assessment decision, Measure Type, Unit, Marker, Value" ;
+  cogs:uploads cogsgit:pmd1 ;
+.
+cogsgit:columns3 a cogs:Columns ;
+  rdfs:label "" ;
+  rdfs:comment "Period ONS geography code, Household Composition, Age, Accommodation type, Length of Stay, Measure Type, Unit, Marker, Value" ;
+  cogs:uploads cogsgit:pmd1 ;
+.
+
+
+cogsgit:pmd1 a cogs:PMD ;
+  rdfs:label "" ;
+  rdfs:comment "Publish my Data: http://gss-data.org.uk/data/search" ;
+.
+###################################################################################################

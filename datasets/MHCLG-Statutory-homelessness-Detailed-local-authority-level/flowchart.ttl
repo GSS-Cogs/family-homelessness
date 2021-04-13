@@ -1,0 +1,109 @@
+@prefix rdf:  <http://www.w3.org/1999/02/22-rdf-syntax-ns#> .
+@prefix rdfs: <http://www.w3.org/2000/01/rdf-schema#> .
+@prefix owl:  <http://www.w3.org/2002/07/owl#> .
+@prefix cogsgit: <https://github.com/GSS-Cogs/> .
+@prefix cogs: <http://gss-cogs.uk/def/arch/> .
+
+<http://gss-cogs.uk/def/arch> a owl:Ontology;
+  rdfs:label "COGS Homelessness Transform Mapping" ;
+.
+
+cogs:SoftwarePackage a owl:Class ;
+  rdfs:label "Software package" ;
+.
+cogs:LandingPage a owl:Class ;
+  rdfs:subClassOf cogs:SoftwarePackage ;
+  rdfs:label "Landing Page" ;
+.
+cogs:Datasets a owl:Class ;
+  rdfs:subClassOf cogs:SoftwarePackage ;
+  rdfs:label "Output Dataset" ;
+.
+cogs:Sheets a owl:Class ;
+  rdfs:subClassOf cogs:SoftwarePackage ;
+  rdfs:label "Sheet names to join";
+.
+cogs:Columns a owl:Class ;
+  rdfs:subClassOf cogs:SoftwarePackage ;
+  rdfs:label "Table" ;
+.
+cogs:PMD a owl:Class ;
+  rdfs:subClassOf cogs:SoftwarePackage ;
+  rdfs:label "PMD" ;
+.
+###########################################################################################################
+
+cogsgit:top-level a cogs:LandingPage ;
+  rdfs:label "Statutory Homelessness detailed Local Authority-Level" ;
+  rdfs:comment "https://www.gov.uk/government/statistical-data-sets/live-tables-on-homelessness";
+  cogs:splits cogsgit:sheet1, cogsgit:sheet2, cogsgit:sheet3, cogsgit:sheet4 ;
+.
+
+cogsgit:sheet1 a cogs:Sheets ;
+  rdfs:label "" ;
+  rdfs:comment "A1, A2, A3, A4, A5P, A5R, A7, A11" ;
+  cogs:transforms cogsgit:dataset1 ;
+.
+cogsgit:sheet2 a cogs:Sheets ;
+  rdfs:label "" ;
+  rdfs:comment "P1, P2, R1, R2" ;
+  cogs:transforms cogsgit:dataset2 ;
+.
+cogsgit:sheet3 a cogs:Sheets ;
+  rdfs:label "" ;
+  rdfs:comment "MD1, MD2, MD3" ;
+  cogs:transforms cogsgit:dataset3 ;
+.
+cogsgit:sheet4 a cogs:Sheets ;
+  rdfs:label "" ;
+  rdfs:comment "TA1, TA2" ;
+  cogs:transforms cogsgit:dataset4 ;
+.
+
+cogsgit:dataset1 a cogs:Datasets ;
+  rdfs:label "" ;
+  rdfs:comment "MHCLG Homelessness - Households initially assessed as threatened with homelessness (owed prevention duty) or homeless (owed relief duty)" ;
+  cogs:outputs cogsgit:columns1 ;
+.
+cogsgit:dataset2 a cogs:Datasets ;
+  rdfs:label "" ;
+  rdfs:comment "MHCLG Homelessness - Households whose prevention or relief duty ended by reason and accommodation type" ;
+  cogs:outputs cogsgit:columns2 ;
+.
+cogsgit:dataset3 a cogs:Datasets ;
+  rdfs:label "" ;
+  rdfs:comment "MHCLG - Households assessed, following relief duty end, as unintentionally homeless and priority need (owed main duty)" ;
+  cogs:outputs cogsgit:columns3 ;
+.
+cogsgit:dataset4 a cogs:Datasets ;
+  rdfs:label "" ;
+  rdfs:comment "MHCLG Homelessness - Households in temporary accommodation by household composition and accommodation type" ;
+  cogs:outputs cogsgit:columns4 ;
+.
+
+cogsgit:columns1 a cogs:Columns ;
+  rdfs:label "" ;
+  rdfs:comment "Period, Accommodation Type, Household Composition, Initial Assessment, Reason for loss or threat of loss of home, Support needs of household, Duty Owed, Referral Public Body, Eligibility for Homelessness Status, Measure Type, Unit, Marker, Value" ;
+  cogs:uploads cogsgit:pmd1 ;
+.
+cogsgit:columns2 a cogs:Columns ;
+  rdfs:label "" ;
+  rdfs:comment "Period, ONS Geography Code, Accommodation Type, Reason duty Ended, Duty Type, Measure Type, Unit, Marker, Value" ;
+  cogs:uploads cogsgit:pmd1 ;
+.
+cogsgit:columns3 a cogs:Columns ;
+  rdfs:label "" ;
+  rdfs:comment "Period, ONS Geography Code, Decision on Duty Owed, Reason duty Ended, Priority Need, Measure Type, Unit, Marker, Value" ;
+  cogs:uploads cogsgit:pmd1 ;
+.
+cogsgit:columns4 a cogs:Columns ;
+  rdfs:label "" ;
+  rdfs:comment "Period, ONS Geography Code, Accommodation Type, Household Composition, Measure Type, Unit, Marker, Value" ;
+  cogs:uploads cogsgit:pmd1 ;
+.
+
+cogsgit:pmd1 a cogs:PMD ;
+  rdfs:label "" ;
+  rdfs:comment "Publish my Data: http://gss-data.org.uk/data/search" ;
+.
+###################################################################################################

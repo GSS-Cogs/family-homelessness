@@ -4,7 +4,7 @@ https://www2.gov.scot/Topics/Statistics/Browse/Housing-Regeneration/RefTables#Pu
 
 **Flowchart**
 
-https://gss-cogs.github.io/gss-data-docs/architecture/homelessness/familymappings.html?sghomelessnessannual.ttl
+https://gss-cogs.github.io/family-homelessness/datasets/specflowcharts.html?SG-Homelessness-in-Scotland-Annual-Publication/flowchart.ttl
 
 Use the following codes for conversion from Local Authority to ONS Geography Code
 

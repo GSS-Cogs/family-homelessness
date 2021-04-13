@@ -1,0 +1,97 @@
+@prefix rdf:  <http://www.w3.org/1999/02/22-rdf-syntax-ns#> .
+@prefix rdfs: <http://www.w3.org/2000/01/rdf-schema#> .
+@prefix owl:  <http://www.w3.org/2002/07/owl#> .
+@prefix cogsgit: <https://github.com/GSS-Cogs/> .
+@prefix cogs: <http://gss-cogs.uk/def/arch/> .
+
+<http://gss-cogs.uk/def/arch> a owl:Ontology;
+  rdfs:label "COGS Homelessness Transform Mapping" ;
+.
+
+cogs:SoftwarePackage a owl:Class ;
+  rdfs:label "Software package" ;
+.
+cogs:LandingPage a owl:Class ;
+  rdfs:subClassOf cogs:SoftwarePackage ;
+  rdfs:label "Landing Page" ;
+.
+cogs:Datasets a owl:Class ;
+  rdfs:subClassOf cogs:SoftwarePackage ;
+  rdfs:label "Output Dataset" ;
+.
+cogs:Sheets a owl:Class ;
+  rdfs:subClassOf cogs:SoftwarePackage ;
+  rdfs:label "Sheet names to join";
+.
+cogs:Columns a owl:Class ;
+  rdfs:subClassOf cogs:SoftwarePackage ;
+  rdfs:label "Table" ;
+.
+cogs:PMD a owl:Class ;
+  rdfs:subClassOf cogs:SoftwarePackage ;
+  rdfs:label "PMD" ;
+.
+###########################################################################################################
+
+cogsgit:top-level1 a cogs:LandingPage ;
+  rdfs:label "Northern Ireland housing bulletin" ;
+  rdfs:comment "https://www.communities-ni.gov.uk/topics/housing-statistics#toc-2";
+  cogs:splits cogsgit:sheet1, cogsgit:sheet2, cogsgit:sheet3 ;
+.
+
+cogsgit:sheet1 a cogs:Sheets ;
+  rdfs:label "" ;
+  rdfs:comment "T1_1, T1_2, T1_3, T1_4" ;
+  cogs:transforms cogsgit:dataset1 ;
+.
+cogsgit:sheet2 a cogs:Sheets ;
+  rdfs:label "" ;
+  rdfs:comment "T2_1, T2_2, T2_3" ;
+  cogs:transforms cogsgit:dataset2 ;
+.
+cogsgit:sheet3 a cogs:Sheets ;
+  rdfs:label "" ;
+  rdfs:comment "T3_1, T3_2, T3_3, T3_4, T3_5" ;
+  cogs:transforms cogsgit:dataset3 ;
+.
+
+
+cogsgit:dataset1 a cogs:Datasets ;
+  rdfs:label "" ;
+  rdfs:comment "NIHE Building Development" ;
+  cogs:outputs cogsgit:columns1 ;
+.
+cogsgit:dataset2 a cogs:Datasets ;
+  rdfs:label "" ;
+  rdfs:comment "NIHE Homelessness by Reason and Household Type" ;
+  cogs:outputs cogsgit:columns2 ;
+.
+cogsgit:dataset3 a cogs:Datasets ;
+  rdfs:label "" ;
+  rdfs:comment "NIHE Housing Stock" ;
+  cogs:outputs cogsgit:columns3 ;
+.
+
+
+cogsgit:columns1 a cogs:Columns ;
+  rdfs:label "" ;
+  rdfs:comment "Period, Development Type, Building Stage, Housing Type, Measure Type, Unit, Marker, Value" ;
+  cogs:uploads cogsgit:pmd1 ;
+.
+cogsgit:columns2 a cogs:Columns ;
+  rdfs:label "" ;
+  rdfs:comment "Period, Reason for Homelessness, Household Composition, Household Homeless Status, Measure Type, Unit, Marker, Value" ;
+  cogs:uploads cogsgit:pmd1 ;
+.
+cogsgit:columns3 a cogs:Columns ;
+  rdfs:label "" ;
+  rdfs:comment "Period, House Price and Index Values, Housing Type, ONS Geography Code, Housing Sector, Measure Type, Unit, Marker, Value" ;
+  cogs:uploads cogsgit:pmd1 ;
+.
+
+
+cogsgit:pmd1 a cogs:PMD ;
+  rdfs:label "" ;
+  rdfs:comment "Publish my Data: http://gss-data.org.uk/data/search" ;
+.
+###################################################################################################

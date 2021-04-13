@@ -1,8 +1,9 @@
 {
+    "id": "wg-homelessness-statistics",
     "title": "Homelessness statistics",
     "publisher": "Welsh Government",
     "description": "Data on the number of households applying to local authorities for housing assistance and the number of homeless households in temporary accommodation.",
-    "landingPage": "https://statswales.gov.wales/Catalogue/Housing/Homelessness?_ga=2.256508107.1961980591.1578476376-1464158188.1573115284",
+    "landingPage": "https://statswales.gov.wales/Catalogue/Housing/Homelessness/householdsforwhichassistancehasbeenprovided-by-outcome-householdtype",
     "datasetNotes": [
         "Data can be found on this landing page as 4 Power BI data sets."
     ],
@@ -11,13 +12,12 @@
         "Homelessness"
     ],
     "extract": {
-        "source": "Power BI",
+        "source": "application/json",
         "stage": "Documented"
     },
     "transform": {
         "airtable": "recP83HYsMuw2tj9C",
-        "github": "8",
-        "main_issue": 34
+        "main_issue": 8
     },
     "sizingNotes": "Available through the odata route, so simple to get, but may need a number of separate downloads / produce a number of different data sets, so needs a fair amount of up-front analysis",
     "notes": ""

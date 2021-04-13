@@ -1,8 +1,10 @@
 {
+    "id": "sg-housing-options-prevent1-statistics-in-scotland",
     "title": "Housing Options (PREVENT1) Statistics in Scotland",
     "publisher": "Scottish Government",
     "description": "The PREVENT1 data specification contains the core questions to be used in the monitoring of housing options work by local authorities. One month after the end of each quarter, Local Authorities are asked to submit an XML file containing the information.",
     "landingPage": "https://www2.gov.scot/Topics/Statistics/Browse/Housing-Regeneration/RefTables",
+    "dataURL": "https://www.gov.scot/binaries/content/documents/govscot/publications/statistics/2020/12/housing-options-prevent1-statistics-scotland-2019-20/documents/tables/tables/govscot%3Adocument/tables.xlsx",
     "datasetNotes": [
         "Data on this page identified as latest version of \"Housing Options (PREVENT1) Statistics in Scotland [date]\" which is listed in the \"Statistics\" column of the table towards the top of the page. A link to the data is contained in the \"links\" column, named \"Excel Tables and Charts\". This opens a new page and access to the XLS file is via \"Open\" link located under heading \"Downloadable document\"."
     ],
@@ -16,9 +18,9 @@
     },
     "transform": {
         "airtable": "reckO8LcMRZwEhQtJ",
-        "github": "10",
-        "main_issue": 36
+        "main_issue": 10
     },
     "sizingNotes": "Messy structure with quite a few tabs, including mixture of data tabs and chart tabs. Multiple tables on some data tabs. Sub-dimensions and footnotes present.",
-    "notes": ""
+    "notes": "",
+    "scraper_state": "https://github.com/GSS-Cogs/gss-utils/issues/197"
 }

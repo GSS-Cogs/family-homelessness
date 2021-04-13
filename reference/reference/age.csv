@@ -1,0 +1,6 @@
+Label,Notation,Parent Notation,Sort Priority
+All,all,,1
+Under 18,under-18,all,2
+18 to 25,18-25,all,3
+Over 28,over-26,all,4
+Not Known,not-known,all,5

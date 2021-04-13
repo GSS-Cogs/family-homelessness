@@ -1,0 +1,136 @@
+{
+    "@context": "http://www.w3.org/ns/csvw",
+    "@id": "http://gss-data.org.uk/data/gss_data/homelessness/mhclg-rough-sleeping#scheme/nationality",
+    "url": "nationality.csv",
+    "rdfs:label": "Nationality",
+    "dc:title": "Nationality",
+    "tableSchema": {
+        "columns": [
+            {
+                "titles": "Label",
+                "name": "label",
+                "datatype": "string",
+                "required": true,
+                "propertyUrl": "rdfs:label"
+            },
+            {
+                "titles": "Notation",
+                "name": "notation",
+                "datatype": {
+                    "base": "string",
+                    "format": "^-?[\\w\\.\\/\\+]+(-[\\w\\.\\/\\+]+)*$"
+                },
+                "required": true,
+                "propertyUrl": "skos:notation"
+            },
+            {
+                "titles": "Parent Notation",
+                "name": "parent_notation",
+                "datatype": {
+                    "base": "string",
+                    "format": "^(-?[\\w\\.\\/\\+]+(-[\\w\\.\\/\\+]+)*|)$"
+                },
+                "required": false,
+                "propertyUrl": "skos:broader",
+                "valueUrl": "http://gss-data.org.uk/data/gss_data/homelessness/mhclg-rough-sleeping#concept/nationality/{parent_notation}"
+            },
+            {
+                "titles": "Sort Priority",
+                "name": "sort_priority",
+                "datatype": "integer",
+                "required": false,
+                "propertyUrl": "http://www.w3.org/ns/ui#sortPriority"
+            },
+            {
+                "virtual": true,
+                "propertyUrl": "rdf:type",
+                "valueUrl": "skos:Concept"
+            },
+            {
+                "virtual": true,
+                "propertyUrl": "skos:inScheme",
+                "valueUrl": "http://gss-data.org.uk/data/gss_data/homelessness/mhclg-rough-sleeping#scheme/nationality"
+            }
+        ],
+        "primaryKey": "notation",
+        "aboutUrl": "http://gss-data.org.uk/data/gss_data/homelessness/mhclg-rough-sleeping#concept/nationality/{notation}"
+    },
+    "prov:hadDerivation": {
+        "@id": "http://gss-data.org.uk/data/gss_data/homelessness/mhclg-rough-sleeping#scheme/nationality",
+        "@type": [
+            "skos:ConceptScheme",
+            "http://publishmydata.com/pmdcat#ConceptScheme"
+        ]
+    },
+    "rdfs:seeAlso": [
+        {
+            "@id": "http://gss-data.org.uk/data/gss_data/homelessness/mhclg-rough-sleeping#scheme/nationality/dataset",
+            "@type": [
+                "dcat:Dataset",
+                "http://publishmydata.com/pmdcat#Dataset"
+            ],
+            "http://publishmydata.com/pmdcat#datasetContents": {
+                "@id": "http://gss-data.org.uk/data/gss_data/homelessness/mhclg-rough-sleeping#scheme/nationality"
+            },
+            "http://publishmydata.com/pmdcat#graph": {
+                "@id": "http://gss-data.org.uk/data/gss_data/homelessness/mhclg-rough-sleeping#scheme/nationality"
+            },
+            "rdfs:label": "Nationality",
+            "dc:title": "Nationality",
+            "rdfs:comment": "Dataset representing the 'Nationality' code list.",
+            "dc:license": {
+                "@id": "http://www.nationalarchives.gov.uk/doc/open-government-licence/version/3/"
+            },
+            "dc:creator": {
+                "@id": "https://www.gov.uk/government/organisations/ministry-of-housing-communities-and-local-government"
+            },
+            "dc:publisher": {
+                "@id": "https://www.gov.uk/government/organisations/ministry-of-housing-communities-and-local-government"
+            },
+            "dcat:contactPoint": {
+                "@id": "roughsleepingstatistics@communities.gov.uk"
+            },
+            "dcat:landingPage": {
+                "@id": "https://www.gov.uk/government/statistical-data-sets/live-tables-on-homelessness"
+            },
+            "dc:issued": {
+                "@type": "dateTime",
+                "@value": "2012-11-10T00:00:00"
+            },
+            "dc:modified": {
+                "@type": "dateTime",
+                "@value": "2020-01-28T00:00:00"
+            },
+            "http://publishmydata.com/pmdcat#markdownDescription": {
+                "@type": "https://www.w3.org/ns/iana/media-types/text/markdown#Resource",
+                "@value": "Annual statistical release evaluating the extent of rough sleeping"
+            }
+        },
+        {
+            "@id": "http://gss-data.org.uk/catalog/vocabularies",
+            "dcat:record": {
+                "@id": "http://gss-data.org.uk/data/gss_data/homelessness/mhclg-rough-sleeping#scheme/nationality/catalog-record"
+            }
+        },
+        {
+            "@id": "http://gss-data.org.uk/data/gss_data/homelessness/mhclg-rough-sleeping#scheme/nationality/catalog-record",
+            "@type": "dcat:CatalogRecord",
+            "foaf:primaryTopic": {
+                "@id": "http://gss-data.org.uk/data/gss_data/homelessness/mhclg-rough-sleeping#scheme/nationality/dataset"
+            },
+            "http://publishmydata.com/pmdcat#metadataGraph": {
+                "@id": "http://gss-data.org.uk/data/gss_data/homelessness/mhclg-rough-sleeping#scheme/nationality"
+            },
+            "dc:title": "Nationality Catalog Record",
+            "rdfs:label": "Nationality Catalog Record",
+            "dc:issued": {
+                "@type": "dateTime",
+                "@value": "2021-04-13T11:56:38.520038"
+            },
+            "dc:modified": {
+                "@type": "dateTime",
+                "@value": "2021-04-13T11:56:38.520038"
+            }
+        }
+    ]
+}

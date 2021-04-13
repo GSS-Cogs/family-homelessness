@@ -1,0 +1,6 @@
+Label,Notation,Parent Notation,Sort Priority
+All,all,,1
+EU Non-UK,eu-non-uk,all,2
+Non EU,non-eu,all,3
+Not Known,not-known,all,4
+UK,uk,all,5

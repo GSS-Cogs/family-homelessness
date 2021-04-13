@@ -17,7 +17,38 @@
     },
     "transform": {
         "airtable": "rec8y9CsU6ZNX73Mv",
-        "main_issue": 2
+        "main_issue": 2,
+        "columns": {
+            "Period": {
+                "parent": "http://purl.org/linked-data/sdmx/2009/dimension#refPeriod",
+                "value": "http://reference.data.gov.uk/id/{+period}",
+                "codelist": false
+            },
+            "Region": {
+                "parent": "http://purl.org/linked-data/sdmx/2009/dimension#refArea",
+                "value": "http://statistics.data.gov.uk/id/statistical-geography/{region}",
+                "description": "",
+                "codelist": false
+            },
+            "Nationality": {
+                "description": "Nationality of homeless recorded"
+            },
+            "Sex": {
+                "description": "Sex at birth",
+                "value": "http://gss-data.org.uk/def/homelessness/concept/sex/{sex}",
+                "codelist": "http://gss-data.org.uk/def/homelessness/concept-scheme/sex"
+            },
+            "Age": {
+                "description": "Age Group",
+                "value": "http://gss-data.org.uk/def/homelessness/concept/age/{age}",
+                "codelist": "http://gss-data.org.uk/def/homelessness/concept-scheme/age"
+            },
+      		"Value": {
+                "unit": "http://gss-data.org.uk/def/concept/measurement-units/people",
+                "measure": "http://gss-data.org.uk/def/measure/count",
+                "datatype": "integer"
+            }
+        }
     },
     "sizingNotes": "",
     "notes": "",

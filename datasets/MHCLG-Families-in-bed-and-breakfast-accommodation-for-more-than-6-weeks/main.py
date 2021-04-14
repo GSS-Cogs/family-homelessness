@@ -1,13 +1,13 @@
 #!/usr/bin/env python
 # coding: utf-8
 
-# In[1]:
+# In[79]:
 
 
 # # MHCLG Families in bed and breakfast accommodation for more than 6 weeks
 
 
-# In[2]:
+# In[80]:
 
 
 import json
@@ -23,7 +23,7 @@ trace = TransformTrace()
 cubes = Cubes("info.json")
 
 
-# In[3]:
+# In[81]:
 
 
 scraper = Scraper(seed="info.json")
@@ -31,7 +31,7 @@ distro = scraper.distribution(latest=True)
 distro
 
 
-# In[4]:
+# In[82]:
 
 
 from dateutil.parser import parse
@@ -112,7 +112,7 @@ def excel_range(bag):
     return f"{top_left_cell}:{bottom_right_cell}"
 
 
-# In[5]:
+# In[83]:
 
 
 # # Note: Geography
@@ -132,7 +132,7 @@ def excel_range(bag):
 # It'll make sense when you run it, but basically when you know what code you want to use to represent a given label - stick it in the `choices` dictionary and it'll just work..
 
 
-# In[6]:
+# In[84]:
 
 
 # Data marker for where an authority has not submitted data
@@ -181,7 +181,7 @@ df = df.rename(columns={"OBS": "Value", "DATAMARKER": "Marker"})
 df
 
 
-# In[7]:
+# In[85]:
 
 
 # The non submitting authrorities will show in the data marker column at this point,
@@ -202,12 +202,10 @@ trace.multi(["Family_Accommodation", "Marker"], f'Replace each "Authorities that
 df["Family Accommodation"] = df["Family Accommodation"].apply(pathify)
 trace.Family_Accommodation('Pathify all values')
 
-
-
 df
 
 
-# In[8]:
+# In[86]:
 
 
 df['Area'] = df.apply(lambda x: x['Area 2'] if 'unknown' in x['Area'] else x['Area'], axis = 1)
@@ -235,8 +233,10 @@ df = df.rename(columns={'Family Accommodation' : 'Pending Review or Appeal'})
 df = df.replace({'Pending Review or Appeal' : {'number-of-families-in-b-b-accommodation-for-6-or-more-weeks' : 'n',
                                                'number-of-families-in-b-b-accommodation-for-6-or-more-weeks-not-pending-a-review-or-appeal' : 'y'}})
 
+df['Value'] = pd.to_numeric(df['Value'], errors='coerce').astype('Int64')
 
-# In[9]:
+
+# In[ ]:
 
 
 cubes.add_cube(scraper, df, "observations")
@@ -247,7 +247,7 @@ trace.render()
 df
 
 
-# In[10]:
+# In[ ]:
 
 
 from IPython.core.display import HTML

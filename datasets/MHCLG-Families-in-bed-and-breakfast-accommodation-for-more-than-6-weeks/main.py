@@ -244,6 +244,8 @@ df = df.drop(columns={'index'})
 # In[603]:
 
 
+scraper.dataset.comment = 'Table showing quarterly figures for 2007 to 2012 by individual local authorities.'
+
 cubes.add_cube(scraper, df, "observations")
 cubes.output_all()
 

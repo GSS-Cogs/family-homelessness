@@ -1,13 +1,13 @@
 #!/usr/bin/env python
 # coding: utf-8
 
-# In[141]:
+# In[220]:
 
 
 # # MHCLG Families in bed and breakfast accommodation for more than 6 weeks
 
 
-# In[142]:
+# In[221]:
 
 
 import json
@@ -23,7 +23,7 @@ trace = TransformTrace()
 cubes = Cubes("info.json")
 
 
-# In[143]:
+# In[222]:
 
 
 scraper = Scraper(seed="info.json")
@@ -31,7 +31,7 @@ distro = scraper.distribution(latest=True)
 distro
 
 
-# In[144]:
+# In[223]:
 
 
 from dateutil.parser import parse
@@ -112,7 +112,7 @@ def excel_range(bag):
     return f"{top_left_cell}:{bottom_right_cell}"
 
 
-# In[145]:
+# In[224]:
 
 
 # # Note: Geography
@@ -132,7 +132,7 @@ def excel_range(bag):
 # It'll make sense when you run it, but basically when you know what code you want to use to represent a given label - stick it in the `choices` dictionary and it'll just work..
 
 
-# In[146]:
+# In[225]:
 
 
 # Data marker for where an authority has not submitted data
@@ -181,7 +181,7 @@ df = df.rename(columns={"OBS": "Value", "DATAMARKER": "Marker"})
 df
 
 
-# In[147]:
+# In[226]:
 
 
 # The non submitting authrorities will show in the data marker column at this point,
@@ -205,13 +205,10 @@ trace.Family_Accommodation('Pathify all values')
 df
 
 
-# In[148]:
+# In[227]:
 
 
-#df['Area'] = df.apply(lambda x: x['Area 2'] if 'unknown' in x['Area'] else x['Area'], axis = 1)
-#df = df.drop(columns='Area 2')
-
-df['Marker'] = df.apply(lambda x: 'no-data-submitted' if '(not pending review or appeal)' in x['Area'] else x['Marker'], axis = 1)
+df['Family Accommodation'] = df.apply(lambda x: 'number-of-families-in-b-b-accommodation-for-6-or-more-weeks-not-pending-a-review-or-appeal' if '(not pending review or appeal)' in x['Area'] else x['Family Accommodation'], axis = 1)
 df['Area'] = df.apply(lambda x: x['Area'].replace('(not pending review or appeal)', '').strip(), axis = 1)
 
 indexNames = df[df['Area'].isin(['unknown']) ].index
@@ -233,8 +230,10 @@ trace.Period('Format period as per standard intervals')
 
 df['Value'] = pd.to_numeric(df['Value'], errors='coerce').astype('Int64')
 
+df = df.drop_duplicates()
 
-# In[149]:
+
+# In[228]:
 
 
 cubes.add_cube(scraper, df, "observations")
@@ -245,7 +244,7 @@ trace.render()
 df
 
 
-# In[150]:
+# In[229]:
 
 
 from IPython.core.display import HTML

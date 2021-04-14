@@ -187,6 +187,9 @@ df = df.drop(['Measure Type', 'Unit'], axis=1)
 # In[99]:
 
 
+scraper.dataset.title = 'Rough Sleeping Snapshot in England'
+scraper.dataset.comment = 'Annual statistical release evaluating the extent of rough sleeping'
+
 cubes.add_cube(scraper, df, "observations")
 cubes.output_all()
 trace.output()

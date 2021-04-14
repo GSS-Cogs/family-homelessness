@@ -30,11 +30,11 @@
                 "description": "",
                 "codelist": false
             },
-            "Pending Review or Appeal": {
-                "description": "Whether the observation is pending review or appeal"
+            "Family Accommodation": {
+                "description": "Family Accommodation"
             },
       		"Value": {
-                "unit": "http://gss-data.org.uk/def/concept/measurement-units/families-in-b-b-accommodation-for-6-or-more-weeks",
+                "unit": "http://gss-data.org.uk/def/concept/measurement-units/families",
                 "measure": "http://gss-data.org.uk/def/measure/count",
                 "datatype": "integer"
             },
@@ -46,6 +46,5 @@
         }
     },
     "sizingNotes": "Data now incorporated into Stautory Homelessness tables",
-    "notes": "",
-    "validate" : false
+    "notes": ""
 }

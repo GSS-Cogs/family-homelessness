@@ -1,13 +1,13 @@
 #!/usr/bin/env python
 # coding: utf-8
 
-# In[131]:
+# In[141]:
 
 
 # # MHCLG Families in bed and breakfast accommodation for more than 6 weeks
 
 
-# In[132]:
+# In[142]:
 
 
 import json
@@ -23,7 +23,7 @@ trace = TransformTrace()
 cubes = Cubes("info.json")
 
 
-# In[133]:
+# In[143]:
 
 
 scraper = Scraper(seed="info.json")
@@ -31,7 +31,7 @@ distro = scraper.distribution(latest=True)
 distro
 
 
-# In[134]:
+# In[144]:
 
 
 from dateutil.parser import parse
@@ -112,7 +112,7 @@ def excel_range(bag):
     return f"{top_left_cell}:{bottom_right_cell}"
 
 
-# In[135]:
+# In[145]:
 
 
 # # Note: Geography
@@ -132,7 +132,7 @@ def excel_range(bag):
 # It'll make sense when you run it, but basically when you know what code you want to use to represent a given label - stick it in the `choices` dictionary and it'll just work..
 
 
-# In[136]:
+# In[146]:
 
 
 # Data marker for where an authority has not submitted data
@@ -181,7 +181,7 @@ df = df.rename(columns={"OBS": "Value", "DATAMARKER": "Marker"})
 df
 
 
-# In[137]:
+# In[147]:
 
 
 # The non submitting authrorities will show in the data marker column at this point,
@@ -205,7 +205,7 @@ trace.Family_Accommodation('Pathify all values')
 df
 
 
-# In[138]:
+# In[148]:
 
 
 #df['Area'] = df.apply(lambda x: x['Area 2'] if 'unknown' in x['Area'] else x['Area'], axis = 1)
@@ -231,15 +231,10 @@ trace.Area('Replace Area names with 9 digit geography codes')
 df["Period"] = df["Period"].map(lambda x: format_period(x, tab.name))
 trace.Period('Format period as per standard intervals')
 
-df = df.rename(columns={'Family Accommodation' : 'Pending Review or Appeal'})
-
-df = df.replace({'Pending Review or Appeal' : {'number-of-families-in-b-b-accommodation-for-6-or-more-weeks' : 'y',
-                                               'number-of-families-in-b-b-accommodation-for-6-or-more-weeks-not-pending-a-review-or-appeal' : 'n'}})
-
 df['Value'] = pd.to_numeric(df['Value'], errors='coerce').astype('Int64')
 
 
-# In[139]:
+# In[149]:
 
 
 cubes.add_cube(scraper, df, "observations")
@@ -250,7 +245,7 @@ trace.render()
 df
 
 
-# In[140]:
+# In[150]:
 
 
 from IPython.core.display import HTML

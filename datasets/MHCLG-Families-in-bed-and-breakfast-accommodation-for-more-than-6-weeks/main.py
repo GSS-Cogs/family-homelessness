@@ -1,13 +1,13 @@
 #!/usr/bin/env python
 # coding: utf-8
 
-# In[583]:
+# In[594]:
 
 
 # # MHCLG Families in bed and breakfast accommodation for more than 6 weeks
 
 
-# In[584]:
+# In[595]:
 
 
 import json
@@ -23,7 +23,7 @@ trace = TransformTrace()
 cubes = Cubes("info.json")
 
 
-# In[585]:
+# In[596]:
 
 
 scraper = Scraper(seed="info.json")
@@ -31,7 +31,7 @@ distro = scraper.distribution(latest=True)
 distro
 
 
-# In[586]:
+# In[597]:
 
 
 from dateutil.parser import parse
@@ -112,7 +112,7 @@ def excel_range(bag):
     return f"{top_left_cell}:{bottom_right_cell}"
 
 
-# In[587]:
+# In[598]:
 
 
 # # Note: Geography
@@ -132,7 +132,7 @@ def excel_range(bag):
 # It'll make sense when you run it, but basically when you know what code you want to use to represent a given label - stick it in the `choices` dictionary and it'll just work..
 
 
-# In[588]:
+# In[599]:
 
 
 # Data marker for where an authority has not submitted data
@@ -181,7 +181,7 @@ df = df.rename(columns={"OBS": "Value", "DATAMARKER": "Marker"})
 df
 
 
-# In[589]:
+# In[600]:
 
 
 # The non submitting authrorities will show in the data marker column at this point,
@@ -204,7 +204,7 @@ trace.Family_Accommodation('Pathify all values')
 df
 
 
-# In[590]:
+# In[601]:
 
 
 df['Family Accommodation'] = df.apply(lambda x: 'number-of-families-in-b-b-accommodation-for-6-or-more-weeks-not-pending-a-review-or-appeal' if '(not pending review or appeal)' in x['Area'] else x['Family Accommodation'], axis = 1)
@@ -232,16 +232,16 @@ df['Value'] = pd.to_numeric(df['Value'], errors='coerce').astype('Int64')
 df = df.drop_duplicates()
 
 
-# In[591]:
+# In[602]:
 
 
 df = df.reset_index()
 df = df.drop(df.loc[(df['Marker'] == 'no-data-submitted') & (df['Period'] == 'day/2009-03-31') & (df['Area'] == 'E09000009') & (df['Family Accommodation'] == 'number-of-families-in-b-b-accommodation-for-6-or-more-weeks')].index[0])
-df = df.reset_index(drop=True)
+df = df.drop(columns={'index'})
 #Irregularity in the data (missing parenthesis), needs to be manually removed)
 
 
-# In[592]:
+# In[603]:
 
 
 cubes.add_cube(scraper, df, "observations")
@@ -252,7 +252,7 @@ trace.render()
 df
 
 
-# In[593]:
+# In[604]:
 
 
 from IPython.core.display import HTML

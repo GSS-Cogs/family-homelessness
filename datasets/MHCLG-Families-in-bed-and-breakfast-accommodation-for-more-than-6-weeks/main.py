@@ -1,13 +1,13 @@
 #!/usr/bin/env python
 # coding: utf-8
 
-# In[ ]:
+# In[10]:
 
 
 # # MHCLG Families in bed and breakfast accommodation for more than 6 weeks
 
 
-# In[595]:
+# In[11]:
 
 
 import json
@@ -23,7 +23,7 @@ trace = TransformTrace()
 cubes = Cubes("info.json")
 
 
-# In[596]:
+# In[12]:
 
 
 scraper = Scraper(seed="info.json")
@@ -31,7 +31,7 @@ distro = scraper.distribution(latest=True)
 distro
 
 
-# In[597]:
+# In[13]:
 
 
 from dateutil.parser import parse
@@ -112,7 +112,7 @@ def excel_range(bag):
     return f"{top_left_cell}:{bottom_right_cell}"
 
 
-# In[598]:
+# In[14]:
 
 
 # # Note: Geography
@@ -132,7 +132,7 @@ def excel_range(bag):
 # It'll make sense when you run it, but basically when you know what code you want to use to represent a given label - stick it in the `choices` dictionary and it'll just work..
 
 
-# In[599]:
+# In[15]:
 
 
 # Data marker for where an authority has not submitted data
@@ -181,7 +181,7 @@ df = df.rename(columns={"OBS": "Value", "DATAMARKER": "Marker"})
 df
 
 
-# In[600]:
+# In[16]:
 
 
 # The non submitting authrorities will show in the data marker column at this point,
@@ -204,7 +204,7 @@ trace.Family_Accommodation('Pathify all values')
 df
 
 
-# In[601]:
+# In[17]:
 
 
 df['Family Accommodation'] = df.apply(lambda x: 'number-of-families-in-b-b-accommodation-for-6-or-more-weeks-not-pending-a-review-or-appeal' if '(not pending review or appeal)' in x['Area'] else x['Family Accommodation'], axis = 1)
@@ -235,16 +235,16 @@ df = df.replace({'Family Accommodation' : {'number-of-families-in-b-b-accommodat
                                            'number-of-families-in-b-b-accommodation-for-6-or-more-weeks-not-pending-a-review-or-appeal' : 'in-b-b-accommodation-for-6-or-more-weeks-not-pending-a-review-or-appeal'}})
 
 
-# In[602]:
+# In[18]:
 
 
 df = df.reset_index()
-df = df.drop(df.loc[(df['Marker'] == 'no-data-submitted') & (df['Period'] == 'day/2009-03-31') & (df['Area'] == 'E09000009') & (df['Family Accommodation'] == 'number-of-families-in-b-b-accommodation-for-6-or-more-weeks')].index[0])
+df = df.drop(df.loc[(df['Marker'] == 'no-data-submitted') & (df['Period'] == 'day/2009-03-31') & (df['Area'] == 'E09000009') & (df['Family Accommodation'] == 'in-b-b-accommodation-for-6-or-more-weeks')].index[0])
 df = df.drop(columns={'index'})
 #Irregularity in the data (missing parenthesis), needs to be manually removed)
 
 
-# In[603]:
+# In[19]:
 
 
 scraper.dataset.comment = 'Table showing quarterly figures for 2007 to 2012 by individual local authorities.'
@@ -257,7 +257,7 @@ trace.render()
 df
 
 
-# In[604]:
+# In[20]:
 
 
 from IPython.core.display import HTML

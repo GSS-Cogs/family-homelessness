@@ -1,13 +1,13 @@
 #!/usr/bin/env python
 # coding: utf-8
 
-# In[87]:
+# In[131]:
 
 
 # # MHCLG Families in bed and breakfast accommodation for more than 6 weeks
 
 
-# In[88]:
+# In[132]:
 
 
 import json
@@ -23,7 +23,7 @@ trace = TransformTrace()
 cubes = Cubes("info.json")
 
 
-# In[89]:
+# In[133]:
 
 
 scraper = Scraper(seed="info.json")
@@ -31,7 +31,7 @@ distro = scraper.distribution(latest=True)
 distro
 
 
-# In[90]:
+# In[134]:
 
 
 from dateutil.parser import parse
@@ -112,7 +112,7 @@ def excel_range(bag):
     return f"{top_left_cell}:{bottom_right_cell}"
 
 
-# In[91]:
+# In[135]:
 
 
 # # Note: Geography
@@ -132,7 +132,7 @@ def excel_range(bag):
 # It'll make sense when you run it, but basically when you know what code you want to use to represent a given label - stick it in the `choices` dictionary and it'll just work..
 
 
-# In[92]:
+# In[136]:
 
 
 # Data marker for where an authority has not submitted data
@@ -181,12 +181,12 @@ df = df.rename(columns={"OBS": "Value", "DATAMARKER": "Marker"})
 df
 
 
-# In[93]:
+# In[137]:
 
 
 # The non submitting authrorities will show in the data marker column at this point,
 # move them to area before looking up codes
-df['Area 2'] = df['Area']
+#df['Area 2'] = df['Area']
 df["Area"][df["Marker"] != ''] = df["Marker"]
 df["Marker"][df["Marker"] != ''] = missing_marker
 
@@ -205,14 +205,17 @@ trace.Family_Accommodation('Pathify all values')
 df
 
 
-# In[94]:
+# In[138]:
 
 
-df['Area'] = df.apply(lambda x: x['Area 2'] if 'unknown' in x['Area'] else x['Area'], axis = 1)
-df = df.drop(columns='Area 2')
+#df['Area'] = df.apply(lambda x: x['Area 2'] if 'unknown' in x['Area'] else x['Area'], axis = 1)
+#df = df.drop(columns='Area 2')
 
 df['Marker'] = df.apply(lambda x: 'no-data-submitted' if '(not pending review or appeal)' in x['Area'] else x['Marker'], axis = 1)
 df['Area'] = df.apply(lambda x: x['Area'].replace('(not pending review or appeal)', '').strip(), axis = 1)
+
+indexNames = df[df['Area'].isin(['unknown']) ].index
+df.drop(indexNames, inplace = True)
 
 df = df.replace({'Area' : {'Shropshire' : 'E06000051',
                            'Isle Of Wight' : 'E06000046',
@@ -236,7 +239,7 @@ df = df.replace({'Pending Review or Appeal' : {'number-of-families-in-b-b-accomm
 df['Value'] = pd.to_numeric(df['Value'], errors='coerce').astype('Int64')
 
 
-# In[95]:
+# In[139]:
 
 
 cubes.add_cube(scraper, df, "observations")
@@ -247,7 +250,7 @@ trace.render()
 df
 
 
-# In[96]:
+# In[140]:
 
 
 from IPython.core.display import HTML

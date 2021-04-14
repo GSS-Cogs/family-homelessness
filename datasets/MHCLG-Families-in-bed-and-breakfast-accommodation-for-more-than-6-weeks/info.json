@@ -46,5 +46,6 @@
         }
     },
     "sizingNotes": "Data now incorporated into Stautory Homelessness tables",
-    "notes": ""
+    "notes": "",
+    "validate" : false
 }

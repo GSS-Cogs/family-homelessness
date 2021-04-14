@@ -1,13 +1,13 @@
 #!/usr/bin/env python
 # coding: utf-8
 
-# In[220]:
+# In[552]:
 
 
 # # MHCLG Families in bed and breakfast accommodation for more than 6 weeks
 
 
-# In[221]:
+# In[553]:
 
 
 import json
@@ -23,7 +23,7 @@ trace = TransformTrace()
 cubes = Cubes("info.json")
 
 
-# In[222]:
+# In[554]:
 
 
 scraper = Scraper(seed="info.json")
@@ -31,7 +31,7 @@ distro = scraper.distribution(latest=True)
 distro
 
 
-# In[223]:
+# In[555]:
 
 
 from dateutil.parser import parse
@@ -112,7 +112,7 @@ def excel_range(bag):
     return f"{top_left_cell}:{bottom_right_cell}"
 
 
-# In[224]:
+# In[556]:
 
 
 # # Note: Geography
@@ -132,7 +132,7 @@ def excel_range(bag):
 # It'll make sense when you run it, but basically when you know what code you want to use to represent a given label - stick it in the `choices` dictionary and it'll just work..
 
 
-# In[225]:
+# In[557]:
 
 
 # Data marker for where an authority has not submitted data
@@ -181,12 +181,12 @@ df = df.rename(columns={"OBS": "Value", "DATAMARKER": "Marker"})
 df
 
 
-# In[226]:
+# In[558]:
 
 
 # The non submitting authrorities will show in the data marker column at this point,
 # move them to area before looking up codes
-#df['Area 2'] = df['Area']
+
 df["Area"][df["Marker"] != ''] = df["Marker"]
 df["Marker"][df["Marker"] != ''] = missing_marker
 
@@ -201,11 +201,10 @@ trace.multi(["Family_Accommodation", "Marker"], f'Replace each "Authorities that
 
 df["Family Accommodation"] = df["Family Accommodation"].apply(pathify)
 trace.Family_Accommodation('Pathify all values')
-
 df
 
 
-# In[227]:
+# In[559]:
 
 
 df['Family Accommodation'] = df.apply(lambda x: 'number-of-families-in-b-b-accommodation-for-6-or-more-weeks-not-pending-a-review-or-appeal' if '(not pending review or appeal)' in x['Area'] else x['Family Accommodation'], axis = 1)
@@ -220,7 +219,7 @@ df = df.replace({'Area' : {'Shropshire' : 'E06000051',
                            'Medway Towns' : 'E06000035'}})
 
 # ---- GEOGRAPHY CODES ----
-choices = {}
+choices = {"Gateshead":"E08000020"}
 df['Area'] = df['Area'].apply(GeoCodeFinder(choices=choices))
 trace.Area('Replace Area names with 9 digit geography codes')
 
@@ -233,7 +232,15 @@ df['Value'] = pd.to_numeric(df['Value'], errors='coerce').astype('Int64')
 df = df.drop_duplicates()
 
 
-# In[228]:
+# In[560]:
+
+
+df = df.reset_index()
+df = df.drop(df.loc[(df['Marker'] == 'no-data-submitted') & (df['Period'] == 'day/2009-03-31') & (df['Area'] == 'E09000009') & (df['Family Accommodation'] == 'number-of-families-in-b-b-accommodation-for-6-or-more-weeks')].index[0])
+#Irregularity in the data (missing parenthesis), needs to be manually removed)
+
+
+# In[561]:
 
 
 cubes.add_cube(scraper, df, "observations")
@@ -244,7 +251,7 @@ trace.render()
 df
 
 
-# In[229]:
+# In[562]:
 
 
 from IPython.core.display import HTML

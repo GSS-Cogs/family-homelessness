@@ -1,7 +1,7 @@
 #!/usr/bin/env python
 # coding: utf-8
 
-# In[594]:
+# In[ ]:
 
 
 # # MHCLG Families in bed and breakfast accommodation for more than 6 weeks
@@ -230,6 +230,9 @@ trace.Period('Format period as per standard intervals')
 df['Value'] = pd.to_numeric(df['Value'], errors='coerce').astype('Int64')
 
 df = df.drop_duplicates()
+
+df = df.replace({'Family Accommodation' : {'number-of-families-in-b-b-accommodation-for-6-or-more-weeks' : 'in-b-b-accommodation-for-6-or-more-weeks',
+                                           'number-of-families-in-b-b-accommodation-for-6-or-more-weeks-not-pending-a-review-or-appeal' : 'in-b-b-accommodation-for-6-or-more-weeks-not-pending-a-review-or-appeal'}})
 
 
 # In[602]:

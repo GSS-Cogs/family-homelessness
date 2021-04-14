@@ -1,13 +1,13 @@
 #!/usr/bin/env python
 # coding: utf-8
 
-# In[232]:
+# In[1]:
 
 
 # # MHCLG Families in bed and breakfast accommodation for more than 6 weeks
 
 
-# In[233]:
+# In[2]:
 
 
 import json
@@ -23,7 +23,7 @@ trace = TransformTrace()
 cubes = Cubes("info.json")
 
 
-# In[234]:
+# In[3]:
 
 
 scraper = Scraper(seed="info.json")
@@ -31,7 +31,7 @@ distro = scraper.distribution(latest=True)
 distro
 
 
-# In[235]:
+# In[4]:
 
 
 from dateutil.parser import parse
@@ -112,7 +112,7 @@ def excel_range(bag):
     return f"{top_left_cell}:{bottom_right_cell}"
 
 
-# In[236]:
+# In[5]:
 
 
 # # Note: Geography
@@ -132,7 +132,7 @@ def excel_range(bag):
 # It'll make sense when you run it, but basically when you know what code you want to use to represent a given label - stick it in the `choices` dictionary and it'll just work..
 
 
-# In[237]:
+# In[6]:
 
 
 # Data marker for where an authority has not submitted data
@@ -155,7 +155,7 @@ for tab in distro.as_databaker():
         trace.Area("Area taken as the places stated beneath the word 'Authority'.")
 
         family_accommodation = anchor.expand(RIGHT) - area.expand(UP)
-        trace.Family_Accomodation('Fields taken from alongside (but not including) "Authority".', excel_range(family_accommodation))
+        trace.Family_Accommodation('Fields taken from alongside (but not including) "Authority".', excel_range(family_accommodation))
 
         trace.obs('Taken as cells that can be cross referenced from the "Area" and "Family Accommodation" selections.')
         obs = family_accommodation.waffle(area).is_not_blank().is_not_whitespace()
@@ -181,7 +181,7 @@ df = df.rename(columns={"OBS": "Value", "DATAMARKER": "Marker"})
 df
 
 
-# In[238]:
+# In[7]:
 
 
 # The non submitting authrorities will show in the data marker column at this point,
@@ -207,7 +207,7 @@ trace.Family_Accommodation('Pathify all values')
 df
 
 
-# In[239]:
+# In[8]:
 
 
 df['Area'] = df.apply(lambda x: x['Area 2'] if 'unknown' in x['Area'] else x['Area'], axis = 1)
@@ -236,7 +236,7 @@ df = df.replace({'Pending Review or Appeal' : {'number-of-families-in-b-b-accomm
                                                'number-of-families-in-b-b-accommodation-for-6-or-more-weeks-not-pending-a-review-or-appeal' : 'y'}})
 
 
-# In[240]:
+# In[9]:
 
 
 cubes.add_cube(scraper, df, "observations")
@@ -247,7 +247,7 @@ trace.render()
 df
 
 
-# In[241]:
+# In[10]:
 
 
 from IPython.core.display import HTML

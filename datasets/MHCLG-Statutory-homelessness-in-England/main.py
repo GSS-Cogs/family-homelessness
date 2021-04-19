@@ -164,4 +164,46 @@ df.drop(['initial_assessment', 'duty_owed', 'section_21'], axis=1, inplace=True)
 df.drop(['prevention_duty', 'tenancy_type', 'reasons_for_breach', 'reasons_for_rent_arrears'], axis=1, inplace=True)
 df
 
+# +
+# Number of households owed a homelessness duty by support needs of household England
+
+for tab in tabs:
+    columns=['Contents']
+    trace.start(datasetTitle, tab, columns, distribution.downloadURL)
+    if tab.name in ['A3']: #only transforming tab A1 for now
+        print(tab.name)
+        
+        remove_notes = tab.filter(contains_string('Notes')).expand(DOWN).expand(RIGHT)
+        quarter = tab.excel_ref('B6').expand(DOWN)-remove_notes
+        period = quarter.shift(LEFT).is_not_blank()-remove_notes 
+#         sheet_name = tab.name
+#         savepreviewhtml(quarter, fname= tab.name + "PREVIEW.html")
+    
+        total_households_with_supportneeds = tab.excel_ref('D2').expand(RIGHT)
+        households_with_one_supportneeds = tab.excel_ref('D3').expand(RIGHT)
+        households_with_two_supportneeds = tab.excel_ref('D4').expand(RIGHT)
+        observations = tab.excel_ref('D6').expand(DOWN).expand(RIGHT)-remove_notes
+#         savepreviewhtml(observations, fname= tab.name + "PREVIEW.html")
+        dimensions = [
+            HDim(quarter,'quarter',DIRECTLY,LEFT),
+            HDim(period,'period',CLOSEST,ABOVE),
+            HDim(total_households_with_supportneeds,'total_households_with_supportneeds',DIRECTLY, ABOVE),
+            HDim(households_with_one_supportneeds,'households_with_one_supportneeds',DIRECTLY, ABOVE),
+            HDim(households_with_two_supportneeds,'households_with_two_supportneeds',DIRECTLY, ABOVE),
+            #HDimConst("sheet_name", sheet_name) #Might be handy to have for post processing when other tabs are running also 
+        ]
+        tidy_sheet = ConversionSegment(tab, dimensions, observations)
+        savepreviewhtml(tidy_sheet, fname= tab.name + "PREVIEW.html")
+        trace.with_preview(tidy_sheet)
+        trace.store("combined_dataframe", tidy_sheet.topandas())
+df = trace.combine_and_trace(datasetTitle, "combined_dataframe")
+#Sheet = "A1"
+df.drop(['initial_assessment', 'duty_owed', 'section_21'], axis=1, inplace=True)
+#Sheet = "A2P"
+df.drop(['prevention_duty', 'tenancy_type', 'reasons_for_breach', 'reasons_for_rent_arrears'], axis=1, inplace=True)
+#Sheet = "A2R"
+df.drop(['relief_prevention_duty', 'relief_tenancy_type', 'relief_reasons_for_breach', 'relief_reasons_for_rent_arrears'], axis=1, inplace=True)
+df     
+# -
+
 

@@ -245,7 +245,7 @@ df.drop(['prevention_duty', 'tenancy_type', 'reasons_for_breach', 'reasons_for_r
 #Sheet = "A2R"
 df.drop(['relief_prevention_duty', 'relief_tenancy_type', 'relief_reasons_for_breach', 'relief_reasons_for_rent_arrears'], axis=1, inplace=True)
 #Sheet = "A3"
-df.drop(['total_households_with_supportneeds', ''])
+df.drop(['total_households_with_supportneeds', 'households_with_one_supportneeds', 'households_with_two_supportneeds'], axis=1, inplace=True)
 df
 # -
 

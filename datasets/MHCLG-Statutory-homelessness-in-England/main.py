@@ -388,7 +388,7 @@ df
 
 # +
 #Age of main applicants assessed as owed a prevention or relief duty by local authority England
-
+#Percentage in age and observations column needs to be cleansed
 
 for tab in tabs:
     columns=['Contents']

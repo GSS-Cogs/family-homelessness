@@ -987,7 +987,7 @@ for tab in accommodation_tabs:
             HDim(accommodation, 'Accommodation Type', DIRECTLY, LEFT)
         ]
 
-        dimensions[3] = with_year_overrides(dimensions[3])
+        #dimensions[3] = with_year_overrides(dimensions[3])
         dimensions[4] = with_month_overrides(dimensions[4])
 
         tidy_sheet = ConversionSegment(tab, dimensions, observations)

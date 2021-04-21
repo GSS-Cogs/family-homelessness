@@ -1,6 +1,15 @@
-# # NIHE Northern Ireland Housing Statistics 
+#!/usr/bin/env python
+# coding: utf-8
 
-# +
+# In[10]:
+
+
+# # NIHE Northern Ireland Housing Statistics
+
+
+# In[11]:
+
+
 import pandas as pd
 from gssutils import *
 import json
@@ -22,7 +31,10 @@ with pd.ExcelWriter("data.xls") as writer:
         pd.read_excel(xls, sheet).to_excel(writer,sheet, index = False)
     writer.save()
 tabs = loadxlstabs("data.xls")
-# -
+
+
+# In[12]:
+
 
 print(type(tabs))
 
@@ -40,22 +52,25 @@ if len(set(tabs_names_to_process)-{x.name for x in tabs}) != 0:
 
 tabs = {tab.name: tab for tab in scraper.distribution(latest=True).as_databaker()}
 
-# +
+
+# In[13]:
+
+
 tab = tabs['T3_10_']
 trace.start(datasetTitle, tab, columns, distribution.downloadURL)
-        
+
 cell = tab.excel_ref("A1")
 
 unit = "household"
 trace.Unit("Hardcoded as household")
 period = cell.shift(0, 2).fill(RIGHT).is_not_whitespace()
 trace.Period("Defined from cell B3 right")
-            
+
 remove = tab.filter(contains_string("1. See Appendix 3: Data Sources - Social Renting Demand.")).expand(RIGHT).expand(DOWN)|tab.filter(contains_string('Total'))
-            
+
 outcome = cell.shift(0, 2).fill(DOWN).is_not_whitespace()-remove
 trace.Outcome("Defined from cell A4 and down")
-            
+
 observations = period.waffle(outcome)
 dimensions = [
     HDim(period, "Period", DIRECTLY, ABOVE),
@@ -69,10 +84,12 @@ trace.with_preview(tidy_sheet)
 trace.store("combined_dataframe", tidy_sheet.topandas())
 
 
-# +
+# In[14]:
+
+
 tab = tabs['T3_9']
 trace.start(datasetTitle, tab, columns, distribution.downloadURL)
-        
+
 cell = tab.excel_ref("A1")
 
 unit = "household"
@@ -80,31 +97,34 @@ trace.Unit("Hardcoded as household")
 #footnotes and Total column is captured in remove
 period = cell.shift(1, 2).fill(RIGHT).is_not_whitespace()
 trace.Period("Defined from cell C3 right")
-            
+
 remove = tab.filter(contains_string("SOURCE: NIHE")).expand(LEFT).expand(DOWN)|tab.filter(contains_string('Total')).expand(RIGHT)
 age = cell.shift(1, 2).fill(DOWN).is_not_blank()-remove
 trace.Age("Defined from cell B4 and down excluding remove")
-            
+
 house_hold_type = age.shift(LEFT).is_not_blank()
 trace.House_Hold_Type("Defined from cell A4 and down")
-                    
+
 observations = period.waffle(age)-remove
 dimensions = [
     HDim(period, "Period", DIRECTLY, ABOVE),
     HDim(age, "Age", DIRECTLY, LEFT),
     HDim(house_hold_type, "House_Hold_Type", CLOSEST, ABOVE),
     HDimConst("Unit", "household")
-] 
+]
 tidy_sheet = ConversionSegment(tab, dimensions, observations)
 savepreviewhtml(tidy_sheet, fname=tab.name + "Preview.html")
 trace.with_preview(tidy_sheet)
-trace.store("combined_dataframe", tidy_sheet.topandas()) 
+trace.store("combined_dataframe", tidy_sheet.topandas())
 
-# +
+
+# In[15]:
+
+
 #'T3_8'
 tab = tabs['T3_8']
 trace.start(datasetTitle, tab, columns, distribution.downloadURL)
-        
+
 cell = tab.excel_ref("A1")
 
 unit = "household"
@@ -113,11 +133,11 @@ trace.Unit("Hardcoded as household")
 #footnotes and Total column is captured in remove
 period = cell.shift(0, 2).fill(RIGHT).is_not_whitespace()
 trace.Period("Defined from cell B3 right")
-            
+
 remove = tab.filter(contains_string("Appendix 3")).expand(RIGHT).expand(DOWN)|tab.filter(contains_string('Total'))
 homelessness_reason = cell.shift(0, 2).fill(DOWN).is_not_whitespace()-remove
 trace.Homelessness_Reason("Defined from cell A4 and down")
-            
+
 observations = period.waffle(homelessness_reason)
 dimensions = [
     HDim(period, "Period", DIRECTLY, ABOVE),
@@ -131,11 +151,13 @@ trace.with_preview(tidy_sheet)
 trace.store("combined_dataframe", tidy_sheet.topandas())
 
 
-# +
+# In[16]:
+
+
 #'T3_11'
 tab = tabs['T3_11']
 trace.start(datasetTitle, tab, columns, distribution.downloadURL)
-        
+
 cell = tab.excel_ref("A1")
 
 unit = "household"
@@ -144,11 +166,11 @@ trace.Unit("Hardcoded as household")
 #footnotes and Total column is captured in remove
 period = cell.shift(0, 2).fill(RIGHT).is_not_whitespace()
 trace.Period("Defined from cell B3 right")
-            
+
 remove = tab.filter(contains_string("1. See Appendix 3: Data Sources - Social Renting Demand.")).expand(RIGHT).expand(DOWN)|tab.filter(contains_string('Total'))
 homelessness_reason = cell.shift(0, 2).fill(DOWN).is_not_whitespace()-remove
 trace.Homelessness_Reason("Defined from cell A4 and down")
-            
+
 observations = period.waffle(homelessness_reason)
 dimensions = [
     HDim(period, "Period", DIRECTLY, ABOVE),
@@ -160,7 +182,10 @@ tidy_sheet = ConversionSegment(tab, dimensions, observations)
 savepreviewhtml(tidy_sheet, fname=tab.name + "Preview.html")
 trace.with_preview(tidy_sheet)
 trace.store("combined_dataframe", tidy_sheet.topandas())
-# -
+
+
+# In[17]:
+
 
 df = trace.combine_and_trace(datasetTitle, "combined_dataframe")
 
@@ -191,13 +216,21 @@ df['Value'] = df['Value'].apply(lambda x: None if pd.isnull(x) else '{0:.0f}'.fo
 """for col in df.columns:
 # Transform by saying the columns which are not required to be transformed
 # as the number of columns not to be transformed is less than the ones to be transformed.
-    if col not in ['Value', 'Age']:       
+    if col not in ['Value', 'Age']:
         df[col] = df[col].apply(lambda x: pathify(str(x)))
         df[col] = df[col].astype('category')"""
 
 df
+
+
+# In[18]:
+
+
+tidy = df
+
 #cubes.add_cube(scraper, df, datasetTitle)
 
 #cubes.output_all()
 
 #trace.render("spec_v1.html")
+

@@ -316,7 +316,7 @@ bulletin_df = df
 
 def process_tab(file):
     get_ipython().run_line_magic('run', '-i $file')
-    return tidy
+    return df
 
 stats_df = process_tab('NIHE-northern-ireland-housing-statistics.py')
 

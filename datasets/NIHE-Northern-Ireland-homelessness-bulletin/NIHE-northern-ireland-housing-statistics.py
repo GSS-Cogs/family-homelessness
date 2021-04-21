@@ -196,9 +196,6 @@ df['Value'] = df['Value'].apply(lambda x: None if pd.isnull(x) else '{0:.0f}'.fo
         df[col] = df[col].astype('category')"""
 
 df
-# -
-
-tidy = df
 #cubes.add_cube(scraper, df, datasetTitle)
 
 #cubes.output_all()

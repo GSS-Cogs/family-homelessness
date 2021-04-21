@@ -17,7 +17,83 @@
     },
     "transform": {
         "airtable": "recqGhObrbTGPi3ON",
-        "main_issue": 12
+        "main_issue": 12,
+        "columns": {
+            "Period": {
+                "parent": "http://purl.org/linked-data/sdmx/2009/dimension#refPeriod",
+                "value": "http://reference.data.gov.uk/id/{+period}",
+                "codelist": false
+            },
+            "ONS Geography Code": {
+                "parent": "http://purl.org/linked-data/sdmx/2009/dimension#refArea",
+                "value": "http://statistics.data.gov.uk/id/statistical-geography/{ons_geography_code}",
+                "description": "",
+                "codelist": false
+            },
+            "Age Group": {
+                "description": "Age Group",
+                "value": "http://gss-data.org.uk/def/homelessness/concept/age/{age_group}",
+                "codelist": "http://gss-data.org.uk/def/homelessness/concept-scheme/age"
+            },
+            "Reason for Homelessness": {
+                "description": "Reason for Homelessness"
+            },
+            "Accommodation Not Reasonable Breakdown": {
+                "description": "Accommodation Not Reasonable Breakdown"
+            },
+            "Intimidation Breakdown": {
+                "description": "Intimidation Breakdown"
+            },
+            "Reason for Loss of Rented Accommodation": {
+                "description": "Reason for Loss of Rented Accommodation"
+            },
+            "Release from Facilities Breakdown": {
+                "description": "Release from Facilities Breakdown"
+            },
+            "Household Composition": {
+                "description": "Household Composition"
+            },
+            "Assessment Decision": {
+                "description": "Assessment Decision"
+            },
+            "Legislative Test Outcome": {
+                "description": "Legislative Test Outcome"
+            },
+            "Repeat Homeless Presentations": {
+                "description": "Repeat Homeless Presentations"
+            },
+            "Priority Need Category": {
+                "description": "Priority Need Category"
+            },
+            "Housing Assessment Outcome": {
+                "description": "Housing Assessment Outcome"
+            },
+            "Accommodation Type": {
+                "description": "Accommodation Type"
+            },
+            "Length of Stay": {
+                "description": "Length of Stay"
+            },
+            "Measure Type": {
+        		"dimension": "http://purl.org/linked-data/cube#measureType",
+        		"value": "http://gss-data.org.uk/def/measure/{measure_type}",
+        		"types": ["count",
+                          "count-per-1000-population"]
+            },
+            "Unit": {
+                "description": "Unit",
+                "value": "http://gss-data.org.uk/def/homelessness/concept/unit/{unit}",
+                "codelist": "http://gss-data.org.uk/def/homelessness/concept-scheme/unit"
+            },
+      		"Value": {
+        		"datatype": "integer"
+      		},
+            "Marker": {
+                "attribute": "http://purl.org/linked-data/sdmx/2009/attribute#obsStatus",
+                "value": "http://gss-data.org.uk/def/concept/cogs-markers/{marker}",
+                "codelist": false
+            }
+        }
     },
     "sizingNotes": "Multiple tabs with small tables and simple structure but some sub-dimensions and multiple footnotes.",
     "notes": ""

@@ -320,6 +320,8 @@ def process_tab(file):
 
 stats_df = process_tab('NIHE-northern-ireland-housing-statistics.py')
 
+stats_df.drop_duplicates().to_csv('stats.csv', index = False)
+
 stats_df["Measure Type"] = 'count'
 stats_df  = df[["Period", "Homelessness Reason", "House_Hold_Type", "Outcome", "Age", "Measure Type", "Unit", "Value", "MARKER"]]
 

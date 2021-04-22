@@ -1,13 +1,13 @@
 #!/usr/bin/env python
 # coding: utf-8
 
-# In[650]:
+# In[14]:
 
 
 # # WG Rough Sleeper Count
 
 
-# In[651]:
+# In[15]:
 
 
 import pandas as pd
@@ -17,7 +17,7 @@ import json
 from gssutils import *
 
 
-# In[652]:
+# In[16]:
 
 
 infoFileName = 'info.json'
@@ -29,7 +29,7 @@ distro = scraper.distribution(latest=True, title='Dataset')
 distro._mediaType = 'application/json'
 
 
-# In[653]:
+# In[17]:
 
 
 df = distro.as_pandas()
@@ -37,7 +37,7 @@ df = distro.as_pandas()
 df.head()
 
 
-# In[654]:
+# In[18]:
 
 
 # # Quick check on what columns we need to keep
@@ -74,7 +74,7 @@ df.drop(drop_list, inplace=True, axis=1)
 df.head()
 
 
-# In[655]:
+# In[19]:
 
 
 # For everything which isn't the Data column, it's categorical so...
@@ -87,14 +87,14 @@ df['Value'] = df['Data'].astype(int)
 df.drop('Data', inplace=True, axis=1)
 
 
-# In[656]:
+# In[20]:
 
 
 # Geographies!
 #df['Geography'] = df['Area_AltCode1'].apply(lambda x: f"http://statistics.data.gov.uk/id/statistical-geography/{x}")
 
 
-# In[657]:
+# In[21]:
 
 
 # Marker (For the geography though it applies to values as well)
@@ -108,7 +108,7 @@ df.rename({'Measure_ItemName_ENG': 'Measure', 'Year_ItemName_ENG': 'Period', 'Ar
 df.head()
 
 
-# In[658]:
+# In[22]:
 
 
 df['Period'] = df.apply(lambda x: x['Period'] + str(x['Measure_Code']) if x['Measure_Code'] in [1, 4] else x['Period'], axis = 1)
@@ -134,7 +134,7 @@ df = df.replace({'Period' : periodMeasure})
 df
 
 
-# In[659]:
+# In[23]:
 
 
 #Below would turn the Total Available Beds, and Total Beds measures into Attributes of the Other 2 Measures.
@@ -163,7 +163,7 @@ dfJoin2.drop_duplicates().to_csv('join.csv', index = False)
 df = dfJoin2"""
 
 
-# In[660]:
+# In[24]:
 
 
 # For the periods
@@ -173,6 +173,8 @@ df = dfJoin2"""
 df['Measure'] = df['Measure'].apply(lambda x: pathify(x))
 
 df['Measure Type'] = df.apply(lambda x: 'estimated count' if 'estimated' in x['Measure'] else 'count', axis = 1)
+df['Measure Type'] = df.apply(lambda x: 'total' if 'emergency' in x['Measure'] else x['Measure Type'], axis = 1)
+#This is not ideal as it is still technically a count, but as Unit is currently not included in validation (due to matching up during RDF phase) this will have to do instead
 df['Unit'] = df['Measure']
 
 df = df.replace({'Unit' : {'total-count-of-rough-sleepers' : 'rough-sleepers',
@@ -190,7 +192,7 @@ df = df[['Period', 'Area', 'Value', 'Measure Type', 'Unit', 'Notes']]
 df
 
 
-# In[661]:
+# In[25]:
 
 
 comments = """
@@ -204,14 +206,14 @@ scraper.dataset.comment = comments
 cubes.add_cube(scraper, df, scraper.title)
 
 
-# In[662]:
+# In[26]:
 
 
 # Write cube
 cubes.output_all()
 
 
-# In[662]:
+# In[26]:
 
 
 

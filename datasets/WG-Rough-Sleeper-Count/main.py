@@ -1,13 +1,13 @@
 #!/usr/bin/env python
 # coding: utf-8
 
-# In[327]:
+# In[359]:
 
 
 # # WG Rough Sleeper Count
 
 
-# In[328]:
+# In[360]:
 
 
 import pandas as pd
@@ -17,7 +17,7 @@ import json
 from gssutils import *
 
 
-# In[329]:
+# In[361]:
 
 
 infoFileName = 'info.json'
@@ -29,7 +29,7 @@ distro = scraper.distribution(latest=True, title='Dataset')
 distro._mediaType = 'application/json'
 
 
-# In[330]:
+# In[362]:
 
 
 df = distro.as_pandas()
@@ -37,7 +37,7 @@ df = distro.as_pandas()
 df.head()
 
 
-# In[331]:
+# In[363]:
 
 
 # # Quick check on what columns we need to keep
@@ -74,7 +74,7 @@ df.drop(drop_list, inplace=True, axis=1)
 df.head()
 
 
-# In[332]:
+# In[364]:
 
 
 # For everything which isn't the Data column, it's categorical so...
@@ -87,14 +87,14 @@ df['Value'] = df['Data'].astype(int)
 df.drop('Data', inplace=True, axis=1)
 
 
-# In[333]:
+# In[365]:
 
 
 # Geographies!
 #df['Geography'] = df['Area_AltCode1'].apply(lambda x: f"http://statistics.data.gov.uk/id/statistical-geography/{x}")
 
 
-# In[334]:
+# In[366]:
 
 
 # Marker (For the geography though it applies to values as well)
@@ -108,7 +108,7 @@ df.rename({'Measure_ItemName_ENG': 'Measure', 'Year_ItemName_ENG': 'Period', 'Ar
 df.head()
 
 
-# In[335]:
+# In[367]:
 
 
 df['Period'] = df.apply(lambda x: x['Period'] + str(x['Measure_Code']) if x['Measure_Code'] in [1, 4] else x['Period'], axis = 1)
@@ -134,13 +134,13 @@ df = df.replace({'Period' : periodMeasure})
 df
 
 
-# In[336]:
+# In[368]:
 
 
 dfBackup = df
 
 
-# In[337]:
+# In[369]:
 
 
 dfAdditional = dfBackup.loc[dfBackup['Marker'].notna()]
@@ -152,14 +152,14 @@ dfAdditional = dfAdditional.drop(columns=['Additional Beds'])
 dfAdditional
 
 
-# In[338]:
+# In[370]:
 
 
 df = pd.concat([df, dfAdditional])
 df
 
 
-# In[339]:
+# In[371]:
 
 
 # For the periods
@@ -182,12 +182,12 @@ df = df.rename(columns={'Marker' : 'Notes'})
 
 df['Notes'] = df.apply(lambda x: x['Notes'].replace('', '').replace('', '') if isinstance(x['Notes'], str) else x['Notes'], axis = 1)
 
-df = df[['Period', 'Area', 'Value', 'Measure Type', 'Unit', 'Notes']]
+df = df[['Period', 'Area', 'Value', 'Measure Type', 'Unit']]#, 'Notes']]
 
 df
 
 
-# In[340]:
+# In[372]:
 
 
 scraper.dataset.family = 'homelessness'
@@ -203,14 +203,14 @@ scraper.dataset.comment = comments
 cubes.add_cube(scraper, df, scraper.title)
 
 
-# In[341]:
+# In[373]:
 
 
 # Write cube
 cubes.output_all()
 
 
-# In[342]:
+# In[374]:
 
 
 from IPython.core.display import HTML

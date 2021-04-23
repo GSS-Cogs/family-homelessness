@@ -1,13 +1,13 @@
 #!/usr/bin/env python
 # coding: utf-8
 
-# In[16]:
+# In[150]:
 
 
 # # WG Rough Sleeper Count
 
 
-# In[17]:
+# In[151]:
 
 
 import pandas as pd
@@ -17,7 +17,7 @@ import json
 from gssutils import *
 
 
-# In[18]:
+# In[152]:
 
 
 infoFileName = 'info.json'
@@ -29,7 +29,7 @@ distro = scraper.distribution(latest=True, title='Dataset')
 distro._mediaType = 'application/json'
 
 
-# In[19]:
+# In[153]:
 
 
 df = distro.as_pandas()
@@ -37,7 +37,7 @@ df = distro.as_pandas()
 df.head()
 
 
-# In[20]:
+# In[154]:
 
 
 # # Quick check on what columns we need to keep
@@ -74,7 +74,7 @@ df.drop(drop_list, inplace=True, axis=1)
 df.head()
 
 
-# In[21]:
+# In[155]:
 
 
 # For everything which isn't the Data column, it's categorical so...
@@ -87,19 +87,19 @@ df['Value'] = df['Data'].astype(int)
 df.drop('Data', inplace=True, axis=1)
 
 
-# In[22]:
+# In[156]:
 
 
 # Geographies!
 #df['Geography'] = df['Area_AltCode1'].apply(lambda x: f"http://statistics.data.gov.uk/id/statistical-geography/{x}")
 
 
-# In[23]:
+# In[157]:
 
 
 # Marker (For the geography though it applies to values as well)
 # Stored as a path now but there are some whitespace issues, which are fixed by splitting on spaces, and then rejoining
-df['Marker'] = df['Area_ItemNotes_ENG'].apply(lambda x: pathify(" ".join(x.split())))
+df['Marker'] = df['Area_ItemNotes_ENG']#.apply(lambda x: pathify(" ".join(x.split())))
 df.drop('Area_ItemNotes_ENG', inplace=True, axis=1)
 
 # Measure
@@ -108,7 +108,7 @@ df.rename({'Measure_ItemName_ENG': 'Measure', 'Year_ItemName_ENG': 'Period', 'Ar
 df.head()
 
 
-# In[24]:
+# In[158]:
 
 
 df['Period'] = df.apply(lambda x: x['Period'] + str(x['Measure_Code']) if x['Measure_Code'] in [1, 4] else x['Period'], axis = 1)
@@ -134,36 +134,32 @@ df = df.replace({'Period' : periodMeasure})
 df
 
 
-# In[25]:
+# In[159]:
 
 
-#Below would turn the Total Available Beds, and Total Beds measures into Attributes of the Other 2 Measures.
-#Rather than delete it, if we decide to go this way its still here
-
-"""dfAttribute1 = df.loc[df['Measure_Code'].isin([2])]
-dfAttribute2 = df.loc[df['Measure_Code'].isin([3])]
-
-dfAttribute1 = dfAttribute1.rename(columns = {'Value' : 'Total Emergency Beds'})
-
-dfAttribute1 = dfAttribute1[['Area', 'Year_Code', 'Total Emergency Beds']]
-
-dfAttribute2 = dfAttribute2.rename(columns = {'Value' : 'Available Emergency Beds'})
-
-dfAttribute2 = dfAttribute2[['Area', 'Year_Code', 'Available Emergency Beds']]
-
-dfAttribute2
-
-df = df.loc[df['Measure_Code'].isin([1, 4])]
-
-dfJoin1 = pd.merge(df, dfAttribute1, how="left", on=['Year_Code', 'Area'])
-dfJoin2 = pd.merge(dfJoin1, dfAttribute2, how="left", on=['Year_Code', 'Area'])
-
-dfJoin2.drop_duplicates().to_csv('join.csv', index = False)
-
-df = dfJoin2"""
+dfBackup = df
 
 
-# In[26]:
+# In[160]:
+
+
+dfAdditional = dfBackup.loc[dfBackup['Marker'].notna()]
+dfAdditional['Additional Beds'] = dfAdditional.apply(lambda x: [int(s) for s in x['Marker'].split() if s.isdigit()][0], axis = 1)
+
+dfAdditional['Value'] = dfAdditional['Additional Beds']
+dfAdditional['Measure'] = 'additional-beds'
+dfAdditional = dfAdditional.drop(columns=['Additional Beds'])
+dfAdditional
+
+
+# In[161]:
+
+
+df = pd.concat([df, dfAdditional])
+df
+
+
+# In[162]:
 
 
 # For the periods
@@ -192,7 +188,7 @@ df = df[['Period', 'Area', 'Value', 'Measure Type', 'Unit', 'Notes']]
 df
 
 
-# In[27]:
+# In[163]:
 
 
 scraper.dataset.family = 'homelessness'
@@ -208,14 +204,14 @@ scraper.dataset.comment = comments
 cubes.add_cube(scraper, df, scraper.title)
 
 
-# In[28]:
+# In[164]:
 
 
 # Write cube
 cubes.output_all()
 
 
-# In[28]:
+# In[164]:
 
 
 

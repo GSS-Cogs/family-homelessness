@@ -1,13 +1,13 @@
 #!/usr/bin/env python
 # coding: utf-8
 
-# In[27]:
+# In[16]:
 
 
 # # WG Rough Sleeper Count
 
 
-# In[28]:
+# In[17]:
 
 
 import pandas as pd
@@ -17,7 +17,7 @@ import json
 from gssutils import *
 
 
-# In[29]:
+# In[18]:
 
 
 infoFileName = 'info.json'
@@ -29,7 +29,7 @@ distro = scraper.distribution(latest=True, title='Dataset')
 distro._mediaType = 'application/json'
 
 
-# In[30]:
+# In[19]:
 
 
 df = distro.as_pandas()
@@ -37,7 +37,7 @@ df = distro.as_pandas()
 df.head()
 
 
-# In[31]:
+# In[20]:
 
 
 # # Quick check on what columns we need to keep
@@ -74,7 +74,7 @@ df.drop(drop_list, inplace=True, axis=1)
 df.head()
 
 
-# In[32]:
+# In[21]:
 
 
 # For everything which isn't the Data column, it's categorical so...
@@ -87,14 +87,14 @@ df['Value'] = df['Data'].astype(int)
 df.drop('Data', inplace=True, axis=1)
 
 
-# In[33]:
+# In[22]:
 
 
 # Geographies!
 #df['Geography'] = df['Area_AltCode1'].apply(lambda x: f"http://statistics.data.gov.uk/id/statistical-geography/{x}")
 
 
-# In[34]:
+# In[23]:
 
 
 # Marker (For the geography though it applies to values as well)
@@ -108,7 +108,7 @@ df.rename({'Measure_ItemName_ENG': 'Measure', 'Year_ItemName_ENG': 'Period', 'Ar
 df.head()
 
 
-# In[35]:
+# In[24]:
 
 
 df['Period'] = df.apply(lambda x: x['Period'] + str(x['Measure_Code']) if x['Measure_Code'] in [1, 4] else x['Period'], axis = 1)
@@ -134,7 +134,7 @@ df = df.replace({'Period' : periodMeasure})
 df
 
 
-# In[36]:
+# In[25]:
 
 
 #Below would turn the Total Available Beds, and Total Beds measures into Attributes of the Other 2 Measures.
@@ -163,7 +163,7 @@ dfJoin2.drop_duplicates().to_csv('join.csv', index = False)
 df = dfJoin2"""
 
 
-# In[37]:
+# In[26]:
 
 
 # For the periods
@@ -192,8 +192,10 @@ df = df[['Period', 'Area', 'Value', 'Measure Type', 'Unit']]#, 'Notes']]
 df
 
 
-# In[38]:
+# In[27]:
 
+
+scraper.dataset.family = 'homelessness'
 
 comments = """
 This information shows the number of rough sleepers in local authority areas. The data is collected to gain a better understanding of the scale and trends in rough sleeping over time to inform local and national policy.The total counts of rough sleepers are single night snapshots. The estimated count is based on data collected over a two week period with assistance from the voluntary sector, faith groups, local businesses/residents, health and substance misuse agencies, and the police.In 2015-16, the count took place between the hours of 11pm on the 25th November and 3am on the 26th November 2015.In 2016-17, the count took place between the hours of 10pm on the 3rd November and 5am on the 4th November 2016.In 2017-18, the count took place between the hours of 10pm on the 9th of November and 5am on the 10th of November 2017.In 2018-19, the count took place between the hours of 10pm on the 8th of November and 5am on the 9th of November 2018.For the estimated number of people sleeping rough, data was collected over a two week period.In 2015-16, data was collected between the 2nd November and 15th November 2015.In 2016-17, data was collected between the 10th October and the 23rd October 2016.In 2017-18, data was collected between the 15th October and the 28th October 2017.In 2018-19, data was collected between the 16th October and the 29th October 2018.
@@ -206,14 +208,14 @@ scraper.dataset.comment = comments
 cubes.add_cube(scraper, df, scraper.title)
 
 
-# In[39]:
+# In[28]:
 
 
 # Write cube
 cubes.output_all()
 
 
-# In[39]:
+# In[28]:
 
 
 

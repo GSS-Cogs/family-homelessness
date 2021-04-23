@@ -1,13 +1,13 @@
 #!/usr/bin/env python
 # coding: utf-8
 
-# In[17]:
+# In[81]:
 
 
 # # WG Rough Sleeper Count
 
 
-# In[18]:
+# In[82]:
 
 
 import pandas as pd
@@ -26,7 +26,7 @@ def mid(s, offset, amount):
     return s[offset:offset+amount]
 
 
-# In[19]:
+# In[83]:
 
 
 infoFileName = 'info.json'
@@ -38,7 +38,7 @@ distro = scraper.distribution(latest=True, title='Dataset')
 distro._mediaType = 'application/json'
 
 
-# In[20]:
+# In[84]:
 
 
 df = distro.as_pandas()
@@ -46,7 +46,7 @@ df = distro.as_pandas()
 df.head()
 
 
-# In[21]:
+# In[85]:
 
 
 # # Quick check on what columns we need to keep
@@ -83,7 +83,7 @@ df.drop(drop_list, inplace=True, axis=1)
 df.head()
 
 
-# In[22]:
+# In[86]:
 
 
 # For everything which isn't the Data column, it's categorical so...
@@ -96,14 +96,14 @@ df['Value'] = df['Data'].astype(int)
 df.drop('Data', inplace=True, axis=1)
 
 
-# In[23]:
+# In[87]:
 
 
 # Geographies!
 #df['Geography'] = df['Area_AltCode1'].apply(lambda x: f"http://statistics.data.gov.uk/id/statistical-geography/{x}")
 
 
-# In[24]:
+# In[88]:
 
 
 # Marker (For the geography though it applies to values as well)
@@ -117,7 +117,7 @@ df.rename({'Measure_ItemName_ENG': 'Measure', 'Year_ItemName_ENG': 'Period', 'Ar
 df.head()
 
 
-# In[25]:
+# In[89]:
 
 
 df['Period'] = df.apply(lambda x: left(x['Period'] + str(x['Measure_Code']),8) if x['Measure_Code'] in [1, 4] else x['Period'], axis = 1)
@@ -143,13 +143,13 @@ df = df.replace({'Period' : periodMeasure})
 df
 
 
-# In[26]:
+# In[90]:
 
 
 dfBackup = df
 
 
-# In[27]:
+# In[91]:
 
 
 dfAdditional = dfBackup.loc[dfBackup['Marker'].notna()]
@@ -161,14 +161,14 @@ dfAdditional = dfAdditional.drop(columns=['Additional Beds'])
 dfAdditional
 
 
-# In[28]:
+# In[92]:
 
 
 df = pd.concat([df, dfAdditional])
 df
 
 
-# In[29]:
+# In[93]:
 
 
 # For the periods
@@ -179,6 +179,7 @@ df['Measure'] = df['Measure'].apply(lambda x: pathify(x))
 
 df['Measure Type'] = df.apply(lambda x: 'estimated-count' if 'estimated' in x['Measure'] else 'count', axis = 1)
 df['Measure Type'] = df.apply(lambda x: 'total' if 'emergency' in x['Measure'] else x['Measure Type'], axis = 1)
+df['Measure Type'] = df.apply(lambda x: 'extra-capacity-count' if 'additional' in x['Measure'] else x['Measure Type'], axis = 1)
 #This is not ideal as it is still technically a count, but as Unit is currently not included in validation (due to matching up during RDF phase) this will have to do instead
 df['Unit'] = df['Measure']
 
@@ -191,12 +192,12 @@ df = df.rename(columns={'Marker' : 'Notes'})
 
 df['Notes'] = df.apply(lambda x: x['Notes'].replace('', '').replace('', '') if isinstance(x['Notes'], str) else x['Notes'], axis = 1)
 
-df = df[['Period', 'Area', 'Value', 'Measure Type', 'Unit']]#, 'Notes']]
+df = df[['Period', 'Area', 'Value', 'Measure Type', 'Unit', 'Notes']]
 
 df
 
 
-# In[30]:
+# In[94]:
 
 
 scraper.dataset.family = 'homelessness'
@@ -212,14 +213,14 @@ scraper.dataset.comment = comments
 cubes.add_cube(scraper, df, scraper.title)
 
 
-# In[31]:
+# In[95]:
 
 
 # Write cube
 cubes.output_all()
 
 
-# In[32]:
+# In[96]:
 
 
 from IPython.core.display import HTML

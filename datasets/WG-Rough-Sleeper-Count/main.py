@@ -192,7 +192,7 @@ df = df.rename(columns={'Marker' : 'Notes'})
 
 df['Notes'] = df.apply(lambda x: pathify(x['Notes'].replace('', '').replace('', '')) if isinstance(x['Notes'], str) else x['Notes'], axis = 1)
 
-df = df[['Period', 'Area', 'Value', 'Measure Type', 'Unit', 'Notes']]
+df = df[['Period', 'Area', 'Value', 'Measure Type', 'Unit']]#, 'Notes']]
 
 df = df.drop_duplicates(subset=None, keep="first", inplace=False)
 
@@ -205,6 +205,7 @@ df
 scraper.dataset.family = 'homelessness'
 
 comments = """
+Swansea provided 30 additional controlled access bed spaces that fall outside of the emergency bed spaces definition which were fully occupied on the night of the count
 This information shows the number of rough sleepers in local authority areas. The data is collected to gain a better understanding of the scale and trends in rough sleeping over time to inform local and national policy.The total counts of rough sleepers are single night snapshots. The estimated count is based on data collected over a two week period with assistance from the voluntary sector, faith groups, local businesses/residents, health and substance misuse agencies, and the police.In 2015-16, the count took place between the hours of 11pm on the 25th November and 3am on the 26th November 2015.In 2016-17, the count took place between the hours of 10pm on the 3rd November and 5am on the 4th November 2016.In 2017-18, the count took place between the hours of 10pm on the 9th of November and 5am on the 10th of November 2017.In 2018-19, the count took place between the hours of 10pm on the 8th of November and 5am on the 9th of November 2018.For the estimated number of people sleeping rough, data was collected over a two week period.In 2015-16, data was collected between the 2nd November and 15th November 2015.In 2016-17, data was collected between the 10th October and the 23rd October 2016.In 2017-18, data was collected between the 15th October and the 28th October 2017.In 2018-19, data was collected between the 16th October and the 29th October 2018.
 Timing Methodology of for 2019-2020 has not been included as of most recent update, therefore Period measurements have been brought forward from the previous year.
 2017-18 data is not directly comparable with 2016-17 data and similarly 2016-17 data is not directly comparable with 2015-16 data due to timing differences.

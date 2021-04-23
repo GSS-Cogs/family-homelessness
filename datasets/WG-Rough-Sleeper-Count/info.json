@@ -44,7 +44,13 @@
       		},
             "Value": {
         		"datatype": "integer"
-      		}
+      		},
+            "Notes": {
+                "dimension": "http://gss-data.org.uk/def/homelessness/property/dimension/notes",
+                "value": "http://gss-data.org.uk/def/homelessness/concept/notes/{notes}",
+                "description": "Additional information which relates to the observation",
+                "codelist": false
+            }
         }
     },
     "sizingNotes": "Available through the odata route, so simple to get, but may need a number of separate downloads / produce a number of different data sets, so needs a fair amount of up-front analysis",

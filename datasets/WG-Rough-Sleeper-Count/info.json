@@ -46,6 +46,8 @@
         		"datatype": "integer"
       		},
             "Notes": {
+                "dimension": "http://gss-data.org.uk/def/homelessness/property/dimension/notes",
+                "value": "http://gss-data.org.uk/def/homelessness/concept/notes/{notes}",
                 "description": "Additional information which relates to the observation",
                 "codelist": false
             }

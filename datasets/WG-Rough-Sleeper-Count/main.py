@@ -187,7 +187,7 @@ df = df.rename(columns={'Marker' : 'Notes'})
 
 #df = df[['Period', 'Area', 'Total Emergency Beds', 'Available Emergency Beds', 'Value', 'Measure Type', 'Unit', 'Notes']]
 
-df = df[['Period', 'Area', 'Value', 'Measure Type', 'Unit', 'Notes']]
+df = df[['Period', 'Area', 'Value', 'Measure Type', 'Unit']]#, 'Notes']]
 
 df
 

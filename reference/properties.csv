@@ -1,3 +1,4 @@
 Namespace,Label,Path,Qb Property Type,Parent Property,Source,Range,Comment
 homelessness,Sex,dimension/sex,qb:DimensionProperty,,,http://gss-data.org.uk/def/homelessness/concept-scheme/sex,Sex
 homelessness,Age,dimension/age,qb:DimensionProperty,,,http://gss-data.org.uk/def/homelessness/concept-scheme/age,Age
+homelessness,Notes,attribute/notes,qb:Attribute,,,http://gss-data.org.uk/def/energy/concept-scheme/notes,Notes

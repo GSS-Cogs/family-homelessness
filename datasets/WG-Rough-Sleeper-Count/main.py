@@ -1,13 +1,13 @@
 #!/usr/bin/env python
 # coding: utf-8
 
-# In[225]:
+# In[1]:
 
 
 # # WG Rough Sleeper Count
 
 
-# In[226]:
+# In[ ]:
 
 
 import pandas as pd
@@ -26,7 +26,7 @@ def mid(s, offset, amount):
     return s[offset:offset+amount]
 
 
-# In[227]:
+# In[ ]:
 
 
 infoFileName = 'info.json'
@@ -38,7 +38,7 @@ distro = scraper.distribution(latest=True, title='Dataset')
 distro._mediaType = 'application/json'
 
 
-# In[228]:
+# In[ ]:
 
 
 df = distro.as_pandas()
@@ -46,7 +46,7 @@ df = distro.as_pandas()
 df.head()
 
 
-# In[229]:
+# In[ ]:
 
 
 # # Quick check on what columns we need to keep
@@ -83,7 +83,7 @@ df.drop(drop_list, inplace=True, axis=1)
 df.head()
 
 
-# In[230]:
+# In[ ]:
 
 
 # For everything which isn't the Data column, it's categorical so...
@@ -96,14 +96,14 @@ df['Value'] = df['Data'].astype(int)
 df.drop('Data', inplace=True, axis=1)
 
 
-# In[231]:
+# In[ ]:
 
 
 # Geographies!
 #df['Geography'] = df['Area_AltCode1'].apply(lambda x: f"http://statistics.data.gov.uk/id/statistical-geography/{x}")
 
 
-# In[232]:
+# In[ ]:
 
 
 # Marker (For the geography though it applies to values as well)
@@ -117,7 +117,7 @@ df.rename({'Measure_ItemName_ENG': 'Measure', 'Year_ItemName_ENG': 'Period', 'Ar
 df.head()
 
 
-# In[233]:
+# In[ ]:
 
 
 df['Period'] = df.apply(lambda x: left(x['Period'] + str(x['Measure_Code']),8) if x['Measure_Code'] in [1, 4] else x['Period'], axis = 1)
@@ -143,13 +143,13 @@ df = df.replace({'Period' : periodMeasure})
 df
 
 
-# In[234]:
+# In[ ]:
 
 
 dfBackup = df
 
 
-# In[235]:
+# In[ ]:
 
 
 dfAdditional = dfBackup.loc[dfBackup['Marker'].notna()]
@@ -161,14 +161,14 @@ dfAdditional = dfAdditional.drop(columns=['Additional Beds'])
 dfAdditional
 
 
-# In[236]:
+# In[ ]:
 
 
 df = pd.concat([df, dfAdditional])
 df
 
 
-# In[237]:
+# In[ ]:
 
 
 # For the periods
@@ -184,8 +184,8 @@ df['Measure Type'] = df.apply(lambda x: 'extra-capacity-count' if 'additional' i
 df['Unit'] = df['Measure']
 
 df = df.replace({'Unit' : {'total-count-of-rough-sleepers' : 'rough-sleepers',
-                              'total-number-of-emergency-bed-spaces' : 'emergency-bed-spaces',
-                              'number-which-were-available-on-the-night-of-the-count' : 'available-bed-spaces',
+                              'total-number-of-emergency-bed-spaces' : 'emergency-beds',
+                              'number-which-were-available-on-the-night-of-the-count' : 'available-emergency-beds',
                               'estimated-number-of-rough-sleepers' : 'rough-sleepers'}})
 
 df = df.rename(columns={'Marker' : 'Notes'})
@@ -199,7 +199,7 @@ df = df.drop_duplicates(subset=None, keep="first", inplace=False)
 df
 
 
-# In[238]:
+# In[ ]:
 
 
 scraper.dataset.family = 'homelessness'
@@ -216,14 +216,14 @@ scraper.dataset.comment = comments
 cubes.add_cube(scraper, df, scraper.title)
 
 
-# In[239]:
+# In[ ]:
 
 
 # Write cube
 cubes.output_all()
 
 
-# In[240]:
+# In[ ]:
 
 
 from IPython.core.display import HTML

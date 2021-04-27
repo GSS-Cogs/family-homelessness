@@ -1,5 +1,14 @@
 # # MHCLG Statutory homelessness Detailed local authority-level 
 
+# +
+#You haven't finished this transform, adding the data to the cube, etc. 
+#Before you do any work on improving the process, 
+#where there are some good habits and bad in here, 
+#export the data frame this generates as an excel file 
+#and consider whether it looks like it's ready to be a CSV-W. If not, 
+#that might help you identify more work to do.
+# -
+
 from gssutils import * 
 import json 
 import pandas as pd
@@ -18,7 +27,7 @@ scraper.distributions = [x for x in scraper.distributions if hasattr(x, "mediaTy
 scraper
 
 
-original_tabs = scraper.distribution(title = lambda x: "Detailed local authority level tables: July to September 2020 (revised)" in x)
+original_tabs = scraper.distribution(title = lambda x: "Detailed local authority level tables: October to December 2020" in x)
 original_tabs
 
 
@@ -1208,18 +1217,18 @@ df
 for tab in tabs:
     columns=['TO DO']
     trace.start(datasetTitle, tab, columns, original_tabs.downloadURL)
-    if tab.name in ['R3_']: #only transforming tab R3_ for now
+    if tab.name in ['R3']: #only transforming tab R3_ for now
         print(tab.name)
               
         remove_notes = tab.filter(contains_string('Notes')).shift(LEFT).expand(DOWN).expand(RIGHT)
         ons_geo = tab.excel_ref('A3').fill(DOWN).is_not_blank() - remove_notes # "-" suppressed in geography code to be processed in stage-2 transformation
         period = tab.excel_ref('A1').is_not_blank() #period can be extracted from this cell 
-        sheet_name = tab.name
+#         sheet_name = tab.name
 #         savepreviewhtml(period, fname= tab.name + "PREVIEW.html")
         
         accomodation_secured = tab.excel_ref('D3').expand(RIGHT)
         observations = tab.excel_ref('D4').expand(DOWN).expand(RIGHT).is_not_blank() - remove_notes
-#         savepreviewhtml(observations, fname= tab.name + "PREVIEW.html")
+#         savepreviewhtml(accomodation_secured, fname= tab.name + "PREVIEW.html")
         dimensions = [
             HDim(ons_geo,'ONS Geography Code',DIRECTLY,LEFT),
             HDim(period,'Period',CLOSEST,ABOVE),
@@ -1522,11 +1531,11 @@ for tab in tabs:
     if tab.name in ['MD3']: #only transforming tab MD3 for now
         print(tab.name)
               
-        remove_notes = tab.filter(contains_string('Notes')).expand(DOWN).expand(RIGHT)
+        remove_notes = tab.filter(contains_string('From July 2002, "Young applicant" ')).shift(LEFT).expand(DOWN).expand(RIGHT)
         ons_geo = tab.excel_ref('A3').fill(DOWN).is_not_blank() - remove_notes # "-" suppressed in geography code to be processed in stage-2 transformation
         period = tab.excel_ref('A1').is_not_blank() #period can be extracted from this cell 
         sheet_name = tab.name
-#         savepreviewhtml(period, fname= tab.name + "PREVIEW.html")
+#         savepreviewhtml(remove_notes, fname= tab.name + "PREVIEW.html")
         households_by_priority = tab.excel_ref('E3').expand(RIGHT)
         vulnerable_households = tab.excel_ref('E4').expand(RIGHT)
         observations = tab.excel_ref('E5').expand(DOWN).expand(RIGHT).is_not_blank() - remove_notes
@@ -1694,13 +1703,17 @@ for tab in tabs:
 #         savepreviewhtml(period, fname= tab.name + "PREVIEW.html")
 
         type_of_occupants_households = tab.excel_ref('E3').expand(RIGHT)
-        male_female = tab.excel_ref('E4').expand(RIGHT)
-        observations = tab.excel_ref('E5').expand(DOWN).expand(RIGHT).is_not_blank() - remove_notes
+        adult_and_children = tab.excel_ref('E4').expand(RIGHT)
+        adult_and_children_in_household = tab.excel_ref('E5').expand(RIGHT)
+        male_female = tab.excel_ref('E6').expand(RIGHT)
+        observations = tab.excel_ref('E7').expand(DOWN).expand(RIGHT).is_not_blank() - remove_notes
 #         savepreviewhtml(observations, fname= tab.name + "PREVIEW.html")
         dimensions = [
             HDim(ons_geo,'ONS Geography Code',DIRECTLY,LEFT),
             HDim(period,'Period',CLOSEST,ABOVE),
             HDim(type_of_occupants_households,'type_of_occupants_households',DIRECTLY, ABOVE),
+            HDim(adult_and_children,'adult_and_children',DIRECTLY, ABOVE),
+            HDim(adult_and_children_in_household,'adult_and_children_in_household',DIRECTLY, ABOVE),
             HDim(male_female,'male_female',DIRECTLY, ABOVE),
 #             HDimConst("sheet_name", sheet_name) #Might be handy to have for post processing when other tabs are running also 
         ]
@@ -1848,8 +1861,18 @@ df.drop(['households_by_priority', 'vulnerable_households'], axis=1, inplace=Tru
 #Sheet = TA1
 df.drop(['type_of_households', 'occupants_of_households'], axis=1, inplace=True)
 #Sheet = TA2
-df.drop(['type_of_occupants_households', 'male_female'], axis=1, inplace=True)
+df.drop(['type_of_occupants_households', 'adult_and_children', 'adult_and_children_in_household', 'male_female'], axis=1, inplace=True)
 
 df.rename(columns={'OBS' : 'Value', 'DATAMARKER' : 'Marker'}, inplace=True)
 df["Period"]= df["Period"].str.split(",", n = 1, expand = True)[1]
 df
+# -
+
+df = trace.combine_and_trace(datasetTitle, "combined_dataframe")
+
+#output cube and spec
+cubes.add_cube(scraper, df.drop_duplicates(), original_tabs.title)
+cubes.output_all()
+trace.render("spec_v1.html")
+
+

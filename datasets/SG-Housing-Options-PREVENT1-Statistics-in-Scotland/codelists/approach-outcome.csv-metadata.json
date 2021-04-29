@@ -82,16 +82,16 @@
                 "@id": "http://www.nationalarchives.gov.uk/doc/open-government-licence/version/3/"
             },
             "dc:creator": {
-                "@id": "https://www.gov.scot/about/how-government-is-run/directorates/housing-and-social-justice/"
+                "@id": "https://www.gov.scot/about/how-government-is-run/directorates/housing-and-social-justice"
             },
             "dc:publisher": {
-                "@id": "https://www.gov.scot/about/how-government-is-run/directorates/housing-and-social-justice/"
+                "@id": "https://www.gov.scot/about/how-government-is-run/directorates/housing-and-social-justice"
             },
             "dcat:contactPoint": {
                 "@id": "homelessness_statistics_inbox@gov.scot"
             },
             "dcat:landingPage": {
-                "@id": "https://www2.gov.scot/Topics/Statistics/Browse/Housing-Regeneration/RefTables/"
+                "@id": "https://www2.gov.scot/Topics/Statistics/Browse/Housing-Regeneration/RefTables"
             },
             "dc:issued": {
                 "@type": "dateTime",

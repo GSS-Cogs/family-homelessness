@@ -74,9 +74,10 @@
             "Approach Status": {
                 "description": "Current Status of Approach to Housing Options"
             },
-            "Percentage of Breakdown": {
+            "Percentage of Breakdown" : {
                 "description": "Percentage amount this observation occupies of the total of relevant observations",
-                "codelist": false
+                "attribute": "http://gss-data.org.uk/def/homelessness/property/dimension/percentage-of-breakdown",
+                "value": "http://gss-data.org.uk/def/homelessness/concept/percentage-of-breakdown/{percentage_of_breakdown}"
             }
         }
     },

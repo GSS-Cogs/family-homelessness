@@ -1,0 +1,5 @@
+Label,Notation,Parent Notation,Sort Priority
+All,all,,0
+Homeless Type reasons,homeless-type-reasons,,1
+Prevent type reasons,prevent-type-reasons,,2
+Other,other,,3

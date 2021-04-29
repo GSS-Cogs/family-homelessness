@@ -1,0 +1,26 @@
+Label,Notation,Parent Notation,Sort Priority
+All,all,,0
+Own property - LA tenancy,own-property-la-tenancy,,1
+Own property - RSL tenancy,own-property-rsl-tenancy,,2
+Own property - private rented tenancy,own-property-private-rented-tenancy,,3
+Own property - tenancy secured through employment / tied house,own-property-tenancy-secured-through-employment-/-tied-house,,4
+Own property - owning / buying,own-property-owning-/-buying,,5
+Own property - Shared ownership / Shared equity / LCHO,own-property-shared-ownership-/-shared-equity-/-lcho,,6
+Parental / family home / relatives,parental-/-family-home-/-relatives,,7
+Friends / partners,friends-/-partners,,8
+Lodger,lodger,,9
+Armed services accommodation,armed-services-accommodation,,10
+Prison,prison,,11
+Hospital,hospital,,12
+Children's residential accommodation (looked after by the local authority),children-s-residential-accommodation-looked-after-by-the-local-authority,,13
+Shared Property – Private Rented Sector,shared-property-private-rented-sector,,14
+Shared Property – Local authority,shared-property-local-authority,,15
+Shared Property - RSL,shared-property-rsl,,16
+Supported accommodation,supported-accommodation,,17
+Hostel (unsupported),hostel-unsupported,,18
+Bed & Breakfast,bed-breakfast,,19
+Caravan / mobile home,caravan-/-mobile-home,,20
+Long-term roofless,long-term-roofless,,21
+Long-term sofa-surfing,long-term-sofa-surfing,,22
+Not known / refused,not-known-/-refused,,23
+Other,other,,24

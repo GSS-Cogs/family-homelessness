@@ -1,0 +1,9 @@
+Label,Notation,Parent Notation,Sort Priority
+All,all,,0
+LA/RSL Tenancy,la/rsl-tenancy,,1
+PRS Tenancy,prs-tenancy,,2
+Moved-in with friends/ relatives,moved-in-with-friends/-relatives,,3
+Lost Contact/ Not known,lost-contact/-not-known,,4
+Remained in current accommodation,remained-in-current-accommodation,,5
+Made homelessness application to local authority,made-homelessness-application-to-local-authority,,6
+Other (known),other-known,,7

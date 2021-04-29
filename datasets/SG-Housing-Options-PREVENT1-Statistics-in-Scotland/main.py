@@ -1,14 +1,25 @@
-# -*- coding: utf-8 -*-
-# # SG Housing Options  PREVENT1  Statistics in Scotland 
+#!/usr/bin/env python
+# coding: utf-8
 
-# +
+# In[575]:
+
+
+# -*- coding: utf-8 -*-
+# # SG Housing Options  PREVENT1  Statistics in Scotland
+
+
+# In[576]:
+
+
 import pandas as pd
 import numpy as np
-import json 
+import json
 
-from gssutils import * 
+from gssutils import *
 
-# -
+
+# In[577]:
+
 
 infoFileName = 'info.json'
 info    = json.load(open(infoFileName))
@@ -17,6 +28,10 @@ cubes   = Cubes(infoFileName)
 scraper.dataset.family = info['families']
 
 scraper
+
+
+# In[578]:
+
 
 scraper.distribution(latest=True)
 
@@ -37,44 +52,82 @@ def wrap(tab: xypath.xypath.Table, x_bag: xypath.xypath.Bag, y_bag: xypath.xypat
 
 df = pd.DataFrame()
 
-# +
+
+# In[579]:
+
+
 # Table 1
 tab = ws['Table 1']
 
 geographies = tab.filter('a) Number').shift(DOWN).expand(DOWN).is_not_blank() - tab.filter('b) Percentage').expand(DOWN)
 period = tab.filter('Number').shift(LEFT).expand(LEFT).is_not_blank()
 values = geographies.waffle(period)
+tmp_dfCount = wrap(tab=tab, x_bag=period, x_name='period', y_bag=geographies, y_name='geography', val_bag=values)
+tmp_dfCount['unit'] = 'household'
 
-tmp_df = wrap(tab=tab, x_bag=period, x_name='period', y_bag=geographies, y_name='geography', val_bag=values)
+geographies = tab.filter('b) Percentage').shift(DOWN).expand(DOWN).is_not_blank()
+values = geographies.waffle(period)
+tmp_dfPercent = wrap(tab=tab, x_bag=period, x_name='period', y_bag=geographies, y_name='geography', val_bag=values)
+tmp_dfPercent['OBS'] = tmp_dfPercent['OBS'].apply(lambda x: round(x*100))
+tmp_dfPercent = tmp_dfPercent.rename(columns={'OBS' : 'Percentage of Breakdown'})
+tmp_dfPercent = tmp_dfPercent.drop(columns=['measure'])
 
-tmp_df['period'] = tmp_df['period'].apply(lambda x: f"/id/government-year/{x[:4]}-20{x[-2:]}")
-tmp_df['measure'] = 'Households making PREVENT1 approaches'
+tmp_df = pd.merge(tmp_dfCount, tmp_dfPercent, how="left", on=['geography', 'period'])
+
+tmp_df['period'] = tmp_df['period'].apply(lambda x: f"government-year/{x[:4]}-20{x[-2:]}")
+tmp_df['measure'] = 'approaches'
+
+tmp_df['tab'] = tab.name
 
 df = df.append(tmp_df, ignore_index=True, sort=False)
 
-del tab, geographies, period, values, tmp_df
+del tab, geographies, period, values, tmp_df, tmp_dfCount, tmp_dfPercent
 
-# +
+
+# In[580]:
+
+
 # Table 2: Unique households making PREVENT1 approaches, 2019/20
 tab = ws['Table 2']
 
 geographies = tab.filter('Scotland').expand(DOWN).is_not_blank()
-drop = tab.filter('Unique household approaches').shift(DOWN)
+drop = tab.filter('Unique household approaches').expand(RIGHT).shift(DOWN)
 values = geographies.waffle(drop)
 
 tmp_df = wrap(tab=tab, x_bag=drop, x_name='drop', y_bag=geographies, y_name='geography', val_bag=values)
 
-tmp_df['period'] = tmp_df['measure'].apply(lambda x: f"/id/government-year/{x[-7:-3]}-20{x[-2:]}")
-tmp_df['measure'] = 'Unique households making PREVENT1 approaches'
-tmp_df.drop('drop', axis=1, inplace=True)
+tmp_df['period'] = tmp_df['measure'].apply(lambda x: f"government-year/{x[-7:-3]}-20{x[-2:]}")
+
+replace = {'Number' : 'Unique approaches',
+           'Rate per 1,000 population' : 'Rate of Approaches per 1,000 households'}
+
+indexNames = tmp_df[ tmp_df['drop'] == 'As proportion of Scotland' ].index
+tmp_df.drop(indexNames, inplace = True)
+tmp_df.drop('measure', axis=1, inplace=True)
+tmp_df = tmp_df.rename(columns={'drop' : 'measure'})
+tmp_df = tmp_df.assign(measure= tmp_df['measure'].map(replace))
+tmp_df['unit'] = tmp_df.apply(lambda x: 'rate' if 'Rate' in x['measure'] else 'household', axis = 1)
+
+geographies = tab.filter('Scotland').expand(DOWN).is_not_blank()
+drop = tab.filter('Rate per 1,000 population').shift(LEFT)
+values = geographies.waffle(drop)
+tmp_dfPercent = wrap(tab=tab, x_bag=drop, x_name='drop', y_bag=geographies, y_name='geography', val_bag=values)
+tmp_dfPercent = tmp_dfPercent.drop(columns=['drop', 'measure'])
+tmp_dfPercent['OBS'] = tmp_dfPercent['OBS'].apply(lambda x: round(x*100))
+tmp_dfPercent = tmp_dfPercent.rename(columns={'OBS' : 'Percentage of Breakdown'})
+
+tmp_df = pd.merge(tmp_df, tmp_dfPercent, how="left", on=['geography'])
+
+tmp_df['tab'] = tab.name
 
 df = df.append(tmp_df, ignore_index=True, sort=False)
 
 del tab, geographies, drop, values, tmp_df
 
 
+# In[581]:
 
-# +
+
 # Table 3: Number of PREVENT1 approaches made by households, 2019/20
 tab = ws['Table 3']
 
@@ -82,20 +135,40 @@ geographies = tab.filter('a) Number').shift(DOWN).expand(DOWN).is_not_blank() - 
 approaches = tab.filter('b) Percentage').shift(DOWN).shift(DOWN).shift(LEFT).expand(LEFT).is_not_blank()
 values = geographies.waffle(approaches)
 
-tmp_df = wrap(tab=tab, x_bag=approaches, x_name='approaches', y_bag=geographies, y_name='geography', val_bag=values)
+tmp_dfCount = wrap(tab=tab, x_bag=approaches, x_name='approaches', y_bag=geographies, y_name='geography', val_bag=values)
+tmp_dfCount['period'] = tmp_dfCount['measure'].apply(lambda x: f"government-year/{x[-7:-3]}-20{x[-2:]}")
+tmp_dfCount['measure'] = 'approaches'
+tmp_dfCount['unit'] = 'household'
 
-tmp_df['period'] = tmp_df['measure'].apply(lambda x: f"/id/government-year/{x[-7:-3]}-20{x[-2:]}")
-tmp_df['measure'] = tmp_df['approaches']
-tmp_df.drop('approaches', axis=1, inplace=True)
+approaches = tab.filter('b) Percentage').shift(DOWN).shift(DOWN).expand(RIGHT).is_not_blank()
+values = geographies.waffle(approaches)
 
-tmp_df['marker'] = 'Figures have been rounded to the nearest 5 for disclosure control purposes'
+tmp_dfPercent = wrap(tab=tab, x_bag=approaches, x_name='approaches', y_bag=geographies, y_name='geography', val_bag=values)
+tmp_dfPercent['period'] = tmp_dfPercent['measure'].apply(lambda x: f"government-year/{x[-7:-3]}-20{x[-2:]}")
+tmp_dfPercent['OBS'] = tmp_dfPercent['OBS'].apply(lambda x: round(x*100))
+tmp_dfPercent = tmp_dfPercent.rename(columns={'OBS' : 'Percentage of Breakdown'})
+tmp_dfPercent = tmp_dfPercent.drop(columns=['measure'])
+
+tmp_df = pd.merge(tmp_dfCount, tmp_dfPercent, how="left", on=['geography', 'period', 'approaches'])
+
+replace = {'Households making one approach only' : '1',
+           'Households making two approaches only' : '2',
+           'Households making three or more approaches' : '3 plus',
+           'All' : 'All'}
+
+tmp_df = tmp_df.assign(approaches= tmp_df['approaches'].map(replace))
+tmp_df = tmp_df.rename(columns={'approaches' : 'number of approaches'})
+
+tmp_df['tab'] = tab.name
 
 df = df.append(tmp_df, ignore_index=True, sort=False)
 
-del tab, geographies, approaches, values, tmp_df
+del tab, geographies, approaches, values, tmp_df, tmp_dfCount, tmp_dfPercent
 
 
-# +
+# In[582]:
+
+
 # Table 4: Number of open PREVENT1 approaches as at 31st March, 2015 to 2020
 tab = ws['Table 4']
 
@@ -103,18 +176,37 @@ geographies = tab.filter('a) Number').shift(DOWN).expand(DOWN).is_not_blank() - 
 period = tab.filter('Number').shift(LEFT).expand(LEFT).is_not_blank()
 values = geographies.waffle(period)
 
-tmp_df = wrap(tab=tab, x_bag=period, x_name='period', y_bag=geographies, y_name='geography', val_bag=values)
+tmp_dfCount = wrap(tab=tab, x_bag=period, x_name='period', y_bag=geographies, y_name='geography', val_bag=values)
 
 # This is a specific measurement date
-tmp_df['period'] = tmp_df['period'].apply(lambda x: f"/id/date/{x[:4]}-03-31")
+tmp_dfCount['period'] = tmp_dfCount['period'].apply(lambda x: f"day/{x[:4]}-03-31")
+tmp_dfCount['measure'] = 'approaches'
+tmp_dfCount['unit'] = 'household'
 
-tmp_df['marker'] = 'Figures have been rounded to the nearest 5 for disclosure control purposes'
+geographies = tab.filter('b) Percentage').shift(DOWN).expand(DOWN).is_not_blank()
+values = geographies.waffle(period)
+
+tmp_dfPercent = wrap(tab=tab, x_bag=period, x_name='period', y_bag=geographies, y_name='geography', val_bag=values)
+
+tmp_dfPercent['period'] = tmp_dfPercent['period'].apply(lambda x: f"day/{x[:4]}-03-31")
+tmp_dfPercent['OBS'] = tmp_dfPercent['OBS'].apply(lambda x: round(x*100))
+tmp_dfPercent = tmp_dfPercent.rename(columns={'OBS' : 'Percentage of Breakdown'})
+tmp_dfPercent = tmp_dfPercent.drop(columns=['measure'])
+
+tmp_df = pd.merge(tmp_dfCount, tmp_dfPercent, how="left", on=['geography', 'period'])
+
+tmp_df['approach status'] = 'open'
+
+tmp_df['tab'] = tab.name
 
 df = df.append(tmp_df, ignore_index=True, sort=False)
 
-del tab, geographies, period, values, tmp_df
+del tab, geographies, period, values, tmp_df, tmp_dfCount, tmp_dfPercent
 
-# +
+
+# In[583]:
+
+
 # Table 5: Number of PREVENT1 approaches by property of applicant, 2014/15 to 2019/20
 tab = ws['Table 5']
 
@@ -122,22 +214,35 @@ properties = tab.filter('a) Number').shift(DOWN).expand(DOWN).is_not_blank() - t
 period = tab.filter('Number').shift(LEFT).expand(LEFT).is_not_blank()
 values = properties.waffle(period)
 
-tmp_df = wrap(tab=tab, x_bag=period, x_name='period', y_bag=properties, y_name='properties', val_bag=values)
+tmp_dfCount = wrap(tab=tab, x_bag=period, x_name='period', y_bag=properties, y_name='properties', val_bag=values)
 
-# Date format
-tmp_df['period'] = tmp_df['measure'].apply(lambda x: f"/id/government-year/{x[-7:-3]}-20{x[-2:]}")
+tmp_dfCount['measure'] = 'approaches'
+tmp_dfCount['unit'] = 'household'
 
-# Clear up the measure a bit
-tmp_df['measure'] = 'Number of PREVENT1 approaches'
+properties = tab.filter('b) Percentage').shift(DOWN).expand(DOWN).is_not_blank()
+values = properties.waffle(period)
+
+tmp_dfPercent = wrap(tab=tab, x_bag=period, x_name='period', y_bag=properties, y_name='properties', val_bag=values)
+tmp_dfPercent['OBS'] = tmp_dfPercent['OBS'].apply(lambda x: round(x*100))
+tmp_dfPercent = tmp_dfPercent.rename(columns={'OBS' : 'Percentage of Breakdown'})
+tmp_dfPercent = tmp_dfPercent.drop(columns=['measure'])
+
+tmp_df = pd.merge(tmp_dfCount, tmp_dfPercent, how="left", on=['period', 'properties'])
 
 # Geography is Scotland-wide
 tmp_df['geography'] = 'Scotland'
+tmp_df['period'] = tmp_df['period'].apply(lambda x: f"government-year/{x}")
+
+tmp_df['tab'] = tab.name
 
 df = df.append(tmp_df, ignore_index=True, sort=False)
 
-del tab, properties, period, values, tmp_df
+del tab, properties, period, values, tmp_df, tmp_dfCount, tmp_dfPercent
 
-# +
+
+# In[584]:
+
+
 # Table 6: Reason for PREVENT1 approach, 2014/15 to 2019/20
 # This one is nested, so have to do it the old way
 tab = ws['Table 6']
@@ -154,23 +259,44 @@ dimensions = [
     HDimConst('measure', tab.excel_ref('A1').value)
 ]
 
-tmp_df = ConversionSegment(values, dimensions).topandas()
+tmp_dfCount = ConversionSegment(values, dimensions).topandas()
 
-# Date format
-tmp_df['period'] = tmp_df['period'].apply(lambda x: f"/id/government-year/{x[-7:-3]}-20{x[-2:]}")
+tmp_dfCount['period'] = tmp_dfCount['period'].apply(lambda x: f"government-year/{x[-7:-3]}-20{x[-2:]}")
+tmp_dfCount['measure'] = 'approaches'
+tmp_dfCount['unit'] = 'household'
 
-# Clean up the measure a bit
-tmp_df['measure'] = 'Reason for PREVENT1 approach'
+reasons = tab.filter('b) Percentage').shift(DOWN).expand(DOWN).is_not_blank()
+values = reasons.waffle(period)
+headers = (tab.filter('All') | tab.filter('Homeless Type reasons') | tab.filter('Prevent type reasons') | tab.filter('Other')) - tab.filter('b) Percentage').expand(UP)
 
-# Marker
-tmp_df['marker'] = 'Figures have been rounded to the nearest 5 for disclosure control purposes'
+dimensions = [
+    HDim(reasons, 'reason', DIRECTLY, LEFT),
+    HDim(period, 'period', DIRECTLY, ABOVE),
+    HDim(headers, 'reason classification', CLOSEST, ABOVE),
+    HDimConst('measure', tab.excel_ref('A1').value)
+]
+
+tmp_dfPercent = ConversionSegment(values, dimensions).topandas()
+
+tmp_dfPercent['period'] = tmp_dfPercent['period'].apply(lambda x: f"government-year/{x[-7:-3]}-20{x[-2:]}")
+tmp_dfPercent['OBS'] = tmp_dfPercent['OBS'].apply(lambda x: round(x*100))
+tmp_dfPercent = tmp_dfPercent.rename(columns={'OBS' : 'Percentage of Breakdown'})
+tmp_dfPercent = tmp_dfPercent.drop(columns=['measure'])
+
+tmp_df = pd.merge(tmp_dfCount, tmp_dfPercent, how="left", on=['period', 'reason', 'reason classification'])
+
+tmp_df['geography'] = 'Scotland'
+
+tmp_df['tab'] = tab.name
 
 df = df.append(tmp_df, ignore_index=True, sort=False)
 
-del tmp_df, tab, reasons, period, values, headers, dimensions
+del tmp_df, tab, reasons, period, values, headers, dimensions, tmp_dfCount, tmp_dfPercent
 
 
-# +
+# In[585]:
+
+
 # Table 7: Reason for PREVENT1 approach by local authority, 2019/20
 tab = ws['Table 7']
 
@@ -178,25 +304,34 @@ geography = tab.filter('a) Number').shift(DOWN).expand(DOWN).is_not_blank() - ta
 reason = tab.filter('a) Number').shift(DOWN).shift(DOWN).expand(RIGHT).is_not_blank()
 values = geography.waffle(reason)
 
-tmp_df = wrap(tab=tab, x_bag=reason, x_name='reason', y_bag=geography, y_name='geography', val_bag=values)
+tmp_dfCount = wrap(tab=tab, x_bag=reason, x_name='reason', y_bag=geography, y_name='geography', val_bag=values)
 
-# Date format
-tmp_df['period'] = tmp_df['measure'].apply(lambda x: f"/id/government-year/{x[-7:-3]}-20{x[-2:]}")
+tmp_dfCount['period'] = tmp_dfCount['measure'].apply(lambda x: f"government-year/{x[-7:-3]}-20{x[-2:]}")
+tmp_dfCount['measure'] = 'approaches'
+tmp_dfCount['unit'] = 'household'
 
-# Clear up the measure a bit
-tmp_df['measure'] = 'Reason of PREVENT1 approaches'
+geography = tab.filter('b) Percentage').shift(DOWN).expand(DOWN).is_not_blank() - tab.filter('Note: Figures have been rounded to the nearest 5 for disclosure control purposes.').expand(UP)
+values = geography.waffle(reason)
 
-# Geography is Scotland-wide
-tmp_df['geography'] = 'Scotland'
+tmp_dfPercent = wrap(tab=tab, x_bag=reason, x_name='reason', y_bag=geography, y_name='geography', val_bag=values)
 
-# Marker
-tmp_df['marker'] = 'Figures have been rounded to the nearest 5 for disclosure control purposes'
+tmp_dfPercent['period'] = tmp_dfPercent['measure'].apply(lambda x: f"government-year/{x[-7:-3]}-20{x[-2:]}")
+tmp_dfPercent['OBS'] = tmp_dfPercent['OBS'].apply(lambda x: round(x*100))
+tmp_dfPercent = tmp_dfPercent.rename(columns={'OBS' : 'Percentage of Breakdown'})
+tmp_dfPercent = tmp_dfPercent.drop(columns=['measure'])
+
+tmp_df = pd.merge(tmp_dfCount, tmp_dfPercent, how="left", on=['geography', 'period', 'reason'])
+
+tmp_df['tab'] = tab.name
 
 df = df.append(tmp_df, ignore_index=True, sort=False)
 
-del tab, geography, reason, values, tmp_df
+del tab, geography, reason, values, tmp_df, tmp_dfCount, tmp_dfPercent
 
-# +
+
+# In[586]:
+
+
 # Table 8: Number of PREVENT1 approaches by property of applicant, 2014/15 to 2019/20
 tab = ws['Table 8']
 
@@ -204,22 +339,37 @@ prevention = tab.filter('a) Number').shift(DOWN).expand(DOWN).is_not_blank() - t
 period = tab.filter('Number').shift(LEFT).expand(LEFT).is_not_blank()
 values = prevention.waffle(period)
 
-tmp_df = wrap(tab=tab, x_bag=period, x_name='period', y_bag=prevention, y_name='prevention', val_bag=values)
+tmp_dfCount = wrap(tab=tab, x_bag=period, x_name='period', y_bag=prevention, y_name='prevention', val_bag=values)
 
-# Date format
-tmp_df['period'] = tmp_df['period'].apply(lambda x: f"/id/government-year/{x[-7:-3]}-20{x[-2:]}")
+tmp_dfCount['period'] = tmp_dfCount['period'].apply(lambda x: f"government-year/{x[-7:-3]}-20{x[-2:]}")
 
-# Clear up the measure a bit
-tmp_df['measure'] = 'Prevention activities carried out'
+tmp_dfCount['measure'] = 'count'
+tmp_dfCount['unit'] = 'prevention activity'
 
-# Geography is Scotland-wide
+prevention = tab.filter('b) Percentage').shift(DOWN).expand(DOWN).is_not_blank() - tab.filter('Note: Applicants may select multiple responses, which is why total figures are greater than the number of approaches').expand(UP)
+values = prevention.waffle(period)
+
+tmp_dfPercent = wrap(tab=tab, x_bag=period, x_name='period', y_bag=prevention, y_name='prevention', val_bag=values)
+
+tmp_dfPercent['period'] = tmp_dfPercent['period'].apply(lambda x: f"government-year/{x[-7:-3]}-20{x[-2:]}")
+tmp_dfPercent['OBS'] = tmp_dfPercent['OBS'].apply(lambda x: round(x*100))
+tmp_dfPercent = tmp_dfPercent.rename(columns={'OBS' : 'Percentage of Breakdown'})
+tmp_dfPercent = tmp_dfPercent.drop(columns=['measure'])
+
+tmp_df = pd.merge(tmp_dfCount, tmp_dfPercent, how="left", on=['period', 'prevention'])
+
 tmp_df['geography'] = 'Scotland'
+
+tmp_df['tab'] = tab.name
 
 df = df.append(tmp_df, ignore_index=True, sort=False)
 
-del tab, prevention, period, values, tmp_df
+del tab, prevention, period, values, tmp_df, tmp_dfCount, tmp_dfPercent
 
-# +
+
+# In[587]:
+
+
 # Table 9: Prevention activities carried out by local authority, 2019/20
 tab = ws['Table 9']
 
@@ -227,48 +377,74 @@ geography = tab.filter('a) Number').shift(DOWN).expand(DOWN).is_not_blank() - ta
 prevention = tab.filter('a) Number').shift(DOWN).shift(DOWN).expand(RIGHT).is_not_blank()
 values = geography.waffle(prevention)
 
-tmp_df = wrap(tab=tab, x_bag=prevention, x_name='prevention', y_bag=geography, y_name='geography', val_bag=values)
+tmp_dfCount = wrap(tab=tab, x_bag=prevention, x_name='prevention', y_bag=geography, y_name='geography', val_bag=values)
 
-# Date format
-tmp_df['period'] = tmp_df['measure'].apply(lambda x: f"/id/government-year/{x[-7:-3]}-20{x[-2:]}")
+tmp_dfCount['period'] = tmp_dfCount['measure'].apply(lambda x: f"government-year/{x[-7:-3]}-20{x[-2:]}")
+tmp_dfCount['measure'] = 'count'
+tmp_dfCount['unit'] = 'prevention activity'
 
-# Clear up the measure a bit
-tmp_df['measure'] = 'Prevention activities carried out'
+geography = tab.filter('b) Percentage').shift(DOWN).expand(DOWN).is_not_blank() - tab.filter('Note: Figures have been rounded to the nearest 5 for disclosure control purposes.').expand(UP)
+values = geography.waffle(prevention)
 
-# Marker
-tmp_df['marker'] = 'Figures have been rounded to the nearest 5 for disclosure control purposes'
+tmp_dfPercent = wrap(tab=tab, x_bag=prevention, x_name='prevention', y_bag=geography, y_name='geography', val_bag=values)
+
+tmp_dfPercent['period'] = tmp_dfPercent['measure'].apply(lambda x: f"government-year/{x[-7:-3]}-20{x[-2:]}")
+tmp_dfPercent['OBS'] = tmp_dfPercent['OBS'].apply(lambda x: round(x*100))
+tmp_dfPercent = tmp_dfPercent.rename(columns={'OBS' : 'Percentage of Breakdown'})
+tmp_dfPercent = tmp_dfPercent.drop(columns=['measure'])
+
+tmp_df = pd.merge(tmp_dfCount, tmp_dfPercent, how="left", on=['geography', 'period', 'prevention'])
+
+indexNames = tmp_df[ tmp_df['geography'] == 'Scotland' ].index
+tmp_df.drop(indexNames, inplace = True)
+
+tmp_df['tab'] = tab.name
 
 df = df.append(tmp_df, ignore_index=True, sort=False)
 
-del tab, geography, prevention, values, tmp_df
+del tab, geography, prevention, values, tmp_df, tmp_dfCount, tmp_dfPercent
 
-# +
+
+# In[588]:
+
+
 # Table 10: Organisation carrying out prevention activities, 2014/15 to 2019/20
 tab = ws['Table 10']
 
-organisation = tab.filter('a) Number').shift(DOWN).expand(DOWN).is_not_blank() - tab.filter('NNote: Figures have been rounded to the nearest 5 for disclosure control purposes.').expand(DOWN)
+organisation = tab.filter('a) Number').shift(DOWN).expand(DOWN).is_not_blank() - tab.filter('Note: Figures have been rounded to the nearest 5 for disclosure control purposes.').expand(DOWN)
 period = tab.filter('Number').shift(LEFT).expand(LEFT).is_not_blank()
 values = organisation.waffle(period)
 
-tmp_df = wrap(tab=tab, x_bag=period, x_name='period', y_bag=organisation, y_name='organisation', val_bag=values)
+tmp_dfCount = wrap(tab=tab, x_bag=period, x_name='period', y_bag=organisation, y_name='organisation involved', val_bag=values)
 
-# Date format
-tmp_df['period'] = tmp_df['period'].apply(lambda x: f"/id/government-year/{x[-7:-3]}-20{x[-2:]}")
+tmp_dfCount['period'] = tmp_dfCount['period'].apply(lambda x: f"government-year/{x[-7:-3]}-20{x[-2:]}")
+tmp_dfCount['measure'] = 'count'
+tmp_dfCount['unit'] = 'prevention activity'
 
-# Clear up the measure a bit
-tmp_df['measure'] = 'Organisation carrying out prevention activites'
+organisation = tab.filter('b) Percentage').shift(DOWN).expand(DOWN).is_not_blank() - tab.filter('Note: Figures have been rounded to the nearest 5 for disclosure control purposes.').expand(UP)
+values = organisation.waffle(period)
 
-# Geography is Scotland-wide
+tmp_dfPercent = wrap(tab=tab, x_bag=period, x_name='period', y_bag=organisation, y_name='organisation involved', val_bag=values)
+
+tmp_dfPercent['period'] = tmp_dfPercent['period'].apply(lambda x: f"government-year/{x[-7:-3]}-20{x[-2:]}")
+tmp_dfPercent['OBS'] = tmp_dfPercent['OBS'].apply(lambda x: round(x*100))
+tmp_dfPercent = tmp_dfPercent.rename(columns={'OBS' : 'Percentage of Breakdown'})
+tmp_dfPercent = tmp_dfPercent.drop(columns=['measure'])
+
+tmp_df = pd.merge(tmp_dfCount, tmp_dfPercent, how="left", on=['period', 'organisation involved'])
+
 tmp_df['geography'] = 'Scotland'
 
-# Marker
-tmp_df['marker'] = 'Figures have been rounded to the nearest 5 for disclosure control purposes'
+tmp_df['tab'] = tab.name
 
 df = df.append(tmp_df, ignore_index=True, sort=False)
 
-del tab, organisation, period, values, tmp_df
+del tab, organisation, period, values, tmp_df, tmp_dfCount, tmp_dfPercent
 
-# +
+
+# In[589]:
+
+
 # Table 11: Maximum type of activity, 2014/15 to 2019/20
 tab = ws['Table 11']
 
@@ -276,22 +452,36 @@ activity_tier = tab.filter('a) Number').shift(DOWN).expand(DOWN).is_not_blank() 
 period = tab.filter('Number').shift(LEFT).expand(LEFT).is_not_blank()
 values = activity_tier.waffle(period)
 
-tmp_df = wrap(tab=tab, x_bag=period, x_name='period', y_bag=activity_tier, y_name='activity-tier', val_bag=values)
+tmp_dfCount = wrap(tab=tab, x_bag=period, x_name='period', y_bag=activity_tier, y_name='activity tier', val_bag=values)
 
-# Date format
-tmp_df['period'] = tmp_df['period'].apply(lambda x: f"/id/government-year/{x[-7:-3]}-20{x[-2:]}")
+tmp_dfCount['period'] = tmp_dfCount['period'].apply(lambda x: f"government-year/{x[-7:-3]}-20{x[-2:]}")
+tmp_dfCount['measure'] = 'approaches'
+tmp_dfCount['unit'] = 'household'
 
-# Clear up the measure a bit
-tmp_df['measure'] = 'maximum-activity-tier'
+activity_tier = tab.filter('b) Percentage').shift(DOWN).expand(DOWN).is_not_blank()
+values = activity_tier.waffle(period)
 
-# Geography is Scotland-wide
+tmp_dfPercent = wrap(tab=tab, x_bag=period, x_name='period', y_bag=activity_tier, y_name='activity tier', val_bag=values)
+
+tmp_dfPercent['period'] = tmp_dfPercent['period'].apply(lambda x: f"government-year/{x[-7:-3]}-20{x[-2:]}")
+tmp_dfPercent['OBS'] = tmp_dfPercent['OBS'].apply(lambda x: round(x*100))
+tmp_dfPercent = tmp_dfPercent.rename(columns={'OBS' : 'Percentage of Breakdown'})
+tmp_dfPercent = tmp_dfPercent.drop(columns=['measure'])
+
+tmp_df = pd.merge(tmp_dfCount, tmp_dfPercent, how="left", on=['period', 'activity tier'])
+
 tmp_df['geography'] = 'Scotland'
+
+tmp_df['tab'] = tab.name
 
 df = df.append(tmp_df, ignore_index=True, sort=False)
 
-del tab, activity_tier, period, values, tmp_df
+del tab, activity_tier, period, values, tmp_df, tmp_dfCount, tmp_dfPercent
 
-# +
+
+# In[590]:
+
+
 # Table 12: Maximum type of activity by local authority, 2019/20
 tab = ws['Table 12']
 
@@ -299,25 +489,35 @@ geography = tab.filter('a) Number').shift(DOWN).expand(DOWN).is_not_blank() - ta
 activity_tier = tab.filter('b) Percentage').shift(DOWN).shift(DOWN).shift(LEFT).expand(LEFT).is_not_blank()
 values = geography.waffle(activity_tier)
 
-tmp_df = wrap(tab=tab, x_bag=activity_tier, x_name='activity tier', y_bag=geography, y_name='geography', val_bag=values)
+tmp_dfCount = wrap(tab=tab, x_bag=activity_tier, x_name='activity tier', y_bag=geography, y_name='geography', val_bag=values)
 
-# Date format
-tmp_df['period'] = tmp_df['measure'].apply(lambda x: f"/id/government-year/{x[-7:-3]}-20{x[-2:]}")
+tmp_dfCount['period'] = tmp_dfCount['measure'].apply(lambda x: f"government-year/{x[-7:-3]}-20{x[-2:]}")
+tmp_dfCount['measure'] = 'approaches'
+tmp_dfCount['unit'] = 'household'
 
-# Clear up the measure a bit
-tmp_df['measure'] = 'maximum-activity-tier'
+geography = tab.filter('a) Number').shift(DOWN).expand(DOWN).is_not_blank() - tab.filter('Note: Figures have been rounded to the nearest 5 for disclosure control purposes.').expand(DOWN)
+activity_tier = tab.filter('b) Percentage').shift(0, 2).expand(RIGHT).is_not_blank()
+values = geography.waffle(activity_tier)
 
-# Geography is Scotland-wide
-tmp_df['geography'] = 'Scotland'
+tmp_dfPercent = wrap(tab=tab, x_bag=activity_tier, x_name='activity tier', y_bag=geography, y_name='geography', val_bag=values)
 
-# Marker
-tmp_df['marker'] = 'Figures have been rounded to the nearest 5 for disclosure control purposes'
+tmp_dfPercent['period'] = tmp_dfPercent['measure'].apply(lambda x: f"government-year/{x[-7:-3]}-20{x[-2:]}")
+tmp_dfPercent['OBS'] = tmp_dfPercent['OBS'].apply(lambda x: round(x*100))
+tmp_dfPercent = tmp_dfPercent.rename(columns={'OBS' : 'Percentage of Breakdown'})
+tmp_dfPercent = tmp_dfPercent.drop(columns=['measure'])
+
+tmp_df = pd.merge(tmp_dfCount, tmp_dfPercent, how="left", on=['geography', 'period', 'activity tier'])
+
+tmp_df['tab'] = tab.name
 
 df = df.append(tmp_df, ignore_index=True, sort=False)
 
-del tab, geography, activity_tier, values, tmp_df
+del tab, geography, activity_tier, values, tmp_df, tmp_dfCount, tmp_dfPercent
 
-# +
+
+# In[591]:
+
+
 # Table 13: Outcome of PREVENT1 approach, 2014/15 to 2019/20
 tab = ws['Table 13']
 
@@ -325,22 +525,37 @@ outcome = tab.filter('a) Number').shift(DOWN).expand(DOWN).is_not_blank() - tab.
 period = tab.filter('Number').shift(LEFT).expand(LEFT).is_not_blank()
 values = outcome.waffle(period)
 
-tmp_df = wrap(tab=tab, x_bag=period, x_name='period', y_bag=outcome, y_name='outcome', val_bag=values)
+tmp_dfCount = wrap(tab=tab, x_bag=period, x_name='period', y_bag=outcome, y_name='approach outcome', val_bag=values)
 
-# Date format
-tmp_df['period'] = tmp_df['period'].apply(lambda x: f"/id/government-year/{x[-7:-3]}-20{x[-2:]}")
+tmp_dfCount['period'] = tmp_dfCount['period'].apply(lambda x: f"government-year/{x[-7:-3]}-20{x[-2:]}")
+tmp_dfCount['measure'] = 'approaches'
+tmp_dfCount['unit'] = 'household'
 
-# Clear up the measure a bit
-tmp_df['measure'] = 'outcomes'
+outcome = tab.filter('b) Percentage').shift(DOWN).expand(DOWN).is_not_blank()
+values = outcome.waffle(period)
 
-# Geography is Scotland-wide
+tmp_dfPercent = wrap(tab=tab, x_bag=period, x_name='period', y_bag=outcome, y_name='approach outcome', val_bag=values)
+
+tmp_dfPercent['period'] = tmp_dfPercent['period'].apply(lambda x: f"government-year/{x[-7:-3]}-20{x[-2:]}")
+tmp_dfPercent['OBS'] = tmp_dfPercent['OBS'].apply(lambda x: round(x*100))
+tmp_dfPercent = tmp_dfPercent.rename(columns={'OBS' : 'Percentage of Breakdown'})
+tmp_dfPercent = tmp_dfPercent.drop(columns=['measure'])
+
+tmp_df = pd.merge(tmp_dfCount, tmp_dfPercent, how="left", on=['period', 'approach outcome'])
+
 tmp_df['geography'] = 'Scotland'
+tmp_df['approach status'] = 'closed'
+
+tmp_df['tab'] = tab.name
 
 df = df.append(tmp_df, ignore_index=True, sort=False)
 
-del tab, outcome, period, values, tmp_df
+del tab, outcome, period, values, tmp_df, tmp_dfCount, tmp_dfPercent
 
-# +
+
+# In[592]:
+
+
 # Table 14: Maximum type of activity by local authority, 2019/20
 tab = ws['Table 14']
 
@@ -348,25 +563,39 @@ geography = tab.filter('a) Number').shift(DOWN).expand(DOWN).is_not_blank() - ta
 outcome = tab.filter('a) Number').shift(DOWN).shift(DOWN).expand(RIGHT).is_not_blank()
 values = geography.waffle(outcome)
 
-tmp_df = wrap(tab=tab, x_bag=outcome, x_name='outcome', y_bag=geography, y_name='geography', val_bag=values)
+tmp_dfCount = wrap(tab=tab, x_bag=outcome, x_name='approach outcome', y_bag=geography, y_name='geography', val_bag=values)
 
-# Date format
-tmp_df['period'] = tmp_df['measure'].apply(lambda x: f"/id/government-year/{x[-7:-3]}-20{x[-2:]}")
+tmp_dfCount['period'] = tmp_dfCount['measure'].apply(lambda x: f"government-year/{x[-7:-3]}-20{x[-2:]}")
+tmp_dfCount['measure'] = 'approaches'
+tmp_dfCount['unit'] = 'household'
 
-# Clear up the measure a bit
-tmp_df['measure'] = 'outcomes'
+geography = tab.filter('b) Percentage').shift(DOWN).expand(DOWN).is_not_blank() - tab.filter('Note: Figures have been rounded to the nearest 5 for disclosure control purposes.').expand(UP)
+values = geography.waffle(outcome)
 
-# Geography is Scotland-wide
-tmp_df['geography'] = 'Scotland'
+tmp_dfPercent = wrap(tab=tab, x_bag=outcome, x_name='approach outcome', y_bag=geography, y_name='geography', val_bag=values)
 
-# Marker
-tmp_df['marker'] = 'Figures have been rounded to the nearest 5 for disclosure control purposes'
+tmp_dfPercent['period'] = tmp_dfPercent['measure'].apply(lambda x: f"government-year/{x[-7:-3]}-20{x[-2:]}")
+tmp_dfPercent['OBS'] = tmp_dfPercent['OBS'].apply(lambda x: round(x*100))
+tmp_dfPercent = tmp_dfPercent.rename(columns={'OBS' : 'Percentage of Breakdown'})
+tmp_dfPercent = tmp_dfPercent.drop(columns=['measure'])
+
+tmp_df = pd.merge(tmp_dfCount, tmp_dfPercent, how="left", on=['geography', 'period', 'approach outcome'])
+
+tmp_df['approach status'] = 'closed'
+
+indexNames = tmp_df[ tmp_df['geography'] == 'Scotland' ].index
+tmp_df.drop(indexNames, inplace = True)
+
+tmp_df['tab'] = tab.name
 
 df = df.append(tmp_df, ignore_index=True, sort=False)
 
 del tab, geography, outcome, values, tmp_df
 
-# +
+
+# In[593]:
+
+
 # Table 15: Average time taken (days) to complete PREVENT1 approach by local authority, 2019/20
 tab = ws['Table 15']
 
@@ -376,29 +605,54 @@ values = geography.waffle(period)
 
 tmp_df = wrap(tab=tab, x_bag=period, x_name='period', y_bag=geography, y_name='geography', val_bag=values)
 
-# Date format
-tmp_df['period'] = tmp_df['period'].apply(lambda x: f"/id/government-year/{x[-7:-3]}-20{x[-2:]}")
+tmp_df['measure'] = 'average time to resolve approach'
+tmp_df['unit'] = 'days'
 
-# Clear up the measure a bit
-tmp_df['measure'] = 'days to complete PREVENT1 approach'
+percent = {'2014/15' : 40,
+           '2015/16' : 82,
+           '2016/17' : 117,
+           '2017/18' : 150,
+           '2018/19' : 103,
+           '2019/20' : 105}
+tmp_df['percentage'] = tmp_df['period']
+tmp_df = tmp_df.assign(percentage= tmp_df['percentage'].map(percent))
+tmp_df['percentage'] = tmp_df.apply(lambda x: round((x['OBS']/x['percentage'])*100), axis = 1)
+
+#Theres probably a better way to do this but my brain is soup
+
+tmp_df['period'] = tmp_df['period'].apply(lambda x: f"government-year/{x[-7:-3]}-20{x[-2:]}")
+tmp_df = tmp_df.rename(columns={'percentage' : 'Percentage of Breakdown'})
+
+tmp_df['tab'] = tab.name
 
 df = df.append(tmp_df, ignore_index=True, sort=False)
 
 del tab, geography, period, values, tmp_df
-# -
+
+
+# In[594]:
+
 
 df
 
-# Column name formatting
-df.rename({'OBS': 'Value'}, axis=1, inplace=True)
-df.rename(columns=lambda x: pathify(x), inplace=True)
+
+# In[595]:
+
+
+df = df.rename(columns={'OBS': 'Value'})
+df = df.drop(columns = ['tab'])
+
+df = df.rename(columns=lambda x: pathify(x).replace('-', '_'))
+
+df = df.replace({'measure' : {'approaches' : 'cumulative-approaches'}})
 
 for col in df.columns:
-    if col != 'Value':
+    if col not in ['value', 'percentage_of_breakdown']:
         df[col] = df[col].astype('category')
 
 # Geograpy fix
-map = {
+mapping = {
+    'All': 'S04000001',
     'Scotland': 'S04000001',
     'Aberdeen City': 'S05000001',
     'Aberdeenshire': 'S05000002',
@@ -433,18 +687,113 @@ map = {
     'West Dunbartonshire': 'S05000027',
     'West Lothian': 'S05000028'
 }
-df['geography'].cat.rename_categories(lambda x: f"http://statistics.data.gov.uk/id/statistical-geography/{map[x]}", inplace=True)
+df = df.assign(geography = df['geography'].map(mapping))
 
-df.geography.value_counts()
+rep = {'NaN' : 'All'}
 
 for col in df.columns:
-    if col not in ('value','geography','period'):
-        df[col].cat.rename_categories(lambda x: pathify(x), inplace=True)
+    if col not in ['value', 'geography', 'percentage_of_breakdown']:
+        df[col] = df[col].cat.add_categories("NaN").fillna("NaN")
+
+df = df.replace({'NaN' : 'All'})
+
+df = df.rename({'period' : 'Period',
+           'geography' : 'Area',
+           'measure' : 'Measure Type',
+           'unit' : 'Unit',
+           'number_of_approaches' : 'Number of Approaches',
+           'approach_status' : 'Approach Status',
+           'properties' : 'Property of Applicant',
+           'reason' : 'Reason for Approach',
+           'reason_classification' : 'Reason Classification',
+           'prevention' : 'Prevention Activities Carried Out',
+           'organisation_involved' : 'Organisation Involved',
+           'activity_tier' : 'Prevention Activity Tier',
+           'approach_outcome' : 'Approach Outcome',
+           'percentage_of_breakdown' : 'Percentage of Breakdown',
+           'value' : 'Value'}, axis=1)
+
+df = df[['Period',
+         'Area',
+         'Reason for Approach',
+         'Reason Classification',
+         'Property of Applicant',
+         'Prevention Activities Carried Out',
+         'Prevention Activity Tier',
+         'Organisation Involved',
+         'Number of Approaches',
+         'Approach Outcome',
+         'Approach Status',
+         'Percentage of Breakdown',
+         'Value',
+         'Measure Type',
+         'Unit']]
+
+df
+
+
+# In[596]:
+
+
+out = Path('codelists')
+out.mkdir(exist_ok=True)
+
+CODELISTS = False
+
+if CODELISTS:
+    for col in df.columns:
+        if col not in ['Period', 'Area', 'Percentage of Breakdown', 'Measure Type', 'Unit', 'Value']:
+            dfcode = df[[col]].drop_duplicates()
+            dfcode['Notation'] = dfcode.apply(lambda x: pathify(x[col]), axis = 1)
+            dfcode = dfcode.rename(columns={dfcode.columns[0]: 'Label'})
+            dfcode['Parent Notation'] = ''
+            dfcode['Sort Priority'] = np.arange(dfcode.shape[0])
+            dfcode.drop_duplicates().to_csv(out / f'{pathify(col)}.csv', index = False)
+
+
+# In[597]:
+
+
+COLUMNS_TO_NOT_PATHIFY = ['Area', 'Percentage of Breakdown', 'Value']
+
+for col in df.columns.values.tolist():
+	if col in COLUMNS_TO_NOT_PATHIFY:
+		continue
+	try:
+		df[col] = df[col].apply(pathify)
+	except Exception as err:
+		raise Exception('Failed to pathify column "{}".'.format(col)) from err
+
+
+# In[598]:
+
+
+scraper.dataset.comment = 'Some Figures have been rounded to the nearest 5 for disclosure control purposes.'                           'The PREVENT1 data specification contains the core questions to be used in the monitoring of housing options work by local authorities.'                           'Applicants may select multiple responses, which is why total reason figures are greater than the number of approaches'
 
 # Add dataframe is in the cube
 cubes.add_cube(scraper, df, scraper.title)
 
+
+# In[599]:
+
+
 # Write cube
 cubes.output_all()
 
+
+# In[600]:
+
+
+from IPython.core.display import HTML
+for col in df:
+    if col not in ['Value']:
+        df[col] = df[col].astype('category')
+        display(HTML(f"<h2>{col}</h2>"))
+        display(df[col].cat.categories)
+
+
+# In[601]:
+
+
+df[['Measure Type', 'Unit']].drop_duplicates()
 

@@ -1,14 +1,14 @@
 #!/usr/bin/env python
 # coding: utf-8
 
-# In[1145]:
+# In[1172]:
 
 
 # -*- coding: utf-8 -*-
 # # SG Housing Options  PREVENT1  Statistics in Scotland
 
 
-# In[1146]:
+# In[1173]:
 
 
 import pandas as pd
@@ -18,7 +18,7 @@ import json
 from gssutils import *
 
 
-# In[1147]:
+# In[1174]:
 
 
 infoFileName = 'info.json'
@@ -30,7 +30,7 @@ scraper.dataset.family = info['families']
 scraper
 
 
-# In[1148]:
+# In[1175]:
 
 
 scraper.distribution(latest=True)
@@ -53,7 +53,7 @@ def wrap(tab: xypath.xypath.Table, x_bag: xypath.xypath.Bag, y_bag: xypath.xypat
 df = pd.DataFrame()
 
 
-# In[1149]:
+# In[1176]:
 
 
 # Table 1
@@ -84,7 +84,7 @@ df = df.append(tmp_df, ignore_index=True, sort=False)
 del tab, geographies, period, values, tmp_df, tmp_dfCount, tmp_dfPercent
 
 
-# In[1150]:
+# In[1177]:
 
 
 # Table 2: Unique households making PREVENT1 approaches, 2019/20
@@ -125,7 +125,7 @@ df = df.append(tmp_df, ignore_index=True, sort=False)
 del tab, geographies, drop, values, tmp_df
 
 
-# In[1151]:
+# In[1178]:
 
 
 # Table 3: Number of PREVENT1 approaches made by households, 2019/20
@@ -169,7 +169,7 @@ df = df.append(tmp_df, ignore_index=True, sort=False)
 del tab, geographies, approaches, values, tmp_df, tmp_dfCount, tmp_dfPercent
 
 
-# In[1152]:
+# In[1179]:
 
 
 # Table 4: Number of open PREVENT1 approaches as at 31st March, 2015 to 2020
@@ -207,7 +207,7 @@ df = df.append(tmp_df, ignore_index=True, sort=False)
 del tab, geographies, period, values, tmp_df, tmp_dfCount, tmp_dfPercent
 
 
-# In[1153]:
+# In[1180]:
 
 
 # Table 5: Number of PREVENT1 approaches by property of applicant, 2014/15 to 2019/20
@@ -246,7 +246,7 @@ df = df.append(tmp_df, ignore_index=True, sort=False)
 del tab, properties, period, values, tmp_df, tmp_dfCount, tmp_dfPercent
 
 
-# In[1154]:
+# In[1181]:
 
 
 # Table 6: Reason for PREVENT1 approach, 2014/15 to 2019/20
@@ -303,7 +303,7 @@ df = df.append(tmp_df, ignore_index=True, sort=False)
 del tmp_df, tab, reasons, period, values, headers, dimensions, tmp_dfCount, tmp_dfPercent
 
 
-# In[1155]:
+# In[1182]:
 
 
 # Table 7: Reason for PREVENT1 approach by local authority, 2019/20
@@ -341,7 +341,7 @@ df = df.append(tmp_df, ignore_index=True, sort=False)
 del tab, geography, reason, values, tmp_df, tmp_dfCount, tmp_dfPercent
 
 
-# In[1156]:
+# In[1183]:
 
 
 # Table 8: Number of PREVENT1 approaches by property of applicant, 2014/15 to 2019/20
@@ -379,7 +379,7 @@ df = df.append(tmp_df, ignore_index=True, sort=False)
 del tab, prevention, period, values, tmp_df, tmp_dfCount, tmp_dfPercent
 
 
-# In[1157]:
+# In[1184]:
 
 
 # Table 9: Prevention activities carried out by local authority, 2019/20
@@ -417,7 +417,7 @@ df = df.append(tmp_df, ignore_index=True, sort=False)
 del tab, geography, prevention, values, tmp_df, tmp_dfCount, tmp_dfPercent
 
 
-# In[1158]:
+# In[1185]:
 
 
 # Table 10: Organisation carrying out prevention activities, 2014/15 to 2019/20
@@ -457,7 +457,7 @@ df = df.append(tmp_df, ignore_index=True, sort=False)
 del tab, organisation, period, values, tmp_df, tmp_dfCount, tmp_dfPercent
 
 
-# In[1159]:
+# In[1186]:
 
 
 # Table 11: Maximum type of activity, 2014/15 to 2019/20
@@ -497,7 +497,7 @@ df = df.append(tmp_df, ignore_index=True, sort=False)
 del tab, activity_tier, period, values, tmp_df, tmp_dfCount, tmp_dfPercent
 
 
-# In[1160]:
+# In[1187]:
 
 
 # Table 12: Maximum type of activity by local authority, 2019/20
@@ -539,7 +539,7 @@ df = df.append(tmp_df, ignore_index=True, sort=False)
 del tab, geography, activity_tier, values, tmp_df, tmp_dfCount, tmp_dfPercent
 
 
-# In[1161]:
+# In[1188]:
 
 
 # Table 13: Outcome of PREVENT1 approach, 2014/15 to 2019/20
@@ -577,7 +577,7 @@ df = df.append(tmp_df, ignore_index=True, sort=False)
 del tab, outcome, period, values, tmp_df, tmp_dfCount, tmp_dfPercent
 
 
-# In[1162]:
+# In[1189]:
 
 
 # Table 14: Maximum type of activity by local authority, 2019/20
@@ -617,7 +617,7 @@ df = df.append(tmp_df, ignore_index=True, sort=False)
 del tab, geography, outcome, values, tmp_df
 
 
-# In[1163]:
+# In[1190]:
 
 
 # Table 15: Average time taken (days) to complete PREVENT1 approach by local authority, 2019/20
@@ -654,17 +654,17 @@ df = df.append(tmp_df, ignore_index=True, sort=False)
 del tab, geography, period, values, tmp_df
 
 
-# In[1164]:
+# In[1191]:
 
 
 df
 
 
-# In[1165]:
+# In[1192]:
 
 
 df = df.rename(columns={'OBS': 'Value'})
-#df = df.drop(columns = ['tab'])
+df = df.drop(columns = ['tab'])
 
 df = df.rename(columns=lambda x: pathify(x).replace('-', '_'))
 
@@ -737,7 +737,7 @@ df = df.rename({'period' : 'Period',
            'percentage_of_breakdown' : 'Percentage of Breakdown',
            'value' : 'Value'}, axis=1)
 
-df = df[['tab','Period',
+df = df[['Period',
          'Area',
          'Reason for Approach',
          'Reason Classification',
@@ -756,7 +756,7 @@ df = df[['tab','Period',
 df
 
 
-# In[1166]:
+# In[1193]:
 
 
 out = Path('codelists')
@@ -775,7 +775,7 @@ if CODELISTS:
             dfcode.drop_duplicates().to_csv(out / f'{pathify(col)}.csv', index = False)
 
 
-# In[1167]:
+# In[1194]:
 
 
 COLUMNS_TO_NOT_PATHIFY = ['Area', 'Percentage of Breakdown', 'Value']
@@ -789,7 +789,7 @@ for col in df.columns.values.tolist():
 		raise Exception('Failed to pathify column "{}".'.format(col)) from err
 
 
-# In[1168]:
+# In[1195]:
 
 
 scraper.dataset.comment = 'Some Figures have been rounded to the nearest 5 for disclosure control purposes.'                           'The PREVENT1 data specification contains the core questions to be used in the monitoring of housing options work by local authorities.'                           'Applicants may select multiple responses, which is why total reason figures are greater than the number of approaches'
@@ -798,14 +798,14 @@ scraper.dataset.comment = 'Some Figures have been rounded to the nearest 5 for d
 cubes.add_cube(scraper, df, scraper.title)
 
 
-# In[1169]:
+# In[1196]:
 
 
 # Write cube
 cubes.output_all()
 
 
-# In[1170]:
+# In[1197]:
 
 
 from IPython.core.display import HTML
@@ -814,31 +814,4 @@ for col in df:
         df[col] = df[col].astype('category')
         display(HTML(f"<h2>{col}</h2>"))
         display(df[col].cat.categories)
-
-
-# In[1171]:
-
-
-df = pd.read_csv("out/housing-options-prevent1-statistics-in-scotland.csv")
-df["all_dimensions_concatenated"] = ""
-for col in df.columns.values:
-    if col not in ["Value", "tab"]:
-        df["all_dimensions_concatenated"] = df["all_dimensions_concatenated"]+df[col].astype(str)
-found = []
-bad_combos = []
-for item in df["all_dimensions_concatenated"]:
-    if item not in found:
-        found.append(item)
-    else:
-        bad_combos.append(item)
-df = df[df["all_dimensions_concatenated"].map(lambda x: x in bad_combos)]
-drop_these_cols = []
-for col in df.columns.values:
-    if col != "all_dimensions_concatenated" and col not in ["Value", "tab"]:
-        drop_these_cols.append(col)
-for dtc in drop_these_cols:
-    df = df.drop(dtc, axis=1)
-df = df[["all_dimensions_concatenated", "tab", "Value"]]
-df = df.sort_values(by=['all_dimensions_concatenated'])
-df.to_csv("duplicates_with_values.csv", index=False)
 

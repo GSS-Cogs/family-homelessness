@@ -23,7 +23,7 @@ df = pd.DataFrame()
 cubes = Cubes("info.json")
 info = json.load(open('info.json')) 
 scraper = Scraper(seed = "info.json")
-scraper.distributions = [x for x in scraper.distributions if hasattr(x, "mediaType")] 
+# scraper.distributions = [x for x in scraper.distributions if hasattr(x, "mediaType")] 
 scraper
 
 
@@ -48,6 +48,7 @@ with original_tabs.open() as ods_obj:
 
 datasetTitle = original_tabs.title
 datasetTitle
+print(type(tabs))
 for tab in tabs:
     print(tab.name)
 
@@ -1633,7 +1634,7 @@ for tab in tabs:
         savepreviewhtml(tidy_sheet, fname= tab.name + "PREVIEW.html")
         trace.with_preview(tidy_sheet)
         trace.store("combined_dataframe", tidy_sheet.topandas())
-df = trace.combine_and_trace(datasetTitle, "combined_dataframe")
+# df = trace.combine_and_trace(datasetTitle, "combined_dataframe")
 
 #sheet:A1
 df.drop(['temp_assessment_duty_type_1', 'temp_assessment_duty_type_2', 'temp_assessment_duty_type_3'], axis=1, inplace=True)
@@ -1684,9 +1685,9 @@ df.drop(['house_holds_duty_ended', 'status'], axis=1, inplace=True)
 #Sheet = TA1
 df.drop(['households_by_priority', 'vulnerable_households'], axis=1, inplace=True)
 
-df.rename(columns={'OBS' : 'Value', 'DATAMARKER' : 'Marker'}, inplace=True)
+# df.rename(columns={'OBS' : 'Value', 'DATAMARKER' : 'Marker'}, inplace=True)
 df["Period"]= df["Period"].str.split(",", n = 1, expand = True)[1]
-df
+# df
 # +
 # Number of households in temporary accommodation by household composition England
 
@@ -1721,7 +1722,7 @@ for tab in tabs:
         savepreviewhtml(tidy_sheet, fname= tab.name + "PREVIEW.html")
         trace.with_preview(tidy_sheet)
         trace.store("combined_dataframe", tidy_sheet.topandas())
-df = trace.combine_and_trace(datasetTitle, "combined_dataframe")
+# df = trace.combine_and_trace(datasetTitle, "combined_dataframe")
 
 #sheet:A1
 df.drop(['temp_assessment_duty_type_1', 'temp_assessment_duty_type_2', 'temp_assessment_duty_type_3'], axis=1, inplace=True)
@@ -1774,9 +1775,9 @@ df.drop(['households_by_priority', 'vulnerable_households'], axis=1, inplace=Tru
 #Sheet = TA1
 df.drop(['type_of_households', 'occupants_of_households'], axis=1, inplace=True)
 
-df.rename(columns={'OBS' : 'Value', 'DATAMARKER' : 'Marker'}, inplace=True)
+# df.rename(columns={'OBS' : 'Value', 'DATAMARKER' : 'Marker'}, inplace=True)
 df["Period"]= df["Period"].str.split(",", n = 1, expand = True)[1]
-df
+# df
 
 # +
 # Number of households by duty under which temporary accommodation is provided England
@@ -1808,7 +1809,7 @@ for tab in tabs:
         savepreviewhtml(tidy_sheet, fname= tab.name + "PREVIEW.html")
         trace.with_preview(tidy_sheet)
         trace.store("combined_dataframe", tidy_sheet.topandas())
-df = trace.combine_and_trace(datasetTitle, "combined_dataframe")
+# df = trace.combine_and_trace(datasetTitle, "combined_dataframe")
 
 #sheet:A1
 df.drop(['temp_assessment_duty_type_1', 'temp_assessment_duty_type_2', 'temp_assessment_duty_type_3'], axis=1, inplace=True)
@@ -1863,16 +1864,18 @@ df.drop(['type_of_households', 'occupants_of_households'], axis=1, inplace=True)
 #Sheet = TA2
 df.drop(['type_of_occupants_households', 'adult_and_children', 'adult_and_children_in_household', 'male_female'], axis=1, inplace=True)
 
-df.rename(columns={'OBS' : 'Value', 'DATAMARKER' : 'Marker'}, inplace=True)
+# df.rename(columns={'OBS' : 'Value', 'DATAMARKER' : 'Marker'}, inplace=True)
 df["Period"]= df["Period"].str.split(",", n = 1, expand = True)[1]
-df
+# df
 # -
 
 df = trace.combine_and_trace(datasetTitle, "combined_dataframe")
 
-#output cube and spec
-cubes.add_cube(scraper, df.drop_duplicates(), original_tabs.title)
-cubes.output_all()
-trace.render("spec_v1.html")
+# #output cube and spec
+# cubes.add_cube(scraper, df.drop_duplicates(), original_tabs.title)
+# cubes.output_all()
+# trace.render("spec_v1.html")
+# pd.DataFrame(df).to_csv('final-output.csv')
+df.rename(columns={'OBS' : 'Value', 'DATAMARKER' : 'Marker'}, inplace=True)
 
-
+pd.DataFrame(df).to_csv('final-output.csv')

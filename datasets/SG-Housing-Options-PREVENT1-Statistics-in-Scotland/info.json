@@ -76,7 +76,7 @@
             },
             "Percentage of Breakdown" : {
                 "attribute": "http://gss-data.org.uk/def/homelessness/property/attribute/percentage-of-breakdown",
-                "value": "/{percentage_of_breakdown}"
+                "value": "{percentage_of_breakdown}"
             }
         }
     },

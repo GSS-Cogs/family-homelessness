@@ -1,14 +1,14 @@
 #!/usr/bin/env python
 # coding: utf-8
 
-# In[575]:
+# In[1145]:
 
 
 # -*- coding: utf-8 -*-
 # # SG Housing Options  PREVENT1  Statistics in Scotland
 
 
-# In[576]:
+# In[1146]:
 
 
 import pandas as pd
@@ -18,7 +18,7 @@ import json
 from gssutils import *
 
 
-# In[577]:
+# In[1147]:
 
 
 infoFileName = 'info.json'
@@ -30,7 +30,7 @@ scraper.dataset.family = info['families']
 scraper
 
 
-# In[578]:
+# In[1148]:
 
 
 scraper.distribution(latest=True)
@@ -53,7 +53,7 @@ def wrap(tab: xypath.xypath.Table, x_bag: xypath.xypath.Bag, y_bag: xypath.xypat
 df = pd.DataFrame()
 
 
-# In[579]:
+# In[1149]:
 
 
 # Table 1
@@ -84,7 +84,7 @@ df = df.append(tmp_df, ignore_index=True, sort=False)
 del tab, geographies, period, values, tmp_df, tmp_dfCount, tmp_dfPercent
 
 
-# In[580]:
+# In[1150]:
 
 
 # Table 2: Unique households making PREVENT1 approaches, 2019/20
@@ -125,7 +125,7 @@ df = df.append(tmp_df, ignore_index=True, sort=False)
 del tab, geographies, drop, values, tmp_df
 
 
-# In[581]:
+# In[1151]:
 
 
 # Table 3: Number of PREVENT1 approaches made by households, 2019/20
@@ -159,6 +159,9 @@ replace = {'Households making one approach only' : '1',
 tmp_df = tmp_df.assign(approaches= tmp_df['approaches'].map(replace))
 tmp_df = tmp_df.rename(columns={'approaches' : 'number of approaches'})
 
+indexNames = tmp_df[ (tmp_df['number of approaches'] == 'All') ].index
+tmp_df.drop(indexNames, inplace = True)
+
 tmp_df['tab'] = tab.name
 
 df = df.append(tmp_df, ignore_index=True, sort=False)
@@ -166,7 +169,7 @@ df = df.append(tmp_df, ignore_index=True, sort=False)
 del tab, geographies, approaches, values, tmp_df, tmp_dfCount, tmp_dfPercent
 
 
-# In[582]:
+# In[1152]:
 
 
 # Table 4: Number of open PREVENT1 approaches as at 31st March, 2015 to 2020
@@ -204,7 +207,7 @@ df = df.append(tmp_df, ignore_index=True, sort=False)
 del tab, geographies, period, values, tmp_df, tmp_dfCount, tmp_dfPercent
 
 
-# In[583]:
+# In[1153]:
 
 
 # Table 5: Number of PREVENT1 approaches by property of applicant, 2014/15 to 2019/20
@@ -231,7 +234,10 @@ tmp_df = pd.merge(tmp_dfCount, tmp_dfPercent, how="left", on=['period', 'propert
 
 # Geography is Scotland-wide
 tmp_df['geography'] = 'Scotland'
-tmp_df['period'] = tmp_df['period'].apply(lambda x: f"government-year/{x}")
+tmp_df['period'] = tmp_df['period'].apply(lambda x: f"government-year/{x[-7:-3]}-20{x[-2:]}")
+
+indexNames = tmp_df[ tmp_df['properties'] == 'All' ].index
+tmp_df.drop(indexNames, inplace = True)
 
 tmp_df['tab'] = tab.name
 
@@ -240,7 +246,7 @@ df = df.append(tmp_df, ignore_index=True, sort=False)
 del tab, properties, period, values, tmp_df, tmp_dfCount, tmp_dfPercent
 
 
-# In[584]:
+# In[1154]:
 
 
 # Table 6: Reason for PREVENT1 approach, 2014/15 to 2019/20
@@ -287,6 +293,9 @@ tmp_df = pd.merge(tmp_dfCount, tmp_dfPercent, how="left", on=['period', 'reason'
 
 tmp_df['geography'] = 'Scotland'
 
+indexNames = tmp_df[ tmp_df['reason classification'] == 'All' ].index
+tmp_df.drop(indexNames, inplace = True)
+
 tmp_df['tab'] = tab.name
 
 df = df.append(tmp_df, ignore_index=True, sort=False)
@@ -294,7 +303,7 @@ df = df.append(tmp_df, ignore_index=True, sort=False)
 del tmp_df, tab, reasons, period, values, headers, dimensions, tmp_dfCount, tmp_dfPercent
 
 
-# In[585]:
+# In[1155]:
 
 
 # Table 7: Reason for PREVENT1 approach by local authority, 2019/20
@@ -322,6 +331,9 @@ tmp_dfPercent = tmp_dfPercent.drop(columns=['measure'])
 
 tmp_df = pd.merge(tmp_dfCount, tmp_dfPercent, how="left", on=['geography', 'period', 'reason'])
 
+indexNames = tmp_df[ (tmp_df['reason'] == 'All') ].index
+tmp_df.drop(indexNames, inplace = True)
+
 tmp_df['tab'] = tab.name
 
 df = df.append(tmp_df, ignore_index=True, sort=False)
@@ -329,7 +341,7 @@ df = df.append(tmp_df, ignore_index=True, sort=False)
 del tab, geography, reason, values, tmp_df, tmp_dfCount, tmp_dfPercent
 
 
-# In[586]:
+# In[1156]:
 
 
 # Table 8: Number of PREVENT1 approaches by property of applicant, 2014/15 to 2019/20
@@ -367,7 +379,7 @@ df = df.append(tmp_df, ignore_index=True, sort=False)
 del tab, prevention, period, values, tmp_df, tmp_dfCount, tmp_dfPercent
 
 
-# In[587]:
+# In[1157]:
 
 
 # Table 9: Prevention activities carried out by local authority, 2019/20
@@ -405,7 +417,7 @@ df = df.append(tmp_df, ignore_index=True, sort=False)
 del tab, geography, prevention, values, tmp_df, tmp_dfCount, tmp_dfPercent
 
 
-# In[588]:
+# In[1158]:
 
 
 # Table 10: Organisation carrying out prevention activities, 2014/15 to 2019/20
@@ -435,6 +447,9 @@ tmp_df = pd.merge(tmp_dfCount, tmp_dfPercent, how="left", on=['period', 'organis
 
 tmp_df['geography'] = 'Scotland'
 
+indexNames = tmp_df[ tmp_df['organisation involved'] == 'All' ].index
+tmp_df.drop(indexNames, inplace = True)
+
 tmp_df['tab'] = tab.name
 
 df = df.append(tmp_df, ignore_index=True, sort=False)
@@ -442,7 +457,7 @@ df = df.append(tmp_df, ignore_index=True, sort=False)
 del tab, organisation, period, values, tmp_df, tmp_dfCount, tmp_dfPercent
 
 
-# In[589]:
+# In[1159]:
 
 
 # Table 11: Maximum type of activity, 2014/15 to 2019/20
@@ -472,6 +487,9 @@ tmp_df = pd.merge(tmp_dfCount, tmp_dfPercent, how="left", on=['period', 'activit
 
 tmp_df['geography'] = 'Scotland'
 
+indexNames = tmp_df[ tmp_df['activity tier'] == 'All' ].index
+tmp_df.drop(indexNames, inplace = True)
+
 tmp_df['tab'] = tab.name
 
 df = df.append(tmp_df, ignore_index=True, sort=False)
@@ -479,7 +497,7 @@ df = df.append(tmp_df, ignore_index=True, sort=False)
 del tab, activity_tier, period, values, tmp_df, tmp_dfCount, tmp_dfPercent
 
 
-# In[590]:
+# In[1160]:
 
 
 # Table 12: Maximum type of activity by local authority, 2019/20
@@ -508,6 +526,12 @@ tmp_dfPercent = tmp_dfPercent.drop(columns=['measure'])
 
 tmp_df = pd.merge(tmp_dfCount, tmp_dfPercent, how="left", on=['geography', 'period', 'activity tier'])
 
+indexNames = tmp_df[ (tmp_df['geography'] == 'All')].index
+tmp_df.drop(indexNames, inplace = True)
+
+indexNames = tmp_df[ (tmp_df['activity tier'] == 'All')].index
+tmp_df.drop(indexNames, inplace = True)
+
 tmp_df['tab'] = tab.name
 
 df = df.append(tmp_df, ignore_index=True, sort=False)
@@ -515,7 +539,7 @@ df = df.append(tmp_df, ignore_index=True, sort=False)
 del tab, geography, activity_tier, values, tmp_df, tmp_dfCount, tmp_dfPercent
 
 
-# In[591]:
+# In[1161]:
 
 
 # Table 13: Outcome of PREVENT1 approach, 2014/15 to 2019/20
@@ -553,7 +577,7 @@ df = df.append(tmp_df, ignore_index=True, sort=False)
 del tab, outcome, period, values, tmp_df, tmp_dfCount, tmp_dfPercent
 
 
-# In[592]:
+# In[1162]:
 
 
 # Table 14: Maximum type of activity by local authority, 2019/20
@@ -593,7 +617,7 @@ df = df.append(tmp_df, ignore_index=True, sort=False)
 del tab, geography, outcome, values, tmp_df
 
 
-# In[593]:
+# In[1163]:
 
 
 # Table 15: Average time taken (days) to complete PREVENT1 approach by local authority, 2019/20
@@ -630,17 +654,17 @@ df = df.append(tmp_df, ignore_index=True, sort=False)
 del tab, geography, period, values, tmp_df
 
 
-# In[594]:
+# In[1164]:
 
 
 df
 
 
-# In[595]:
+# In[1165]:
 
 
 df = df.rename(columns={'OBS': 'Value'})
-df = df.drop(columns = ['tab'])
+#df = df.drop(columns = ['tab'])
 
 df = df.rename(columns=lambda x: pathify(x).replace('-', '_'))
 
@@ -713,7 +737,7 @@ df = df.rename({'period' : 'Period',
            'percentage_of_breakdown' : 'Percentage of Breakdown',
            'value' : 'Value'}, axis=1)
 
-df = df[['Period',
+df = df[['tab','Period',
          'Area',
          'Reason for Approach',
          'Reason Classification',
@@ -732,7 +756,7 @@ df = df[['Period',
 df
 
 
-# In[596]:
+# In[1166]:
 
 
 out = Path('codelists')
@@ -751,7 +775,7 @@ if CODELISTS:
             dfcode.drop_duplicates().to_csv(out / f'{pathify(col)}.csv', index = False)
 
 
-# In[597]:
+# In[1167]:
 
 
 COLUMNS_TO_NOT_PATHIFY = ['Area', 'Percentage of Breakdown', 'Value']
@@ -765,7 +789,7 @@ for col in df.columns.values.tolist():
 		raise Exception('Failed to pathify column "{}".'.format(col)) from err
 
 
-# In[598]:
+# In[1168]:
 
 
 scraper.dataset.comment = 'Some Figures have been rounded to the nearest 5 for disclosure control purposes.'                           'The PREVENT1 data specification contains the core questions to be used in the monitoring of housing options work by local authorities.'                           'Applicants may select multiple responses, which is why total reason figures are greater than the number of approaches'
@@ -774,14 +798,14 @@ scraper.dataset.comment = 'Some Figures have been rounded to the nearest 5 for d
 cubes.add_cube(scraper, df, scraper.title)
 
 
-# In[599]:
+# In[1169]:
 
 
 # Write cube
 cubes.output_all()
 
 
-# In[600]:
+# In[1170]:
 
 
 from IPython.core.display import HTML
@@ -792,8 +816,29 @@ for col in df:
         display(df[col].cat.categories)
 
 
-# In[601]:
+# In[1171]:
 
 
-df[['Measure Type', 'Unit']].drop_duplicates()
+df = pd.read_csv("out/housing-options-prevent1-statistics-in-scotland.csv")
+df["all_dimensions_concatenated"] = ""
+for col in df.columns.values:
+    if col not in ["Value", "tab"]:
+        df["all_dimensions_concatenated"] = df["all_dimensions_concatenated"]+df[col].astype(str)
+found = []
+bad_combos = []
+for item in df["all_dimensions_concatenated"]:
+    if item not in found:
+        found.append(item)
+    else:
+        bad_combos.append(item)
+df = df[df["all_dimensions_concatenated"].map(lambda x: x in bad_combos)]
+drop_these_cols = []
+for col in df.columns.values:
+    if col != "all_dimensions_concatenated" and col not in ["Value", "tab"]:
+        drop_these_cols.append(col)
+for dtc in drop_these_cols:
+    df = df.drop(dtc, axis=1)
+df = df[["all_dimensions_concatenated", "tab", "Value"]]
+df = df.sort_values(by=['all_dimensions_concatenated'])
+df.to_csv("duplicates_with_values.csv", index=False)
 

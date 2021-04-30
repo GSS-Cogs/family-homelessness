@@ -10,7 +10,7 @@
     ],
     "published": "2019-06-26",
     "families": [
-        "Homelessness"
+        "homelessness"
     ],
     "extract": {
         "source": "XLS",
@@ -76,8 +76,7 @@
             },
             "Percentage of Breakdown" : {
                 "attribute": "http://gss-data.org.uk/def/homelessness/property/attribute/percentage-of-breakdown",
-                "value": "http://gss-data.org.uk/def/homelessness/concept/percentage-of-breakdown/{percentage_of_breakdown}"
-            }
+                "value": "{percentage_of_breakdown}"
         }
     },
     "sizingNotes": "Messy structure with quite a few tabs, including mixture of data tabs and chart tabs. Multiple tables on some data tabs. Sub-dimensions and footnotes present.",

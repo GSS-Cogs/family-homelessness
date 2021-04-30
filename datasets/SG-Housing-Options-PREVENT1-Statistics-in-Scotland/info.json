@@ -77,9 +77,11 @@
             "Percentage of Breakdown" : {
                 "attribute": "http://gss-data.org.uk/def/homelessness/property/attribute/percentage-of-breakdown",
                 "value": "{percentage_of_breakdown}"
+            }
         }
     },
     "sizingNotes": "Messy structure with quite a few tabs, including mixture of data tabs and chart tabs. Multiple tables on some data tabs. Sub-dimensions and footnotes present.",
     "notes": "",
     "scraper_state": "https://github.com/GSS-Cogs/gss-utils/issues/197"
 }
+

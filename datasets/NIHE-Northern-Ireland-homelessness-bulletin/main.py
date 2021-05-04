@@ -1,14 +1,14 @@
 #!/usr/bin/env python
 # coding: utf-8
 
-# In[1017]:
+# In[1096]:
 
 
 # -*- coding: utf-8 -*-
 # # NIHE Northern Ireland homelessness bulletin
 
 
-# In[1018]:
+# In[1097]:
 
 
 
@@ -23,7 +23,7 @@ import messytables
 from io import BytesIO
 
 
-# In[1019]:
+# In[1098]:
 
 
 
@@ -32,7 +32,7 @@ cubes = Cubes("info.json")
 pd.set_option('display.float_format', lambda x: '%.0f' % x)
 
 
-# In[1020]:
+# In[1099]:
 
 
 
@@ -41,7 +41,7 @@ landingPage = info['landingPage']
 landingPage
 
 
-# In[1021]:
+# In[1100]:
 
 
 
@@ -85,7 +85,7 @@ def mid(s, offset, amount):
     return s[offset:offset+amount]
 
 
-# In[1022]:
+# In[1101]:
 
 
 
@@ -99,7 +99,7 @@ temp_end = tab_names.index('3_5') + 1  # tempprary accommodation end index
 (pres_start, accept_start, temp_start, temp_end)
 
 
-# In[1023]:
+# In[1102]:
 
 
 
@@ -110,7 +110,7 @@ accommodation_tabs = tabs[temp_start: temp_end]
 trace = TransformTrace()
 
 
-# In[1024]:
+# In[1103]:
 
 
 
@@ -337,7 +337,7 @@ stats_df = stats_df.rename(columns={"Homelessness Reason" : "Reason for Homeless
 stats_df
 
 
-# In[1025]:
+# In[1104]:
 
 
 
@@ -346,7 +346,7 @@ bulletin_df[["Measure Type", "Unit"]] = bulletin_df[["Unit", "Measure Type"]]
 bulletin_df
 
 
-# In[1026]:
+# In[1105]:
 
 
 
@@ -444,7 +444,7 @@ df = df.replace({'Household Composition' : {'families1' : 'families',
 df
 
 
-# In[1027]:
+# In[1106]:
 
 
 
@@ -454,22 +454,7 @@ scraper.dataset.title = title
 cubes.add_cube(scraper, df, scraper.dataset.title)
 
 
-# In[1028]:
-
-
-
-from IPython.core.display import HTML
-for col in df:
-    if col not in ['Value']:
-        df[col] = df[col].astype('category')
-        display(HTML(f"<h2>{col}</h2>"))
-        display(df[col].cat.categories)
-
-
-df
-
-
-# In[1029]:
+# In[1107]:
 
 
 
@@ -764,92 +749,7 @@ df = df[['Period', 'Reason for Homelessness', 'Accommodation Not Reasonable Brea
 df
 
 
-# In[1030]:
-
-
-
-from IPython.core.display import HTML
-for col in df:
-    if col not in ['Value']:
-        df[col] = df[col].astype('category')
-        display(HTML(f"<h2>{col}</h2>"))
-        display(df[col].cat.categories)
-
-cubes.add_cube(scraper, df, scraper.dataset.title)
-
-
-# In[1031]:
-
-
-
-def with_year_overrides(year_dimension):
-    year_cells = [cell for cell in year_dimension.hbagset if cell.value in [2019.0, 2020.0, 2021.0]]
-    for cell in year_dimension.hbagset:
-        # If a dimension cell is not year
-        if cell.value in ['', 'Jan', 'Jul', 'Total']:
-            # Is there a value two cells down? if so use that value
-            cell_checked = [cell2 for cell2 in year_cells if cell2.y == cell.y + 2]
-            if len(cell_checked) > 0:
-                year_dimension.AddCellValueOverride(cell, str(cell_checked[0].value))
-
-            # Is there a value one cell down? if so use that value
-            cell_checked = [cell2 for cell2 in year_cells if cell2.y == cell.y + 1]
-            if len(cell_checked) > 0:
-                year_dimension.AddCellValueOverride(cell, str(cell_checked[0].value))
-
-            # Is there a value one cell up? if so use that value
-            cell_checked = [cell2 for cell2 in year_cells if cell2.y == cell.y - 1]
-            if len(cell_checked) > 0:
-                year_dimension.AddCellValueOverride(cell, str(cell_checked[0].value))
-
-            # Is there a value two cells up? if so use that value
-            cell_checked = [cell2 for cell2 in year_cells if cell2.y == cell.y - 2]
-            if len(cell_checked) > 0:
-                year_dimension.AddCellValueOverride(cell, str(cell_checked[0].value))
-
-            # Is there a value three cells up? if so use that value
-            cell_checked = [cell2 for cell2 in year_cells if cell2.y == cell.y - 3]
-            if len(cell_checked) > 0:
-                year_dimension.AddCellValueOverride(cell, str(cell_checked[0].value))
-
-    return year_dimension
-
-
-def with_month_overrides(month_dimension):
-    month_cells = [cell for cell in month_dimension.hbagset if cell.value in ['Jan', 'Jul']]
-    for cell in month_dimension.hbagset:
-        # If a dimension cell is not month
-        if cell.value not in ['Jan', 'Jul']:
-            # Is there a value one cell down? if so use that value
-            cell_checked = [cell2 for cell2 in month_cells if cell2.y == cell.y + 1]
-            if len(cell_checked) > 0:
-                month_dimension.AddCellValueOverride(cell, cell_checked[0].value)
-
-            # Is there a value one cell up? if so use that value
-            cell_checked = [cell2 for cell2 in month_cells if cell2.y == cell.y - 1]
-            if len(cell_checked) > 0:
-                month_dimension.AddCellValueOverride(cell, cell_checked[0].value)
-
-            # Is there a value two cells up? if so use that value
-            cell_checked = [cell2 for cell2 in month_cells if cell2.y == cell.y - 2]
-            if len(cell_checked) > 0:
-                month_dimension.AddCellValueOverride(cell, cell_checked[0].value)
-
-            # Is there a value three cells up? if so use that value
-            cell_checked = [cell2 for cell2 in month_cells if cell2.y == cell.y - 3]
-            if len(cell_checked) > 0:
-                month_dimension.AddCellValueOverride(cell, cell_checked[0].value)
-
-            # Is there a value four cells up? if so use that value
-            cell_checked = [cell2 for cell2 in month_cells if cell2.y == cell.y - 4]
-            if len(cell_checked) > 0:
-                month_dimension.AddCellValueOverride(cell, cell_checked[0].value)
-
-    return month_dimension
-
-
-# In[1032]:
-
+# In[1108]:
 
 
 for tab in accommodation_tabs:
@@ -1008,6 +908,9 @@ for tab in accommodation_tabs:
             HDim(accommodation, 'Accommodation Type', DIRECTLY, LEFT)
         ]
 
+        dimensions[3].engine.starting_offset = 3
+        dimensions[3].engine.ending_offset = 2
+
         tidy_sheet = ConversionSegment(tab, dimensions, observations)
         savepreviewhtml(tidy_sheet, fname=tab.name + "Preview.html")
         table = tidy_sheet.topandas()
@@ -1015,11 +918,9 @@ for tab in accommodation_tabs:
         print(table['Quarter'].unique())
 
         trace.store('combined_dataframe_accommodation', table)
-table.loc[(table['Accommodation Type'] == 'Total')]
-#table
 
 
-# In[1033]:
+# In[1109]:
 
 
 df = trace.combine_and_trace(title, 'combined_dataframe_accommodation').fillna('')
@@ -1099,49 +1000,14 @@ df = df[
 scraper.dataset.license = "".join([x.strip().replace('"', '') for x in scraper.dataset.license.split(" ")])
 
 
-# In[1034]:
-
-
-
-from IPython.core.display import HTML
-for col in df:
-    if col not in ['Value']:
-        df[col] = df[col].astype('category')
-        display(HTML(f"<h2>{col}</h2>"))
-        display(df[col].cat.categories)
-
-cubes.add_cube(scraper, df, scraper.dataset.title)
-
-
-# In[1035]:
+# In[1110]:
 
 
 cubes.output_all()
 
 
-# In[1036]:
+# In[1110]:
 
 
-df = pd.read_csv("out/nihe-temporary-accommodation.csv")
-df["all_dimensions_concatenated"] = ""
-for col in df.columns.values:
-    if col != "Value":
-        df["all_dimensions_concatenated"] = df["all_dimensions_concatenated"]+df[col].astype(str)
-found = []
-bad_combos = []
-for item in df["all_dimensions_concatenated"]:
-    if item not in found:
-        found.append(item)
-    else:
-        bad_combos.append(item)
-df = df[df["all_dimensions_concatenated"].map(lambda x: x in bad_combos)]
-drop_these_cols = []
-for col in df.columns.values:
-    if col != "all_dimensions_concatenated" and col != "Value":
-        drop_these_cols.append(col)
-for dtc in drop_these_cols:
-    df = df.drop(dtc, axis=1)
-df = df[["all_dimensions_concatenated", "Value"]]
-df = df.sort_values(by=['all_dimensions_concatenated'])
-df.to_csv("duplicates_with_values.csv", index=False)
+
 

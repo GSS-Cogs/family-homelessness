@@ -1,14 +1,15 @@
 #!/usr/bin/env python
 # coding: utf-8
 
-# In[167]:
+# In[1017]:
 
 
 # -*- coding: utf-8 -*-
 # # NIHE Northern Ireland homelessness bulletin
 
 
-# In[168]:
+# In[1018]:
+
 
 
 from gssutils import *
@@ -22,7 +23,8 @@ import messytables
 from io import BytesIO
 
 
-# In[169]:
+# In[1019]:
+
 
 
 cubes = Cubes("info.json")
@@ -30,7 +32,8 @@ cubes = Cubes("info.json")
 pd.set_option('display.float_format', lambda x: '%.0f' % x)
 
 
-# In[170]:
+# In[1020]:
+
 
 
 info = json.load(open('info.json'))
@@ -38,7 +41,8 @@ landingPage = info['landingPage']
 landingPage
 
 
-# In[171]:
+# In[1021]:
+
 
 
 scraper = Scraper(seed='info.json')
@@ -81,7 +85,8 @@ def mid(s, offset, amount):
     return s[offset:offset+amount]
 
 
-# In[172]:
+# In[1022]:
+
 
 
 
@@ -94,7 +99,8 @@ temp_end = tab_names.index('3_5') + 1  # tempprary accommodation end index
 (pres_start, accept_start, temp_start, temp_end)
 
 
-# In[173]:
+# In[1023]:
+
 
 
 presentations_tabs = tabs[pres_start: accept_start]
@@ -104,7 +110,8 @@ accommodation_tabs = tabs[temp_start: temp_end]
 trace = TransformTrace()
 
 
-# In[174]:
+# In[1024]:
+
 
 
 for tab in presentations_tabs:
@@ -330,7 +337,8 @@ stats_df = stats_df.rename(columns={"Homelessness Reason" : "Reason for Homeless
 stats_df
 
 
-# In[175]:
+# In[1025]:
+
 
 
 bulletin_df[["Measure Type", "Unit"]] = bulletin_df[["Unit", "Measure Type"]]
@@ -338,7 +346,8 @@ bulletin_df[["Measure Type", "Unit"]] = bulletin_df[["Unit", "Measure Type"]]
 bulletin_df
 
 
-# In[176]:
+# In[1026]:
+
 
 
 df = pd.concat([bulletin_df, stats_df], sort = False)
@@ -435,7 +444,8 @@ df = df.replace({'Household Composition' : {'families1' : 'families',
 df
 
 
-# In[177]:
+# In[1027]:
+
 
 
 scraper = Scraper(seed='info.json')
@@ -444,7 +454,8 @@ scraper.dataset.title = title
 cubes.add_cube(scraper, df, scraper.dataset.title)
 
 
-# In[178]:
+# In[1028]:
+
 
 
 from IPython.core.display import HTML
@@ -458,7 +469,8 @@ for col in df:
 df
 
 
-# In[179]:
+# In[1029]:
+
 
 
 for tab in acceptance_tabs:
@@ -752,7 +764,8 @@ df = df[['Period', 'Reason for Homelessness', 'Accommodation Not Reasonable Brea
 df
 
 
-# In[180]:
+# In[1030]:
+
 
 
 from IPython.core.display import HTML
@@ -765,7 +778,8 @@ for col in df:
 cubes.add_cube(scraper, df, scraper.dataset.title)
 
 
-# In[181]:
+# In[1031]:
+
 
 
 def with_year_overrides(year_dimension):
@@ -834,7 +848,8 @@ def with_month_overrides(month_dimension):
     return month_dimension
 
 
-# In[182]:
+# In[1032]:
+
 
 
 for tab in accommodation_tabs:
@@ -966,8 +981,14 @@ for tab in accommodation_tabs:
         remove_year = cell.fill(DOWN).regex('[0-9]+') - footnote
         year_values = [x.value for x in remove_year]
 
-        year = accommodation.fill(LEFT)
-        quarter = accommodation.fill(LEFT)
+        def filterFunc(iterable):
+            if left(str(iterable.value), 2) == '20':
+                return True
+            else:
+                return False
+
+        year = accommodation.fill(LEFT).filter(filterFunc) | tab.excel_ref('A34')
+        quarter = accommodation.fill(LEFT).filter(contains_string('J')) | tab.excel_ref('A35')
 
         year_override = {}
         quarter_override = {}
@@ -982,20 +1003,24 @@ for tab in accommodation_tabs:
             HDimConst('Measure Type', 'Households'),
             HDimConst('Unit', 'Count'),
             HDim(length_of_stay, 'Length of Stay', DIRECTLY, ABOVE),
-            HDim(year, 'Period', CLOSEST, ABOVE, cellvalueoverride=year_override),
-            HDim(quarter, 'Quarter', DIRECTLY, LEFT, cellvalueoverride=quarter_override),
+            HDim(year, 'Period',  WITHIN(above = 2, below = 3), LEFT, cellvalueoverride=year_override),
+            HDim(quarter, 'Quarter', WITHIN(above = 1, below = 4), LEFT, cellvalueoverride=quarter_override),
             HDim(accommodation, 'Accommodation Type', DIRECTLY, LEFT)
         ]
 
-        dimensions[3] = with_year_overrides(dimensions[3])
-        dimensions[4] = with_month_overrides(dimensions[4])
-
         tidy_sheet = ConversionSegment(tab, dimensions, observations)
+        savepreviewhtml(tidy_sheet, fname=tab.name + "Preview.html")
         table = tidy_sheet.topandas()
         print(table['Period'].unique())
         print(table['Quarter'].unique())
 
         trace.store('combined_dataframe_accommodation', table)
+table.loc[(table['Accommodation Type'] == 'Total')]
+#table
+
+
+# In[1033]:
+
 
 df = trace.combine_and_trace(title, 'combined_dataframe_accommodation').fillna('')
 
@@ -1074,7 +1099,8 @@ df = df[
 scraper.dataset.license = "".join([x.strip().replace('"', '') for x in scraper.dataset.license.split(" ")])
 
 
-# In[183]:
+# In[1034]:
+
 
 
 from IPython.core.display import HTML
@@ -1087,11 +1113,35 @@ for col in df:
 cubes.add_cube(scraper, df, scraper.dataset.title)
 
 
-# In[184]:
-
-
+# In[1035]:
 
 
 cubes.output_all()
 
+
+# In[1036]:
+
+
+df = pd.read_csv("out/nihe-temporary-accommodation.csv")
+df["all_dimensions_concatenated"] = ""
+for col in df.columns.values:
+    if col != "Value":
+        df["all_dimensions_concatenated"] = df["all_dimensions_concatenated"]+df[col].astype(str)
+found = []
+bad_combos = []
+for item in df["all_dimensions_concatenated"]:
+    if item not in found:
+        found.append(item)
+    else:
+        bad_combos.append(item)
+df = df[df["all_dimensions_concatenated"].map(lambda x: x in bad_combos)]
+drop_these_cols = []
+for col in df.columns.values:
+    if col != "all_dimensions_concatenated" and col != "Value":
+        drop_these_cols.append(col)
+for dtc in drop_these_cols:
+    df = df.drop(dtc, axis=1)
+df = df[["all_dimensions_concatenated", "Value"]]
+df = df.sort_values(by=['all_dimensions_concatenated'])
+df.to_csv("duplicates_with_values.csv", index=False)
 

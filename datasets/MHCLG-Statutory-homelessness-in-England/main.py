@@ -932,6 +932,13 @@ df.drop(['household_type_and_composition', 'prs_srs_1', 'breakdown_of_prs_srs_1'
 #Sheet = "P3"
 df.drop(['household_with_secured_accomodation'], axis=1, inplace=True)
 pd.DataFrame(df).to_csv("P5-output.csv")
+# -
+
+
+
+
+
+
 
 # +
 # df = trace.combine_and_trace(datasetTitle, "combined_dataframe")

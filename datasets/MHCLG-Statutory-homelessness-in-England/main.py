@@ -932,9 +932,68 @@ df.drop(['household_type_and_composition', 'prs_srs_1', 'breakdown_of_prs_srs_1'
 #Sheet = "P3"
 df.drop(['household_with_secured_accomodation'], axis=1, inplace=True)
 pd.DataFrame(df).to_csv("P5-output.csv")
+
+# +
+#Number of households whose relief duty ended by reason for duty end England
+
+for tab in tabs:
+    columns=['Contents']
+    trace.start(datasetTitle, tab, columns, distribution.downloadURL)
+    if tab.name in ['R1']: #only transforming tab A10 for now
+        print(tab.name)
+        
+        remove_notes = tab.filter(contains_string('Notes')).expand(DOWN).expand(RIGHT)
+        household_relief_duty_ended = tab.filter("Local connection referral accepted by other LA").shift(LEFT).shift(LEFT).shift(LEFT).expand(RIGHT)
+        observations = household_relief_duty_ended.fill(DOWN).shift(LEFT).fill(RIGHT).is_not_blank()-remove_notes
+        unwanted = observations.shift(LEFT).shift(LEFT).fill(RIGHT)
+        quarter = unwanted.shift(LEFT)-unwanted
+        period = quarter.shift(LEFT).is_not_blank()
+        dimensions = [
+            HDim(quarter,'quarter',DIRECTLY,LEFT),
+            HDim(period,'period',CLOSEST,ABOVE),
+            HDim(household_relief_duty_ended, 'household_relief_duty_ended', DIRECTLY,ABOVE),
+        ]
+        tidy_sheet = ConversionSegment(tab, dimensions, observations)
+        savepreviewhtml(tidy_sheet, fname= tab.name + "PREVIEW.html")
+        trace.with_preview(tidy_sheet)
+        trace.store("combined_dataframe", tidy_sheet.topandas())
+df = trace.combine_and_trace(datasetTitle, "combined_dataframe")
+#Sheet = "A1"
+df.drop(['initial_assessment', 'duty_owed', 'section_21'], axis=1, inplace=True)
+#Sheet = "A2P"
+df.drop(['prevention_duty', 'tenancy_type', 'reasons_for_breach', 'reasons_for_rent_arrears'], axis=1, inplace=True)
+#Sheet = "A2R"
+df.drop(['relief_prevention_duty', 'relief_tenancy_type', 'relief_reasons_for_breach', 'relief_reasons_for_rent_arrears'], axis=1, inplace=True)
+#Sheet = "A3"
+df.drop(['total_households_with_supportneeds', 'households_with_one_supportneeds', 'households_with_two_supportneeds'], axis=1, inplace=True)
+#Sheet = "A4P"
+df.drop(['rented_sector', 'prs_srs', 'breakdown_of_prs_srs'], axis=1, inplace=True)
+#Sheet = "A4R"
+df.drop(['accomodation_during_application', 'breakdown_of_accomodation', 'accomodation_type'], axis=1, inplace=True)
+#Sheet = "A5P"
+df.drop(['household_composition','gender'], axis=1, inplace=True)
+#Sheet = "A5R"
+df.drop(['relief_duty_household_composition', 'relief_duty_gender'], axis=1, inplace=True)
+#Sheet = "A6"
+df.drop(['age_of_applicants'], axis=1, inplace=True)
+#Sheet = "A7"
+df.drop(['total_referred_households', 'total_households_duty_refer2', 'breakdown_total_households_duty_refer2'], axis=1, inplace=True)
+#Sheet = "A8"
+df.drop(['ethnicity_of_main_applicants', 'breakdown_of_ethnicity_of_main_applicants'], axis=1, inplace=True)
+#Sheet = "A10"
+df.drop(['prevention_or_relief_duty'], axis=1, inplace=True)
+#Sheet = "A12"
+df.drop(['sexual_identification'], axis=1, inplace=True)
+#Sheet = "P1"
+df.drop(['prevention_duty_ended', 'moved_or_stayed_accomodation'], axis=1, inplace=True)
+#Sheet = 'P2'
+df.drop(['household_type_and_composition', 'prs_srs_1', 'breakdown_of_prs_srs_1'], axis=1, inplace=True)
+#Sheet = "P3"
+df.drop(['household_with_secured_accomodation'], axis=1, inplace=True)
+#Sheet = "P5"
+df.drop(['household_secured_accomodation_at_end_preventionduty', 'breakdown_of_household_secured_accomodation_at_end_preventionduty'], axis=1, inplace=True)
+pd.DataFrame(df).to_csv("R1-output.csv")        
 # -
-
-
 
 
 

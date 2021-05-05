@@ -57,7 +57,8 @@ for tab in tabs:
 #Number of households by initial assessment of homelessness circumstances and needs England
 
 for tab in tabs:
-    columns=['quarter', 'period', 'initial_assessment', 'duty_owed', 'section_21']
+    columns=['Contents']
+#     columns=['quarter', 'period', 'initial_assessment', 'duty_owed', 'section_21']
     trace.start(datasetTitle, tab, columns, distribution.downloadURL)
     if tab.name in ['A1']: #only transforming tab A1 for now
         print(tab.name)
@@ -102,7 +103,8 @@ for tab in tabs:
 
 #Number of households owed a prevention duty by reason for threat of loss, of last settled home England
 for tab in tabs:
-    columns=['quarter', 'period', 'prevention_duty', 'tenancy_type', 'reasons_for_breach', 'reasons_for_rent_arrears']
+    columns=['Contents']
+#     columns=['quarter', 'period', 'prevention_duty', 'tenancy_type', 'reasons_for_breach', 'reasons_for_rent_arrears']
     trace.start(datasetTitle, tab, columns, distribution.downloadURL)
     if tab.name in ['A2P']: #only transforming tab A2P for now
         print(tab.name)
@@ -638,7 +640,7 @@ pd.DataFrame(df).to_csv("A10-output.csv")
 for tab in tabs:
     columns=['Contents']
     trace.start(datasetTitle, tab, columns, distribution.downloadURL)
-    if tab.name in ['A12']: #only transforming tab A10 for now
+    if tab.name in ['A12']: #only transforming tab A12 for now
         print(tab.name)
         
         cell = tab.excel_ref('A1')
@@ -695,7 +697,7 @@ pd.DataFrame(df).to_csv("A12-output.csv")
 for tab in tabs:
     columns=['Contents']
     trace.start(datasetTitle, tab, columns, distribution.downloadURL)
-    if tab.name in ['P1']: #only transforming tab A10 for now
+    if tab.name in ['P1']: #only transforming tab P1 for now
         print(tab.name)
         
         cell = tab.excel_ref('A1')
@@ -753,7 +755,7 @@ pd.DataFrame(df).to_csv("P1-output.csv")
 for tab in tabs:
     columns=['Contents']
     trace.start(datasetTitle, tab, columns, distribution.downloadURL)
-    if tab.name in ['P2']: #only transforming tab A10 for now
+    if tab.name in ['P2']: #only transforming tab P2 for now
         print(tab.name)
         
         cell = tab.excel_ref('A1')
@@ -763,16 +765,16 @@ for tab in tabs:
 #         savepreviewhtml(period, fname= tab.name + "PREVIEW.html")
         
         household_type_and_composition = tab.filter("Total number of households whose prevention duty ended with accommodation secured").expand(RIGHT)
-        prs_srs = household_type_and_composition.shift(DOWN).expand(RIGHT)
-        breakdown_of_prs_srs = prs_srs.shift(DOWN).expand(RIGHT)
+        prs_srs_1 = household_type_and_composition.shift(DOWN).expand(RIGHT)
+        breakdown_of_prs_srs_1 = prs_srs.shift(DOWN).expand(RIGHT)
         observations = breakdown_of_prs_srs.fill(DOWN).shift(LEFT).fill(RIGHT).is_not_blank()-remove_notes
 #         savepreviewhtml(observations, fname= tab.name + "PREVIEW.html")
         dimensions = [
             HDim(quarter,'quarter',DIRECTLY,LEFT),
             HDim(period,'period',CLOSEST,ABOVE),
             HDim(household_type_and_composition, 'household_type_and_composition', DIRECTLY,ABOVE),
-            HDim(prs_srs, 'prs_srs', DIRECTLY, ABOVE),
-            HDim(breakdown_of_prs_srs, 'breakdown_of_prs_srs', DIRECTLY, ABOVE),
+            HDim(prs_srs_1, 'prs_srs_1', DIRECTLY, ABOVE),
+            HDim(breakdown_of_prs_srs_1, 'breakdown_of_prs_srs_1', DIRECTLY, ABOVE),
             #HDimConst("sheet_name", sheet_name) #Might be handy to have for post processing when other tabs are running also 
         ]
         tidy_sheet = ConversionSegment(tab, dimensions, observations)
@@ -810,6 +812,65 @@ df.drop(['sexual_identification'], axis=1, inplace=True)
 #Sheet = "P1"
 df.drop(['prevention_duty_ended', 'moved_or_stayed_accomodation'], axis=1, inplace=True)
 pd.DataFrame(df).to_csv("P2-output.csv")
+# -
+
+# Main prevention activity that resulted in accommodation secured for households at end of prevention duty by local authority England
+for tab in tabs:
+    columns=['Contents']
+    trace.start(datasetTitle, tab, columns, distribution.downloadURL)
+    if tab.name in ['P3']: #only transforming tab A10 for now
+        print(tab.name)
+
+        remove_notes = tab.filter(contains_string('Notes')).expand(DOWN).expand(RIGHT)
+        household_with_secured_accomodation = tab.filter("Total number of households where prevention duty ended with accommodation secured").expand(RIGHT)
+        observations = household_with_secured_accomodation.fill(DOWN).shift(LEFT).fill(RIGHT).is_not_blank()-remove_notes
+        unwanted = observations.shift(LEFT)
+        quarter = unwanted.shift(LEFT)-unwanted
+        period = quarter.shift(LEFT).is_not_blank()
+
+        dimensions = [
+            HDim(quarter,'quarter',DIRECTLY,LEFT),
+            HDim(period,'period',CLOSEST,ABOVE),
+            HDim(household_with_secured_accomodation, 'household_with_secured_accomodation', DIRECTLY,ABOVE),
+        ]
+        tidy_sheet = ConversionSegment(tab, dimensions, observations)
+        savepreviewhtml(tidy_sheet, fname= tab.name + "PREVIEW.html")
+        trace.with_preview(tidy_sheet)
+        trace.store("combined_dataframe", tidy_sheet.topandas())
+df = trace.combine_and_trace(datasetTitle, "combined_dataframe")
+#Sheet = "A1"
+df.drop(['initial_assessment', 'duty_owed', 'section_21'], axis=1, inplace=True)
+#Sheet = "A2P"
+df.drop(['prevention_duty', 'tenancy_type', 'reasons_for_breach', 'reasons_for_rent_arrears'], axis=1, inplace=True)
+#Sheet = "A2R"
+df.drop(['relief_prevention_duty', 'relief_tenancy_type', 'relief_reasons_for_breach', 'relief_reasons_for_rent_arrears'], axis=1, inplace=True)
+#Sheet = "A3"
+df.drop(['total_households_with_supportneeds', 'households_with_one_supportneeds', 'households_with_two_supportneeds'], axis=1, inplace=True)
+#Sheet = "A4P"
+df.drop(['rented_sector', 'prs_srs', 'breakdown_of_prs_srs'], axis=1, inplace=True)
+#Sheet = "A4R"
+df.drop(['accomodation_during_application', 'breakdown_of_accomodation', 'accomodation_type'], axis=1, inplace=True)
+#Sheet = "A5P"
+df.drop(['household_composition','gender'], axis=1, inplace=True)
+#Sheet = "A5R"
+df.drop(['relief_duty_household_composition', 'relief_duty_gender'], axis=1, inplace=True)
+#Sheet = "A6"
+df.drop(['age_of_applicants'], axis=1, inplace=True)
+#Sheet = "A7"
+df.drop(['total_referred_households', 'total_households_duty_refer2', 'breakdown_total_households_duty_refer2'], axis=1, inplace=True)
+#Sheet = "A8"
+df.drop(['ethnicity_of_main_applicants', 'breakdown_of_ethnicity_of_main_applicants'], axis=1, inplace=True)
+#Sheet = "A10"
+df.drop(['prevention_or_relief_duty'], axis=1, inplace=True)
+#Sheet = "A12"
+df.drop(['sexual_identification'], axis=1, inplace=True)
+#Sheet = "P1"
+df.drop(['prevention_duty_ended', 'moved_or_stayed_accomodation'], axis=1, inplace=True)
+#Sheet = 'P2'
+df.drop(['household_type_and_composition', 'prs_srs_1', 'breakdown_of_prs_srs_1'], axis=1, inplace=True)
+pd.DataFrame(df).to_csv("P3-output.csv")
+
+
 
 # +
 # df = trace.combine_and_trace(datasetTitle, "combined_dataframe")

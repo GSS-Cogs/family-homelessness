@@ -185,6 +185,7 @@ dimensions = [
     HDim(period, "Period", DIRECTLY, ABOVE),
     HDim(homelessness_reason, "Homelessness Reason", DIRECTLY, LEFT),
     HDimConst("Age", "all"),
+    HDimConst('Outcome', 'Accepted'),
     HDimConst("Unit", "household")
 ]
 tidy_sheet = ConversionSegment(tab, dimensions, observations)

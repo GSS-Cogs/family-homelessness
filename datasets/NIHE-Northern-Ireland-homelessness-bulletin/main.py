@@ -1,14 +1,14 @@
 #!/usr/bin/env python
 # coding: utf-8
 
-# In[40]:
+# In[56]:
 
 
 # -*- coding: utf-8 -*-
 # # NIHE Northern Ireland homelessness bulletin
 
 
-# In[41]:
+# In[57]:
 
 
 
@@ -25,7 +25,7 @@ from io import BytesIO
 from ntpath import basename
 
 
-# In[42]:
+# In[58]:
 
 
 
@@ -34,7 +34,7 @@ cubes = Cubes("info.json")
 pd.set_option('display.float_format', lambda x: '%.0f' % x)
 
 
-# In[43]:
+# In[59]:
 
 
 
@@ -43,7 +43,7 @@ landingPage = info['landingPage']
 landingPage
 
 
-# In[44]:
+# In[60]:
 
 
 
@@ -87,7 +87,7 @@ def mid(s, offset, amount):
     return s[offset:offset+amount]
 
 
-# In[45]:
+# In[61]:
 
 
 
@@ -101,7 +101,7 @@ temp_end = tab_names.index('3_5') + 1  # tempprary accommodation end index
 (pres_start, accept_start, temp_start, temp_end)
 
 
-# In[46]:
+# In[62]:
 
 
 
@@ -112,7 +112,7 @@ accommodation_tabs = tabs[temp_start: temp_end]
 trace = TransformTrace()
 
 
-# In[47]:
+# In[63]:
 
 
 
@@ -337,7 +337,7 @@ stats_df = stats_df.rename(columns={"Homelessness Reason" : "Reason for Homeless
 stats_df
 
 
-# In[48]:
+# In[64]:
 
 
 
@@ -346,7 +346,7 @@ bulletin_df[["Measure Type", "Unit"]] = bulletin_df[["Unit", "Measure Type"]]
 bulletin_df
 
 
-# In[49]:
+# In[65]:
 
 
 
@@ -444,7 +444,7 @@ df = df.replace({'Household Composition' : {'families1' : 'families',
 df
 
 
-# In[50]:
+# In[66]:
 
 
 
@@ -454,7 +454,7 @@ scraper.dataset.title = title
 cubes.add_cube(scraper, df, scraper.dataset.title)
 
 
-# In[51]:
+# In[67]:
 
 
 
@@ -749,7 +749,7 @@ df = df[['Period', 'Reason for Homelessness', 'Accommodation Not Reasonable Brea
 df
 
 
-# In[52]:
+# In[68]:
 
 
 for tab in accommodation_tabs:
@@ -920,7 +920,7 @@ for tab in accommodation_tabs:
         trace.store('combined_dataframe_accommodation', table)
 
 
-# In[53]:
+# In[69]:
 
 
 df = trace.combine_and_trace(title, 'combined_dataframe_accommodation').fillna('')
@@ -1000,13 +1000,13 @@ df = df[
 scraper.dataset.license = "".join([x.strip().replace('"', '') for x in scraper.dataset.license.split(" ")])
 
 
-# In[54]:
+# In[70]:
 
 
 cubes.output_all()
 
 
-# In[54]:
+# In[71]:
 
 
 

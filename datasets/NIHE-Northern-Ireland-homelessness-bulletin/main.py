@@ -1,14 +1,14 @@
 #!/usr/bin/env python
 # coding: utf-8
 
-# In[1031]:
+# In[1133]:
 
 
 # -*- coding: utf-8 -*-
 # # NIHE Northern Ireland homelessness bulletin
 
 
-# In[1032]:
+# In[1134]:
 
 
 
@@ -25,7 +25,7 @@ from io import BytesIO
 from ntpath import basename
 
 
-# In[1033]:
+# In[1135]:
 
 
 
@@ -34,7 +34,7 @@ cubes = Cubes("info.json")
 pd.set_option('display.float_format', lambda x: '%.0f' % x)
 
 
-# In[1034]:
+# In[1136]:
 
 
 
@@ -43,7 +43,7 @@ landingPage = info['landingPage']
 landingPage
 
 
-# In[1035]:
+# In[1137]:
 
 
 
@@ -87,7 +87,7 @@ def mid(s, offset, amount):
     return s[offset:offset+amount]
 
 
-# In[1036]:
+# In[1138]:
 
 
 
@@ -101,7 +101,7 @@ temp_end = tab_names.index('3_5') + 1  # tempprary accommodation end index
 (pres_start, accept_start, temp_start, temp_end)
 
 
-# In[1037]:
+# In[1139]:
 
 
 
@@ -112,7 +112,7 @@ accommodation_tabs = tabs[temp_start: temp_end]
 trace = TransformTrace()
 
 
-# In[1038]:
+# In[1140]:
 
 
 
@@ -337,7 +337,7 @@ stats_df = stats_df.rename(columns={"Homelessness Reason" : "Reason for Homeless
 stats_df
 
 
-# In[1039]:
+# In[1141]:
 
 
 
@@ -346,7 +346,7 @@ bulletin_df[["Measure Type", "Unit"]] = bulletin_df[["Unit", "Measure Type"]]
 bulletin_df
 
 
-# In[1040]:
+# In[1142]:
 
 
 
@@ -463,7 +463,7 @@ for col in df.columns.values.tolist():
 df
 
 
-# In[1041]:
+# In[1143]:
 
 
 
@@ -473,7 +473,7 @@ scraper.dataset.title = title
 cubes.add_cube(scraper, df, scraper.dataset.title)
 
 
-# In[1042]:
+# In[1144]:
 
 
 
@@ -790,13 +790,13 @@ for col in df.columns.values.tolist():
 df
 
 
-# In[1043]:
+# In[1145]:
 
 
 cubes.add_cube(scraper, df, scraper.dataset.title)
 
 
-# In[1044]:
+# In[1146]:
 
 
 for tab in accommodation_tabs:
@@ -967,7 +967,7 @@ for tab in accommodation_tabs:
         trace.store('combined_dataframe_accommodation', table)
 
 
-# In[1045]:
+# In[1147]:
 
 
 df = trace.combine_and_trace(title, 'combined_dataframe_accommodation').fillna('')
@@ -1054,22 +1054,26 @@ for col in df.columns.values.tolist():
 
 df['Value'] = df.apply(lambda x: int(x['Value']) if x['Marker'] == '' else x['Value'], axis = 1)
 
+df['Age Group'] = df.apply(lambda x: x['Age Group'] + '-under-18' if ('all' in x['Age Group'] and 'children' in x['Unit']) or ('total' in x['Age Group'] and 'children' in x['Unit']) else x['Age Group'], axis = 1)
+
+df['Unit'] = df.apply(lambda x: 'placements' if 'children' in x['Unit'] else x['Unit'], axis = 1)
+
 df
 
 
-# In[1046]:
+# In[1148]:
 
 
 cubes.add_cube(scraper, df, scraper.dataset.title)
 
 
-# In[1047]:
+# In[1149]:
 
 
 cubes.output_all()
 
 
-# In[1047]:
+# In[1149]:
 
 
 

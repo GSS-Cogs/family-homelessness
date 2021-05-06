@@ -1,14 +1,14 @@
 #!/usr/bin/env python
 # coding: utf-8
 
-# In[424]:
+# In[772]:
 
 
 # -*- coding: utf-8 -*-
 # # NIHE Northern Ireland homelessness bulletin
 
 
-# In[425]:
+# In[773]:
 
 
 
@@ -25,7 +25,7 @@ from io import BytesIO
 from ntpath import basename
 
 
-# In[426]:
+# In[774]:
 
 
 
@@ -34,7 +34,7 @@ cubes = Cubes("info.json")
 pd.set_option('display.float_format', lambda x: '%.0f' % x)
 
 
-# In[427]:
+# In[775]:
 
 
 
@@ -43,7 +43,7 @@ landingPage = info['landingPage']
 landingPage
 
 
-# In[428]:
+# In[776]:
 
 
 
@@ -87,7 +87,7 @@ def mid(s, offset, amount):
     return s[offset:offset+amount]
 
 
-# In[429]:
+# In[777]:
 
 
 
@@ -101,7 +101,7 @@ temp_end = tab_names.index('3_5') + 1  # tempprary accommodation end index
 (pres_start, accept_start, temp_start, temp_end)
 
 
-# In[430]:
+# In[778]:
 
 
 
@@ -112,7 +112,7 @@ accommodation_tabs = tabs[temp_start: temp_end]
 trace = TransformTrace()
 
 
-# In[431]:
+# In[779]:
 
 
 
@@ -337,7 +337,7 @@ stats_df = stats_df.rename(columns={"Homelessness Reason" : "Reason for Homeless
 stats_df
 
 
-# In[432]:
+# In[780]:
 
 
 
@@ -346,7 +346,7 @@ bulletin_df[["Measure Type", "Unit"]] = bulletin_df[["Unit", "Measure Type"]]
 bulletin_df
 
 
-# In[433]:
+# In[781]:
 
 
 
@@ -463,7 +463,7 @@ for col in df.columns.values.tolist():
 df
 
 
-# In[434]:
+# In[782]:
 
 
 
@@ -473,7 +473,7 @@ scraper.dataset.title = title
 cubes.add_cube(scraper, df, scraper.dataset.title)
 
 
-# In[435]:
+# In[783]:
 
 
 
@@ -497,12 +497,12 @@ for tab in acceptance_tabs:
         quarter = cell.fill(DOWN).regex('[^0-9]+').is_not_blank() - total - footnote
         year = cell.fill(DOWN).is_not_blank() - total - quarter - footnote
 
+        status = reason.shift(0, 3).expand(RIGHT)
+
         reason_override = {}
         for x in reason:
-            if xypath.contrib.excel.excel_location(x) == 'P2':
-                reason_override[x.value] = 'Status of Household Duty Discharged'
-            elif xypath.contrib.excel.excel_location(x) == 'Q2':
-                reason_override[x.value] = 'Status of Household Live full duty applicants'
+            if xypath.contrib.excel.excel_location(x) in ['P2', 'Q2']:
+                reason_override[x.value] = 'Status of Household'
 
         reason_title = 'Reason for Homelessness'
 
@@ -513,11 +513,14 @@ for tab in acceptance_tabs:
             HDimConst('ONS Geography Code', "N07000001"),
             HDim(year, 'Period', CLOSEST, UP),
             HDim(quarter, 'Quarter', DIRECTLY, LEFT),
+            HDim(status, 'Status', DIRECTLY, ABOVE),
             HDim(reason, reason_title, DIRECTLY, ABOVE, cellvalueoverride=reason_override)
         ]
 
         tidy_sheet = ConversionSegment(tab, dimensions, observations)
         table = tidy_sheet.topandas()
+        table['Reason for Homelessness'] = table['Reason for Homelessness'] + ' ' + table['Status']
+        table = table.drop(columns=['Status'])
         trace.store('combined_dataframe_acceptance', table)
 
     if tab.name in ['2_1A', '2_1B', '2_1C', '2_5', '2_6']:
@@ -765,7 +768,7 @@ df = df[['Period', 'Reason for Homelessness', 'Accommodation Not Reasonable Brea
          'Release from Facilities Breakdown', 'Household Composition', 'ONS Geography Code', 'Priority Need Category',
          'Housing Assessment Outcome', 'Age Group', 'Assessment Decision', 'Measure Type', 'Unit', 'Value', 'Marker']]
 
-df['Reason for Homelessness'] = df.apply(lambda x: 'accommodation-not-reasonable' if (x['Reason for Homelessness'] == '') and (x['Accommodation Not Reasonable Breakdown'] != '') else x['Reason for Homelessness'], axis = 1)
+"""df['Reason for Homelessness'] = df.apply(lambda x: 'accommodation-not-reasonable' if (x['Reason for Homelessness'] == '') and (x['Accommodation Not Reasonable Breakdown'] != '') else x['Reason for Homelessness'], axis = 1)
 df['Reason for Homelessness'] = df.apply(lambda x: 'intimidation' if (x['Reason for Homelessness'] == '') and (x['Intimidation Breakdown'] != '') else x['Reason for Homelessness'], axis = 1)
 df['Reason for Homelessness'] = df.apply(lambda x: 'release-from-hospital-prison-other-institution' if (x['Reason for Homelessness'] == '') and (x['Release from Facilities Breakdown'] != '') else x['Reason for Homelessness'], axis = 1)
 
@@ -782,18 +785,18 @@ for col in df.columns.values.tolist():
 	if col in ['Marker', 'Value']:
 		continue
 	else:
-         df[col] = df[col].replace("", "all")
+         df[col] = df[col].replace("", "all")"""
 
 df
 
 
-# In[436]:
+# In[784]:
 
 
 cubes.add_cube(scraper, df, scraper.dataset.title)
 
 
-# In[437]:
+# In[785]:
 
 
 for tab in accommodation_tabs:
@@ -964,7 +967,7 @@ for tab in accommodation_tabs:
         trace.store('combined_dataframe_accommodation', table)
 
 
-# In[438]:
+# In[786]:
 
 
 df = trace.combine_and_trace(title, 'combined_dataframe_accommodation').fillna('')
@@ -1052,19 +1055,19 @@ for col in df.columns.values.tolist():
 df
 
 
-# In[439]:
+# In[787]:
 
 
 cubes.add_cube(scraper, df, scraper.dataset.title)
 
 
-# In[440]:
+# In[788]:
 
 
 cubes.output_all()
 
 
-# In[441]:
+# In[789]:
 
 
 """df = pd.read_csv("out/observations.csv")

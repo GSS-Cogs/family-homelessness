@@ -1,14 +1,14 @@
 #!/usr/bin/env python
 # coding: utf-8
 
-# In[1222]:
+# In[1459]:
 
 
 # -*- coding: utf-8 -*-
 # # NIHE Northern Ireland homelessness bulletin
 
 
-# In[1223]:
+# In[1460]:
 
 
 
@@ -23,9 +23,10 @@ import pyexcel
 import messytables
 from io import BytesIO
 from ntpath import basename
+import copy
 
 
-# In[1224]:
+# In[1461]:
 
 
 
@@ -34,7 +35,7 @@ cubes = Cubes("info.json")
 pd.set_option('display.float_format', lambda x: '%.0f' % x)
 
 
-# In[1225]:
+# In[1462]:
 
 
 
@@ -43,7 +44,7 @@ landingPage = info['landingPage']
 landingPage
 
 
-# In[1226]:
+# In[1463]:
 
 
 
@@ -87,7 +88,7 @@ def mid(s, offset, amount):
     return s[offset:offset+amount]
 
 
-# In[1227]:
+# In[1464]:
 
 
 
@@ -101,7 +102,7 @@ temp_end = tab_names.index('3_5') + 1  # tempprary accommodation end index
 (pres_start, accept_start, temp_start, temp_end)
 
 
-# In[1228]:
+# In[1465]:
 
 
 
@@ -112,7 +113,7 @@ accommodation_tabs = tabs[temp_start: temp_end]
 trace = TransformTrace()
 
 
-# In[1229]:
+# In[1466]:
 
 
 
@@ -337,7 +338,7 @@ stats_df = stats_df.rename(columns={"Homelessness Reason" : "Reason for Homeless
 stats_df
 
 
-# In[1230]:
+# In[1467]:
 
 
 
@@ -346,7 +347,7 @@ bulletin_df[["Measure Type", "Unit"]] = bulletin_df[["Unit", "Measure Type"]]
 bulletin_df
 
 
-# In[1231]:
+# In[1468]:
 
 
 
@@ -463,17 +464,20 @@ for col in df.columns.values.tolist():
 df
 
 
-# In[1232]:
-
+# In[1469]:
 
 
 scraper = Scraper(seed='info.json')
-scraper.dataset.title = title
 
-cubes.add_cube(scraper, df, scraper.dataset.title)
+scraper.dataset.license = "".join([x.strip().replace('"', '') for x in scraper.dataset.license.split(" ")])
+
+scraper.dataset.title = "NIHE - Homelessness Presentations"
+scraper.dataset.comment = 'The Northern Ireland Homelessness bulletin is a biannual publication which contains information on a range of areas relating to homelessness. The report is currently divided into three sections which are: Homeless Presenters; Homeless Acceptances; and Temporary Accommodation.'
+
+cubes.add_cube(copy.deepcopy(scraper), df, scraper.dataset.title)
 
 
-# In[1233]:
+# In[1470]:
 
 
 
@@ -790,13 +794,18 @@ for col in df.columns.values.tolist():
 df
 
 
-# In[1234]:
+# In[1471]:
 
 
-cubes.add_cube(scraper, df, scraper.dataset.title)
+scraper.dataset.license = "".join([x.strip().replace('"', '') for x in scraper.dataset.license.split(" ")])
+
+scraper.dataset.title = 'NIHE - Homelessness Acceptances'
+scraper.dataset.comment = 'The Northern Ireland Homelessness bulletin is a biannual publication which contains information on a range of areas relating to homelessness. The report is currently divided into three sections which are: Homeless Presenters; Homeless Acceptances; and Temporary Accommodation.'
+
+cubes.add_cube(copy.deepcopy(scraper), df, scraper.dataset.title)
 
 
-# In[1235]:
+# In[1472]:
 
 
 for tab in accommodation_tabs:
@@ -967,7 +976,7 @@ for tab in accommodation_tabs:
         trace.store('combined_dataframe_accommodation', table)
 
 
-# In[1236]:
+# In[1473]:
 
 
 df = trace.combine_and_trace(title, 'combined_dataframe_accommodation').fillna('')
@@ -1061,19 +1070,22 @@ df['Unit'] = df.apply(lambda x: 'placements' if 'children' in x['Unit'] else x['
 df
 
 
-# In[1237]:
+# In[1474]:
 
 
-cubes.add_cube(scraper, df, scraper.dataset.title)
+scraper.dataset.title = 'NIHE - Temporary Accommodation'
+scraper.dataset.comment = 'The Northern Ireland Homelessness bulletin is a biannual publication which contains information on a range of areas relating to homelessness. The report is currently divided into three sections which are: Homeless Presenters; Homeless Acceptances; and Temporary Accommodation.'
+
+cubes.add_cube(copy.deepcopy(scraper), df, scraper.dataset.title)
 
 
-# In[1238]:
+# In[1475]:
 
 
 cubes.output_all()
 
 
-# In[1239]:
+# In[1475]:
 
 
 

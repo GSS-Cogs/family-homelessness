@@ -757,17 +757,16 @@ for tab in tabs:
     trace.start(datasetTitle, tab, columns, distribution.downloadURL)
     if tab.name in ['P2']: #only transforming tab P2 for now
         print(tab.name)
-        cell = tab.excel_ref("A1")
+        
         remove_notes = tab.filter(contains_string('Notes')).expand(DOWN).expand(RIGHT)
         household_type_and_composition = tab.filter("Total number of households whose prevention duty ended with accommodation secured").expand(RIGHT)
         prs_srs_1 = tab.filter("Total PRS").expand(RIGHT).is_not_blank()
         breakdown_of_prs_srs_1 = tab.filter("Self-contained").shift(LEFT).shift(LEFT).shift(LEFT).expand(RIGHT)
-#         observations = cell.shift(3,6).expand(RIGHT).expand(DOWN).is_not_blank()-remove_notes
-        observations = tab.excel_ref("D7").expand(RIGHT).expand(DOWN).is_not_blank()-remove_notes
+        observations = breakdown_of_prs_srs_1.fill(DOWN).expand(RIGHT).is_not_blank()-remove_notes
         unwanted = observations.shift(LEFT).shift(LEFT).fill(RIGHT)
         quarter = unwanted.shift(LEFT)-unwanted
         period = quarter.shift(LEFT).is_not_blank()
-#         savepreviewhtml(period, fname= tab.name + "PREVIEW.html")
+#         savepreviewhtml(observations, fname= tab.name + "PREVIEW.html")
         dimensions = [
             HDim(quarter,'quarter',DIRECTLY,LEFT),
             HDim(period,'period',CLOSEST,ABOVE),

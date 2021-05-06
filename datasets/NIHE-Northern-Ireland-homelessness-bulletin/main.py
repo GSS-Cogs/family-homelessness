@@ -1,14 +1,14 @@
 #!/usr/bin/env python
 # coding: utf-8
 
-# In[772]:
+# In[1031]:
 
 
 # -*- coding: utf-8 -*-
 # # NIHE Northern Ireland homelessness bulletin
 
 
-# In[773]:
+# In[1032]:
 
 
 
@@ -25,7 +25,7 @@ from io import BytesIO
 from ntpath import basename
 
 
-# In[774]:
+# In[1033]:
 
 
 
@@ -34,7 +34,7 @@ cubes = Cubes("info.json")
 pd.set_option('display.float_format', lambda x: '%.0f' % x)
 
 
-# In[775]:
+# In[1034]:
 
 
 
@@ -43,7 +43,7 @@ landingPage = info['landingPage']
 landingPage
 
 
-# In[776]:
+# In[1035]:
 
 
 
@@ -87,7 +87,7 @@ def mid(s, offset, amount):
     return s[offset:offset+amount]
 
 
-# In[777]:
+# In[1036]:
 
 
 
@@ -101,7 +101,7 @@ temp_end = tab_names.index('3_5') + 1  # tempprary accommodation end index
 (pres_start, accept_start, temp_start, temp_end)
 
 
-# In[778]:
+# In[1037]:
 
 
 
@@ -112,7 +112,7 @@ accommodation_tabs = tabs[temp_start: temp_end]
 trace = TransformTrace()
 
 
-# In[779]:
+# In[1038]:
 
 
 
@@ -337,7 +337,7 @@ stats_df = stats_df.rename(columns={"Homelessness Reason" : "Reason for Homeless
 stats_df
 
 
-# In[780]:
+# In[1039]:
 
 
 
@@ -346,7 +346,7 @@ bulletin_df[["Measure Type", "Unit"]] = bulletin_df[["Unit", "Measure Type"]]
 bulletin_df
 
 
-# In[781]:
+# In[1040]:
 
 
 
@@ -463,7 +463,7 @@ for col in df.columns.values.tolist():
 df
 
 
-# In[782]:
+# In[1041]:
 
 
 
@@ -473,7 +473,7 @@ scraper.dataset.title = title
 cubes.add_cube(scraper, df, scraper.dataset.title)
 
 
-# In[783]:
+# In[1042]:
 
 
 
@@ -790,13 +790,13 @@ for col in df.columns.values.tolist():
 df
 
 
-# In[784]:
+# In[1043]:
 
 
 cubes.add_cube(scraper, df, scraper.dataset.title)
 
 
-# In[785]:
+# In[1044]:
 
 
 for tab in accommodation_tabs:
@@ -967,7 +967,7 @@ for tab in accommodation_tabs:
         trace.store('combined_dataframe_accommodation', table)
 
 
-# In[786]:
+# In[1045]:
 
 
 df = trace.combine_and_trace(title, 'combined_dataframe_accommodation').fillna('')
@@ -1052,44 +1052,25 @@ for col in df.columns.values.tolist():
 	else:
          df[col] = df[col].replace("", "all")
 
+df['Value'] = df.apply(lambda x: int(x['Value']) if x['Marker'] == '' else x['Value'], axis = 1)
+
 df
 
 
-# In[787]:
+# In[1046]:
 
 
 cubes.add_cube(scraper, df, scraper.dataset.title)
 
 
-# In[788]:
+# In[1047]:
 
 
 cubes.output_all()
 
 
-# In[789]:
+# In[1047]:
 
 
-"""df = pd.read_csv("out/observations.csv")
-df["all_dimensions_concatenated"] = ""
-for col in df.columns.values:
-    if col != "Value":
-        df["all_dimensions_concatenated"] = df["all_dimensions_concatenated"]+df[col].astype(str)
-found = []
-bad_combos = []
-for item in df["all_dimensions_concatenated"]:
-    if item not in found:
-        found.append(item)
-    else:
-        bad_combos.append(item)
-df = df[df["all_dimensions_concatenated"].map(lambda x: x in bad_combos)]
-drop_these_cols = []
-for col in df.columns.values:
-    if col != "all_dimensions_concatenated" and col != "Value":
-        drop_these_cols.append(col)
-for dtc in drop_these_cols:
-    df = df.drop(dtc, axis=1)
-df = df[["all_dimensions_concatenated", "Value"]]
-df = df.sort_values(by=['all_dimensions_concatenated'])
-df.to_csv("duplicates_with_values.csv", index=False)"""
+
 

@@ -1,14 +1,14 @@
 #!/usr/bin/env python
 # coding: utf-8
 
-# In[56]:
+# In[424]:
 
 
 # -*- coding: utf-8 -*-
 # # NIHE Northern Ireland homelessness bulletin
 
 
-# In[57]:
+# In[425]:
 
 
 
@@ -25,7 +25,7 @@ from io import BytesIO
 from ntpath import basename
 
 
-# In[58]:
+# In[426]:
 
 
 
@@ -34,7 +34,7 @@ cubes = Cubes("info.json")
 pd.set_option('display.float_format', lambda x: '%.0f' % x)
 
 
-# In[59]:
+# In[427]:
 
 
 
@@ -43,7 +43,7 @@ landingPage = info['landingPage']
 landingPage
 
 
-# In[60]:
+# In[428]:
 
 
 
@@ -87,7 +87,7 @@ def mid(s, offset, amount):
     return s[offset:offset+amount]
 
 
-# In[61]:
+# In[429]:
 
 
 
@@ -101,7 +101,7 @@ temp_end = tab_names.index('3_5') + 1  # tempprary accommodation end index
 (pres_start, accept_start, temp_start, temp_end)
 
 
-# In[62]:
+# In[430]:
 
 
 
@@ -112,7 +112,7 @@ accommodation_tabs = tabs[temp_start: temp_end]
 trace = TransformTrace()
 
 
-# In[63]:
+# In[431]:
 
 
 
@@ -337,7 +337,7 @@ stats_df = stats_df.rename(columns={"Homelessness Reason" : "Reason for Homeless
 stats_df
 
 
-# In[64]:
+# In[432]:
 
 
 
@@ -346,7 +346,7 @@ bulletin_df[["Measure Type", "Unit"]] = bulletin_df[["Unit", "Measure Type"]]
 bulletin_df
 
 
-# In[65]:
+# In[433]:
 
 
 
@@ -441,10 +441,29 @@ df = df.replace({'Household Composition' : {'families1' : 'families',
                                             'single-males-26-59-yrs' : 'single-males',
                                             'single-males-total' : 'single-males'}})
 
+df['Reason for Homelessness'] = df.apply(lambda x: 'accommodation-not-reasonable' if (x['Reason for Homelessness'] == '') and (x['Accommodation Not Reasonable Breakdown'] != '') else x['Reason for Homelessness'], axis = 1)
+df['Reason for Homelessness'] = df.apply(lambda x: 'intimidation' if (x['Reason for Homelessness'] == '') and (x['Intimidation Breakdown'] != '') else x['Reason for Homelessness'], axis = 1)
+df['Reason for Homelessness'] = df.apply(lambda x: 'release-from-hospital-prison-other-institution' if (x['Reason for Homelessness'] == '') and (x['Release from Facilities Breakdown'] != '') else x['Reason for Homelessness'], axis = 1)
+
+COLUMNS_TO_NOT_NA = ['Reason for Homelessness', 'Household Composition', 'Priority Need Category', 'Housing Assessment Outcome', 'Marker', 'Value']
+
+for col in df.columns.values.tolist():
+	if col in COLUMNS_TO_NOT_NA:
+		continue
+	else:
+         df[col] = df[col].replace("", "N/A")
+
+
+for col in df.columns.values.tolist():
+	if col in ['Marker', 'Value']:
+		continue
+	else:
+         df[col] = df[col].replace("", "all")
+
 df
 
 
-# In[66]:
+# In[434]:
 
 
 
@@ -454,7 +473,7 @@ scraper.dataset.title = title
 cubes.add_cube(scraper, df, scraper.dataset.title)
 
 
-# In[67]:
+# In[435]:
 
 
 
@@ -746,10 +765,35 @@ df = df[['Period', 'Reason for Homelessness', 'Accommodation Not Reasonable Brea
          'Release from Facilities Breakdown', 'Household Composition', 'ONS Geography Code', 'Priority Need Category',
          'Housing Assessment Outcome', 'Age Group', 'Assessment Decision', 'Measure Type', 'Unit', 'Value', 'Marker']]
 
+df['Reason for Homelessness'] = df.apply(lambda x: 'accommodation-not-reasonable' if (x['Reason for Homelessness'] == '') and (x['Accommodation Not Reasonable Breakdown'] != '') else x['Reason for Homelessness'], axis = 1)
+df['Reason for Homelessness'] = df.apply(lambda x: 'intimidation' if (x['Reason for Homelessness'] == '') and (x['Intimidation Breakdown'] != '') else x['Reason for Homelessness'], axis = 1)
+df['Reason for Homelessness'] = df.apply(lambda x: 'release-from-hospital-prison-other-institution' if (x['Reason for Homelessness'] == '') and (x['Release from Facilities Breakdown'] != '') else x['Reason for Homelessness'], axis = 1)
+
+COLUMNS_TO_NOT_NA = ['Reason for Homelessness', 'Household Composition', 'Priority Need Category', 'Housing Assessment Outcome', 'Marker', 'Value']
+
+for col in df.columns.values.tolist():
+	if col in COLUMNS_TO_NOT_NA:
+		continue
+	else:
+         df[col] = df[col].replace("", "N/A")
+
+
+for col in df.columns.values.tolist():
+	if col in ['Marker', 'Value']:
+		continue
+	else:
+         df[col] = df[col].replace("", "all")
+
 df
 
 
-# In[68]:
+# In[436]:
+
+
+cubes.add_cube(scraper, df, scraper.dataset.title)
+
+
+# In[437]:
 
 
 for tab in accommodation_tabs:
@@ -920,7 +964,7 @@ for tab in accommodation_tabs:
         trace.store('combined_dataframe_accommodation', table)
 
 
-# In[69]:
+# In[438]:
 
 
 df = trace.combine_and_trace(title, 'combined_dataframe_accommodation').fillna('')
@@ -999,15 +1043,50 @@ df = df[
 
 scraper.dataset.license = "".join([x.strip().replace('"', '') for x in scraper.dataset.license.split(" ")])
 
+for col in df.columns.values.tolist():
+	if col in ['Marker', 'Value']:
+		continue
+	else:
+         df[col] = df[col].replace("", "all")
 
-# In[70]:
+df
+
+
+# In[439]:
+
+
+cubes.add_cube(scraper, df, scraper.dataset.title)
+
+
+# In[440]:
 
 
 cubes.output_all()
 
 
-# In[71]:
+# In[441]:
 
 
-
+"""df = pd.read_csv("out/observations.csv")
+df["all_dimensions_concatenated"] = ""
+for col in df.columns.values:
+    if col != "Value":
+        df["all_dimensions_concatenated"] = df["all_dimensions_concatenated"]+df[col].astype(str)
+found = []
+bad_combos = []
+for item in df["all_dimensions_concatenated"]:
+    if item not in found:
+        found.append(item)
+    else:
+        bad_combos.append(item)
+df = df[df["all_dimensions_concatenated"].map(lambda x: x in bad_combos)]
+drop_these_cols = []
+for col in df.columns.values:
+    if col != "all_dimensions_concatenated" and col != "Value":
+        drop_these_cols.append(col)
+for dtc in drop_these_cols:
+    df = df.drop(dtc, axis=1)
+df = df[["all_dimensions_concatenated", "Value"]]
+df = df.sort_values(by=['all_dimensions_concatenated'])
+df.to_csv("duplicates_with_values.csv", index=False)"""
 

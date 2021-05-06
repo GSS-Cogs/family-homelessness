@@ -33,7 +33,7 @@
             "Age Group": {
                 "description": "Age Group",
                 "value": "http://gss-data.org.uk/def/homelessness/concept/age/{age_group}",
-                "codelist": "http://gss-data.org.uk/def/homelessness/concept-scheme/age"
+                "codelist": "http://gss-data.org.uk/def/homelessness/concept-scheme/age-group"
             },
             "Reason for Homelessness": {
                 "description": "Reason for Homelessness"
@@ -83,9 +83,8 @@
                 ]
             },
             "Unit": {
-                "description": "Unit",
-                "value": "http://gss-data.org.uk/def/homelessness/concept/unit/{unit}",
-                "codelist": "http://gss-data.org.uk/def/homelessness/concept-scheme/unit"
+               "attribute": "http://purl.org/linked-data/sdmx/2009/attribute#unitMeasure",
+               "value": "http://gss-data.org.uk/def/concept/measurement-units/{unit}"
             },
             "Value": {
                 "datatype": "integer"

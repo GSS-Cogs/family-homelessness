@@ -1,0 +1,136 @@
+{
+    "@context": "http://www.w3.org/ns/csvw",
+    "@id": "http://gss-data.org.uk/data/gss_data/homelessness/nihe-northern-ireland-homelessness-bulletin#scheme/release-from-facilities-breakdown",
+    "url": "release-from-facilities-breakdown.csv",
+    "rdfs:label": "Release from Facilities Breakdown",
+    "dc:title": "Release from Facilities Breakdown",
+    "tableSchema": {
+        "columns": [
+            {
+                "titles": "Label",
+                "name": "label",
+                "datatype": "string",
+                "required": true,
+                "propertyUrl": "rdfs:label"
+            },
+            {
+                "titles": "Notation",
+                "name": "notation",
+                "datatype": {
+                    "base": "string",
+                    "format": "^-?[\\w\\.\\/\\+]+(-[\\w\\.\\/\\+]+)*$"
+                },
+                "required": true,
+                "propertyUrl": "skos:notation"
+            },
+            {
+                "titles": "Parent Notation",
+                "name": "parent_notation",
+                "datatype": {
+                    "base": "string",
+                    "format": "^(-?[\\w\\.\\/\\+]+(-[\\w\\.\\/\\+]+)*|)$"
+                },
+                "required": false,
+                "propertyUrl": "skos:broader",
+                "valueUrl": "http://gss-data.org.uk/data/gss_data/homelessness/nihe-northern-ireland-homelessness-bulletin#concept/release-from-facilities-breakdown/{parent_notation}"
+            },
+            {
+                "titles": "Sort Priority",
+                "name": "sort_priority",
+                "datatype": "integer",
+                "required": false,
+                "propertyUrl": "http://www.w3.org/ns/ui#sortPriority"
+            },
+            {
+                "virtual": true,
+                "propertyUrl": "rdf:type",
+                "valueUrl": "skos:Concept"
+            },
+            {
+                "virtual": true,
+                "propertyUrl": "skos:inScheme",
+                "valueUrl": "http://gss-data.org.uk/data/gss_data/homelessness/nihe-northern-ireland-homelessness-bulletin#scheme/release-from-facilities-breakdown"
+            }
+        ],
+        "primaryKey": "notation",
+        "aboutUrl": "http://gss-data.org.uk/data/gss_data/homelessness/nihe-northern-ireland-homelessness-bulletin#concept/release-from-facilities-breakdown/{notation}"
+    },
+    "prov:hadDerivation": {
+        "@id": "http://gss-data.org.uk/data/gss_data/homelessness/nihe-northern-ireland-homelessness-bulletin#scheme/release-from-facilities-breakdown",
+        "@type": [
+            "skos:ConceptScheme",
+            "http://publishmydata.com/pmdcat#ConceptScheme"
+        ]
+    },
+    "rdfs:seeAlso": [
+        {
+            "@id": "http://gss-data.org.uk/data/gss_data/homelessness/nihe-northern-ireland-homelessness-bulletin#scheme/release-from-facilities-breakdown/dataset",
+            "@type": [
+                "dcat:Dataset",
+                "http://publishmydata.com/pmdcat#Dataset"
+            ],
+            "http://publishmydata.com/pmdcat#datasetContents": {
+                "@id": "http://gss-data.org.uk/data/gss_data/homelessness/nihe-northern-ireland-homelessness-bulletin#scheme/release-from-facilities-breakdown"
+            },
+            "http://publishmydata.com/pmdcat#graph": {
+                "@id": "http://gss-data.org.uk/data/gss_data/homelessness/nihe-northern-ireland-homelessness-bulletin#scheme/release-from-facilities-breakdown"
+            },
+            "rdfs:label": "Release from Facilities Breakdown",
+            "dc:title": "Release from Facilities Breakdown",
+            "rdfs:comment": "Dataset representing the 'Release from Facilities Breakdown' code list.",
+            "dc:license": {
+                "@id": "http://www.nationalarchives.gov.uk/doc/open-government-licence/version/3/"
+            },
+            "dc:creator": {
+                "@id": "https://www.nihe.gov.uk/"
+            },
+            "dc:publisher": {
+                "@id": "https://www.nihe.gov.uk/"
+            },
+            "dcat:contactPoint": {
+                "@id": "psu@communities-ni.gov.uk"
+            },
+            "dcat:landingPage": {
+                "@id": "https://www.communities-ni.gov.uk/publications/topic/8182?search=%22Northern+Ireland+Homelessness+Bulletin%22&Search-exposed-form=Go&sort_by=field_published_date"
+            },
+            "dc:issued": {
+                "@type": "dateTime",
+                "@value": "2020-12-15T00:00:00"
+            },
+            "dc:modified": {
+                "@type": "dateTime",
+                "@value": "2020-12-15T00:00:00"
+            },
+            "http://publishmydata.com/pmdcat#markdownDescription": {
+                "@type": "https://www.w3.org/ns/iana/media-types/text/markdown#Resource",
+                "@value": "The Northern Ireland Homelessness bulletin is a biannual publication which contains information on a range of areas relating to homelessness. The report is currently divided into three sections which are: Homeless Presenters; Homeless Acceptances; and Temporary Accommodation."
+            }
+        },
+        {
+            "@id": "http://gss-data.org.uk/catalog/vocabularies",
+            "dcat:record": {
+                "@id": "http://gss-data.org.uk/data/gss_data/homelessness/nihe-northern-ireland-homelessness-bulletin#scheme/release-from-facilities-breakdown/catalog-record"
+            }
+        },
+        {
+            "@id": "http://gss-data.org.uk/data/gss_data/homelessness/nihe-northern-ireland-homelessness-bulletin#scheme/release-from-facilities-breakdown/catalog-record",
+            "@type": "dcat:CatalogRecord",
+            "foaf:primaryTopic": {
+                "@id": "http://gss-data.org.uk/data/gss_data/homelessness/nihe-northern-ireland-homelessness-bulletin#scheme/release-from-facilities-breakdown/dataset"
+            },
+            "http://publishmydata.com/pmdcat#metadataGraph": {
+                "@id": "http://gss-data.org.uk/data/gss_data/homelessness/nihe-northern-ireland-homelessness-bulletin#scheme/release-from-facilities-breakdown"
+            },
+            "dc:title": "Release from Facilities Breakdown Catalog Record",
+            "rdfs:label": "Release from Facilities Breakdown Catalog Record",
+            "dc:issued": {
+                "@type": "dateTime",
+                "@value": "2021-04-29T10:50:16.719532"
+            },
+            "dc:modified": {
+                "@type": "dateTime",
+                "@value": "2021-04-29T10:50:16.719532"
+            }
+        }
+    ]
+}

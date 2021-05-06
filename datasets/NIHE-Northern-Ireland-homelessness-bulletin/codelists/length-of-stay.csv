@@ -1,0 +1,9 @@
+Label,Notation,Parent Notation,Sort Priority
+less-than-6-months,less-than-6-months,,0
+6-12-months,6-12-months,,1
+1-2-years,1-2-years,,2
+2-3-years,2-3-years,,3
+3-4-years,3-4-years,,4
+4-5-years,4-5-years,,5
+5-plus-years,5-plus-years,,6
+total,total,,7

@@ -1,0 +1,11 @@
+Label,Notation,Parent Notation,Sort Priority
+accepted,accepted,,0
+discharged,discharged,,1
+appeal,appeal,,2
+cancelled,cancelled,,3
+concluded,concluded,,4
+duty-discharged,duty-discharged,,5
+no-decision,no-decision,,6
+prevented,prevented,,7
+rejected,rejected,,8
+total,total,,9

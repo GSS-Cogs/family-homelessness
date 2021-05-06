@@ -1,0 +1,19 @@
+Label,Notation,Parent Notation,Sort Priority
+accommodation-not-reasonable,accommodation-not-reasonable,,0
+bomb-fire-damage-civil-disturbance,bomb-fire-damage-civil-disturbance,,1
+domestic-violence,domestic-violence,,2
+fire-flood-other-emergency,fire-flood-other-emergency,,3
+intimidation,intimidation,,4
+loss-of-rented-accommodation,loss-of-rented-accommodation,,5
+marital-relationship-breakdown,marital-relationship-breakdown,,6
+mortgage-default,mortgage-default,,7
+neighbourhood-harassment,neighbourhood-harassment,,8
+no-accommodation-in-northern-ireland,no-accommodation-in-northern-ireland,,9
+other,other,,10
+release-from-hospital-prison-other-institution,release-from-hospital-prison-other-institution,,11
+sharing-breakdown-family-dispute,sharing-breakdown-family-dispute,,12
+total,total,,13
+status-of-household-live-full-duty-applicants,status-of-household-live-full-duty-applicants,,14
+no-data-on-reason-for-presentation,no-data-on-reason-for-presentation,,15
+live-full-duty-applicants,live-full-duty-applicants,,16
+discharged-full-duty-applicants,discharged-full-duty-applicants,,17

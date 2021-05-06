@@ -1,0 +1,13 @@
+Label,Notation,Parent Notation,Sort Priority
+loss-of-rented-accommodation-generic,loss-of-rented-accommodation-generic,,0
+private-affordability,private-affordability,,1
+private-fitness-repairs,private-fitness-repairs,,2
+private-landlord-dispute,private-landlord-dispute,,3
+private-property-sale,private-property-sale,,4
+private-other,private-other,,5
+housing-association-arrears,housing-association-arrears,,6
+housing-association-anti-social-behaviour,housing-association-anti-social-behaviour,,7
+housing-association-other,housing-association-other,,8
+northern-ireland-housing-executive-arrears,northern-ireland-housing-executive-arrears,,9
+northern-ireland-housing-executive-other,northern-ireland-housing-executive-other,,10
+total,total,,11

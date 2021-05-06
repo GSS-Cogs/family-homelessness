@@ -33,7 +33,7 @@
             "Age Group": {
                 "description": "Age Group",
                 "value": "http://gss-data.org.uk/def/homelessness/concept/age/{age_group}",
-                "codelist": "http://gss-data.org.uk/def/homelessness/concept-scheme/age-group"
+                "codelist": "http://gss-data.org.uk/def/homelessness/concept-scheme/age"
             },
             "Reason for Homelessness": {
                 "description": "Reason for Homelessness"

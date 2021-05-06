@@ -75,19 +75,21 @@
                 "description": "Length of Stay"
             },
             "Measure Type": {
-        		"dimension": "http://purl.org/linked-data/cube#measureType",
-        		"value": "http://gss-data.org.uk/def/measure/{measure_type}",
-        		"types": ["count",
-                          "count-per-1000-population"]
+                "dimension": "http://purl.org/linked-data/cube#measureType",
+                "value": "http://gss-data.org.uk/def/measure/{measure_type}",
+                "types": [
+                    "count",
+                    "count-per-1000-population"
+                ]
             },
             "Unit": {
                 "description": "Unit",
                 "value": "http://gss-data.org.uk/def/homelessness/concept/unit/{unit}",
                 "codelist": "http://gss-data.org.uk/def/homelessness/concept-scheme/unit"
             },
-      		"Value": {
-        		"datatype": "integer"
-      		},
+            "Value": {
+                "datatype": "integer"
+            },
             "Marker": {
                 "attribute": "http://purl.org/linked-data/sdmx/2009/attribute#obsStatus",
                 "value": "http://gss-data.org.uk/def/concept/cogs-markers/{marker}",

@@ -1,14 +1,14 @@
 #!/usr/bin/env python
 # coding: utf-8
 
-# In[1096]:
+# In[40]:
 
 
 # -*- coding: utf-8 -*-
 # # NIHE Northern Ireland homelessness bulletin
 
 
-# In[1097]:
+# In[41]:
 
 
 
@@ -17,13 +17,15 @@ from databaker.framework import *
 import json
 import pandas as pd
 import numpy as np
-
+import glob
+from pathlib import Path
 import pyexcel
 import messytables
 from io import BytesIO
+from ntpath import basename
 
 
-# In[1098]:
+# In[42]:
 
 
 
@@ -32,7 +34,7 @@ cubes = Cubes("info.json")
 pd.set_option('display.float_format', lambda x: '%.0f' % x)
 
 
-# In[1099]:
+# In[43]:
 
 
 
@@ -41,7 +43,7 @@ landingPage = info['landingPage']
 landingPage
 
 
-# In[1100]:
+# In[44]:
 
 
 
@@ -85,7 +87,7 @@ def mid(s, offset, amount):
     return s[offset:offset+amount]
 
 
-# In[1101]:
+# In[45]:
 
 
 
@@ -99,7 +101,7 @@ temp_end = tab_names.index('3_5') + 1  # tempprary accommodation end index
 (pres_start, accept_start, temp_start, temp_end)
 
 
-# In[1102]:
+# In[46]:
 
 
 
@@ -110,7 +112,7 @@ accommodation_tabs = tabs[temp_start: temp_end]
 trace = TransformTrace()
 
 
-# In[1103]:
+# In[47]:
 
 
 
@@ -327,8 +329,6 @@ def process_tab():
 
 stats_df = process_tab()
 
-stats_df.drop_duplicates().to_csv('stats.csv', index = False)
-
 stats_df["Measure Type"] = 'count'
 stats_df  = df[["Period", "Homelessness Reason", "House_Hold_Type", "Outcome", "Age", "Measure Type", "Unit", "Value", "MARKER"]]
 
@@ -337,7 +337,7 @@ stats_df = stats_df.rename(columns={"Homelessness Reason" : "Reason for Homeless
 stats_df
 
 
-# In[1104]:
+# In[48]:
 
 
 
@@ -346,7 +346,7 @@ bulletin_df[["Measure Type", "Unit"]] = bulletin_df[["Unit", "Measure Type"]]
 bulletin_df
 
 
-# In[1105]:
+# In[49]:
 
 
 
@@ -444,7 +444,7 @@ df = df.replace({'Household Composition' : {'families1' : 'families',
 df
 
 
-# In[1106]:
+# In[50]:
 
 
 
@@ -454,7 +454,7 @@ scraper.dataset.title = title
 cubes.add_cube(scraper, df, scraper.dataset.title)
 
 
-# In[1107]:
+# In[51]:
 
 
 
@@ -749,7 +749,7 @@ df = df[['Period', 'Reason for Homelessness', 'Accommodation Not Reasonable Brea
 df
 
 
-# In[1108]:
+# In[52]:
 
 
 for tab in accommodation_tabs:
@@ -920,7 +920,7 @@ for tab in accommodation_tabs:
         trace.store('combined_dataframe_accommodation', table)
 
 
-# In[1109]:
+# In[53]:
 
 
 df = trace.combine_and_trace(title, 'combined_dataframe_accommodation').fillna('')
@@ -1000,13 +1000,13 @@ df = df[
 scraper.dataset.license = "".join([x.strip().replace('"', '') for x in scraper.dataset.license.split(" ")])
 
 
-# In[1110]:
+# In[54]:
 
 
 cubes.output_all()
 
 
-# In[1110]:
+# In[54]:
 
 
 

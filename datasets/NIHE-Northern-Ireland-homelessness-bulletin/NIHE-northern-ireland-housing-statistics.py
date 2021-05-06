@@ -15,40 +15,49 @@ from gssutils import *
 import json
 import numpy as np
 
-info = json.load(open("housing-stats-info.json"))
-scraper = Scraper(seed = "housing-stats-info.json")
+info = json.load(open("info.json"))
+
+info['dataURL'] = "https://www.communities-ni.gov.uk/system/files/publications/communities/ni-housing-stats-19-20-tables3.ods"
+info['landingPage'] = "https://www.communities-ni.gov.uk/topics/housing-statistics#toc-2"
+
+with open('info.json', 'w') as outfile:
+    json.dump(info, outfile, indent=4)
+
+scraper = Scraper(seed = "info.json")
 scraper.distributions = [x for x in scraper.distributions if hasattr(x, "mediaType")]
 scraper
+#%%
 
 trace = TransformTrace()
-cubes = Cubes("housing-stats-info.json")
+#cubes = Cubes("housing-stats-info.json")
 # +
 # The source data is published  in ODS format. ODS is converted to xls with the below lines of code as databaker is compatible with xls
 
-xls = pd.ExcelFile(scraper.distributions[0].downloadURL, engine="odf")
+"""xls = pd.ExcelFile("https://www.communities-ni.gov.uk/system/files/publications/communities/ni-housing-stats-19-20-tables3.ods", engine="odf")
 with pd.ExcelWriter("data.xls") as writer:
     for sheet in xls.sheet_names:
         pd.read_excel(xls, sheet).to_excel(writer,sheet, index = False)
     writer.save()
-tabs = loadxlstabs("data.xls")
+tabs = loadxlstabs("data.xls")"""
 
 
 # In[12]:
 
 
-print(type(tabs))
+"""print(type(tabs))"""
 
 distribution = scraper.distribution(latest=True)
 datasetTitle = info["title"]
 distribution
+#%%
 datasetTitle
 
 columns = ["Period", "Age", "Homelessness Reason", "House Hold Type", "Outcome", "Unit"]
 
 tabs_names_to_process = {'T3_8', 'T3_9', 'T3_10_', 'T3_11'}
 
-if len(set(tabs_names_to_process)-{x.name for x in tabs}) != 0:
-    raise ValueError(f'Aborting. A tab named {set(tabs_names_to_process)-{x.name for x in tabs}} required but not found')
+"""if len(set(tabs_names_to_process)-{x.name for x in tabs}) != 0:
+    raise ValueError(f'Aborting. A tab named {set(tabs_names_to_process)-{x.name for x in tabs}} required but not found')"""
 
 tabs = {tab.name: tab for tab in scraper.distribution(latest=True).as_databaker()}
 
@@ -228,9 +237,12 @@ df
 
 tidy = df
 
-#cubes.add_cube(scraper, df, datasetTitle)
+# In[19]:
 
-#cubes.output_all()
+info['landingPage'] = "https://www.communities-ni.gov.uk/publications/topic/8182?search=%22Northern+Ireland+Homelessness+Bulletin%22&Search-exposed-form=Go&sort_by=field_published_date"
 
-#trace.render("spec_v1.html")
+del info['dataURL']
+
+with open('info.json', 'w') as outfile:
+    json.dump(info, outfile, indent= 4 )
 

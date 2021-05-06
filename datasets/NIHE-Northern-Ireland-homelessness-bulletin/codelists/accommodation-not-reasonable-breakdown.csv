@@ -1,11 +1,11 @@
 Label,Notation,Parent Notation,Sort Priority
-accommodation-not-reasonable-generic,accommodation-not-reasonable-generic,,0
-financial-hardship,financial-hardship,,1
-mental-health,mental-health,,2
-other,other,,3
-overcrowding,overcrowding,,4
-physical-health-disability,physical-health-disability,,5
-property-unfitness,property-unfitness,,6
-violence,violence,,7
-total,total,,8
-accomodation-not-reasonable-generic,accomodation-not-reasonable-generic,,9
+Accommodation not reasonable generic,accommodation-not-reasonable-generic,,0
+Financial hardship,financial-hardship,,1
+Mental health,mental-health,,2
+Other,other,,3
+Overcrowding,overcrowding,,4
+Physical health disability,physical-health-disability,,5
+Property unfitness,property-unfitness,,6
+Violence,violence,,7
+Total,total,,8
+Accomodation not reasonable generic,accomodation-not-reasonable-generic,,9

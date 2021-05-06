@@ -1,11 +1,11 @@
 Label,Notation,Parent Notation,Sort Priority
-accepted,accepted,,0
-discharged,discharged,,1
-appeal,appeal,,2
-cancelled,cancelled,,3
-concluded,concluded,,4
-duty-discharged,duty-discharged,,5
-no-decision,no-decision,,6
-prevented,prevented,,7
-rejected,rejected,,8
-total,total,,9
+Accepted,accepted,,0
+Discharged,discharged,,1
+Appeal,appeal,,2
+Cancelled,cancelled,,3
+Concluded,concluded,,4
+Duty discharged,duty-discharged,,5
+No decision,no-decision,,6
+Prevented,prevented,,7
+Rejected,rejected,,8
+Total,total,,9

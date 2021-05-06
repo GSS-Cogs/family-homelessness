@@ -1,10 +1,11 @@
 Label,Notation,Parent Notation,Sort Priority
-hotel-b-b,hotel-b-b,,0
-leased-property,leased-property,,1
-nihe-hostels,nihe-hostels,,2
-private-single-lets,private-single-lets,,3
-voluntary-sector-hostels,voluntary-sector-hostels,,4
-total,total,,5
-bespoke-facility-of-temporary-accommodation,bespoke-facility-of-temporary-accommodation,,6
-crash-voluntary-sector,crash-voluntary-sector,,7
-hotel-b-b-leased-property,hotel-b-b-leased-property,,8
+All,all,,0
+Hotel b b,hotel-b-b,,1
+Leased property,leased-property,,2
+Nihe hostels,nihe-hostels,,3
+Private single lets,private-single-lets,,4
+Voluntary sector hostels,voluntary-sector-hostels,,5
+Total,total,,6
+Bespoke facility of temporary accommodation,bespoke-facility-of-temporary-accommodation,,7
+Crash voluntary sector,crash-voluntary-sector,,8
+Hotel b b leased property,hotel-b-b-leased-property,,9

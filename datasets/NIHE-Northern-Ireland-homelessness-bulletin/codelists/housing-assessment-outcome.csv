@@ -1,7 +1,8 @@
 Label,Notation,Parent Notation,Sort Priority
-on-waiting-list,on-waiting-list,,0
-allocated-housing-association-tenancy,allocated-housing-association-tenancy,,1
-allocated-nihe-tenancy,allocated-nihe-tenancy,,2
-private-rental-permanent-private-rented-access-scheme-tenancy,private-rental-permanent-private-rented-access-scheme-tenancy,,3
-refused-3-reasonable-offers,refused-3-reasonable-offers,,4
-total,total,,5
+All,all,,0
+On waiting list,on-waiting-list,,1
+Allocated housing association tenancy,allocated-housing-association-tenancy,,2
+Allocated nihe tenancy,allocated-nihe-tenancy,,3
+Private rental permanent private rented access scheme tenancy,private-rental-permanent-private-rented-access-scheme-tenancy,,4
+Refused 3 reasonable offers,refused-3-reasonable-offers,,5
+Total,total,,6

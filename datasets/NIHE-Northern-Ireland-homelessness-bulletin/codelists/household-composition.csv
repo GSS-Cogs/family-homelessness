@@ -1,8 +1,9 @@
 Label,Notation,Parent Notation,Sort Priority
-single-males,single-males,,0
-single-females,single-females,,1
-couples,couples,,2
-families,families,,3
-pensioners,pensioners,,4
-undefined,undefined,,5
-total,total,,6
+All,all,,0
+Single males,single-males,,1
+Single females,single-females,,2
+Couples,couples,,3
+Families,families,,4
+Pensioners,pensioners,,5
+Undefined,undefined,,6
+Total,total,,7

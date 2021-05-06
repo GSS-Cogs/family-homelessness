@@ -1,7 +1,8 @@
 Label,Notation,Parent Notation,Sort Priority
-dependent-children,dependent-children,,0
-emergency,emergency,,1
-pregnant,pregnant,,2
-violence,violence,,3
-vulnerable,vulnerable,,4
-total,total,,5
+All,all,,0
+Dependent children,dependent-children,,1
+Emergency,emergency,,2
+Pregnant,pregnant,,3
+Violence,violence,,4
+Vulnerable,vulnerable,,5
+Total,total,,6

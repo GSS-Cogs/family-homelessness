@@ -1,14 +1,14 @@
 #!/usr/bin/env python
 # coding: utf-8
 
-# In[1150]:
+# In[1222]:
 
 
 # -*- coding: utf-8 -*-
 # # NIHE Northern Ireland homelessness bulletin
 
 
-# In[1151]:
+# In[1223]:
 
 
 
@@ -25,7 +25,7 @@ from io import BytesIO
 from ntpath import basename
 
 
-# In[1152]:
+# In[1224]:
 
 
 
@@ -34,7 +34,7 @@ cubes = Cubes("info.json")
 pd.set_option('display.float_format', lambda x: '%.0f' % x)
 
 
-# In[1153]:
+# In[1225]:
 
 
 
@@ -43,7 +43,7 @@ landingPage = info['landingPage']
 landingPage
 
 
-# In[1154]:
+# In[1226]:
 
 
 
@@ -87,7 +87,7 @@ def mid(s, offset, amount):
     return s[offset:offset+amount]
 
 
-# In[1155]:
+# In[1227]:
 
 
 
@@ -101,7 +101,7 @@ temp_end = tab_names.index('3_5') + 1  # tempprary accommodation end index
 (pres_start, accept_start, temp_start, temp_end)
 
 
-# In[1156]:
+# In[1228]:
 
 
 
@@ -112,7 +112,7 @@ accommodation_tabs = tabs[temp_start: temp_end]
 trace = TransformTrace()
 
 
-# In[1157]:
+# In[1229]:
 
 
 
@@ -337,7 +337,7 @@ stats_df = stats_df.rename(columns={"Homelessness Reason" : "Reason for Homeless
 stats_df
 
 
-# In[1158]:
+# In[1230]:
 
 
 
@@ -346,7 +346,7 @@ bulletin_df[["Measure Type", "Unit"]] = bulletin_df[["Unit", "Measure Type"]]
 bulletin_df
 
 
-# In[1159]:
+# In[1231]:
 
 
 
@@ -451,7 +451,7 @@ for col in df.columns.values.tolist():
 	if col in COLUMNS_TO_NOT_NA:
 		continue
 	else:
-         df[col] = df[col].replace("", "N/A")
+         df[col] = df[col].replace("", "NA")
 
 
 for col in df.columns.values.tolist():
@@ -463,7 +463,7 @@ for col in df.columns.values.tolist():
 df
 
 
-# In[1160]:
+# In[1232]:
 
 
 
@@ -473,7 +473,7 @@ scraper.dataset.title = title
 cubes.add_cube(scraper, df, scraper.dataset.title)
 
 
-# In[1161]:
+# In[1233]:
 
 
 
@@ -778,7 +778,7 @@ for col in df.columns.values.tolist():
 	if col in COLUMNS_TO_NOT_NA:
 		continue
 	else:
-         df[col] = df[col].replace("", "N/A")
+         df[col] = df[col].replace("", "NA")
 
 
 for col in df.columns.values.tolist():
@@ -790,13 +790,13 @@ for col in df.columns.values.tolist():
 df
 
 
-# In[1162]:
+# In[1234]:
 
 
 cubes.add_cube(scraper, df, scraper.dataset.title)
 
 
-# In[1163]:
+# In[1235]:
 
 
 for tab in accommodation_tabs:
@@ -967,7 +967,7 @@ for tab in accommodation_tabs:
         trace.store('combined_dataframe_accommodation', table)
 
 
-# In[ ]:
+# In[1236]:
 
 
 df = trace.combine_and_trace(title, 'combined_dataframe_accommodation').fillna('')
@@ -1061,19 +1061,19 @@ df['Unit'] = df.apply(lambda x: 'placements' if 'children' in x['Unit'] else x['
 df
 
 
-# In[ ]:
+# In[1237]:
 
 
 cubes.add_cube(scraper, df, scraper.dataset.title)
 
 
-# In[ ]:
+# In[1238]:
 
 
 cubes.output_all()
 
 
-# In[ ]:
+# In[1239]:
 
 
 

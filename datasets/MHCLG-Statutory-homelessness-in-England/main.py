@@ -1261,10 +1261,9 @@ df.drop(['household_relief_duty_ended'], axis=1, inplace=True)
 df.drop(['household_relief_duty_ended_by_type_of_accommodation', 'prs_srs_breakdown'], axis=1, inplace=True)
 #Sheet = "R5"
 df.drop(['relief_duty_ended_with_accomodation_secured'], axis=1, inplace=True)
-#Sheet = "MD1"
+#Sheet = "R5"
 df.drop(['household_inmate_combination', 'breakdown_of_inmate_combination'], axis=1, inplace=True)
 pd.DataFrame(df).to_csv("MD1-output.csv")
-#         savepreviewhtml(period, fname= tab.name + "PREVIEW.html")
 # -
 
 

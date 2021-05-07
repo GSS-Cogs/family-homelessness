@@ -1337,7 +1337,7 @@ df.drop(['relief_duty_ended_with_accomodation_secured'], axis=1, inplace=True)
 df.drop(['household_inmate_combination', 'breakdown_of_inmate_combination'], axis=1, inplace=True)
 #Sheet = "MD1"
 df.drop(['household_by_decision_duty_owed'], axis=1, inplace=True)
-pd.DataFrame(df).to_csv("MD1-output.csv")       
+pd.DataFrame(df).to_csv("MD2-output.csv")       
 # -
 
 

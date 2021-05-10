@@ -232,22 +232,19 @@ pd.DataFrame(df).to_csv("A3-output.csv")
 #Number of households owed a prevention duty by accommodation at time of application England
 
 for tab in tabs:
-    columns=['Contents']
+    columns=['quarter', 'period', 'rented_sector', 'prs_srs', 'breakdown_of_prs_srs']
     trace.start(datasetTitle, tab, columns, distribution.downloadURL)
     if tab.name in ['A4P']: #only transforming tab A4P for now
         print(tab.name)
         
         remove_notes = tab.filter(contains_string('Notes')).expand(DOWN).expand(RIGHT)
-        quarter = tab.excel_ref('B6').expand(DOWN)-remove_notes
-        period = quarter.shift(LEFT).is_not_blank()-remove_notes 
-#         sheet_name = tab.name
-#         savepreviewhtml(period, fname= tab.name + "PREVIEW.html")
-    
-        rented_sector = tab.excel_ref('D3').expand(RIGHT)
-        prs_srs = tab.excel_ref('D4').expand(RIGHT)
-        breakdown_of_prs_srs = tab.excel_ref('D5').expand(RIGHT)
-        observations = tab.excel_ref('D7').expand(DOWN).expand(RIGHT)-remove_notes
-#         savepreviewhtml(observations, fname= tab.name + "PREVIEW.html")
+        rented_sector = tab.filter("Total owed a prevention duty1").expand(RIGHT)
+        prs_srs = rented_sector.shift(DOWN).expand(RIGHT)
+        breakdown_of_prs_srs = prs_srs.shift(DOWN).expand(RIGHT)
+        observations = breakdown_of_prs_srs.fill(DOWN).expand(RIGHT).is_not_blank()
+        unwanted = observations.shift(LEFT).shift(LEFT).fill(RIGHT)
+        quarter = unwanted.shift(LEFT)-unwanted
+        period = quarter.shift(LEFT).is_not_blank()
         dimensions = [
             HDim(quarter,'quarter',DIRECTLY,LEFT),
             HDim(period,'period',CLOSEST,ABOVE),

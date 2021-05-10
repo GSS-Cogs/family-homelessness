@@ -286,17 +286,6 @@ for tab in tabs:
         unwanted = observations.shift(LEFT).shift(LEFT).fill(RIGHT)
         quarter = unwanted.shift(LEFT)-unwanted
         period = quarter.shift(LEFT).is_not_blank()
-#         savepreviewhtml(period, fname= tab.name + "PREVIEW.html")
-#         quarter = tab.excel_ref('B6').expand(DOWN)-remove_notes
-#         period = quarter.shift(LEFT).is_not_blank()-remove_notes 
-# #         sheet_name = tab.name
-# #         savepreviewhtml(period, fname= tab.name + "PREVIEW.html")
-        
-#         accomodation_during_application = tab.excel_ref('D3').expand(RIGHT)
-#         breakdown_of_accomodation = tab.excel_ref('D4').expand(RIGHT)
-#         accomodation_type = tab.excel_ref('D5').expand(RIGHT)
-#         observations = tab.excel_ref('D7').expand(DOWN).expand(RIGHT)-remove_notes
-# #         savepreviewhtml(observations, fname= tab.name + "PREVIEW.html")
         dimensions = [
             HDim(quarter,'quarter',DIRECTLY,LEFT),
             HDim(period,'period',CLOSEST,ABOVE),

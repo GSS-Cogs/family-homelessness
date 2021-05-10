@@ -58,7 +58,7 @@ for tab in tabs:
 
 for tab in tabs:
     columns=['Contents']
-#     columns=['quarter', 'period', 'initial_assessment', 'duty_owed', 'section_21']
+    columns=['quarter', 'period', 'initial_assessment', 'duty_owed', 'section_21']
     trace.start(datasetTitle, tab, columns, distribution.downloadURL)
     if tab.name in ['A1']: #only transforming tab A1 for now
         print(tab.name)
@@ -101,24 +101,21 @@ pd.DataFrame(df).to_csv("A1-output.csv")
 
 #Number of households owed a prevention duty by reason for threat of loss, of last settled home England
 for tab in tabs:
-    columns=['Contents']
-#     columns=['quarter', 'period', 'prevention_duty', 'tenancy_type', 'reasons_for_breach', 'reasons_for_rent_arrears']
+    columns=['quarter', 'period', 'prevention_duty', 'tenancy_type', 'reasons_for_breach', 'reasons_for_rent_arrears']
     trace.start(datasetTitle, tab, columns, distribution.downloadURL)
     if tab.name in ['A2P']: #only transforming tab A2P for now
         print(tab.name)
         
         remove_notes = tab.filter(contains_string('Notes')).expand(DOWN).expand(RIGHT)
-        quarter = tab.excel_ref('B6').expand(DOWN)-remove_notes
-        period = quarter.shift(LEFT).is_not_blank()-remove_notes 
-#         sheet_name = tab.name
+        prevention_duty = tab.filter("Total owed a prevention duty1").expand(RIGHT)
+        tenancy_type = prevention_duty.shift(DOWN).expand(RIGHT)
+        reasons_for_breach = tenancy_type.shift(DOWN).expand(RIGHT)
+        reasons_for_rent_arrears = reasons_for_breach.shift(DOWN).expand(RIGHT)
+        observations = reasons_for_rent_arrears.fill(DOWN).expand(RIGHT).is_not_blank()-remove_notes
+        unwanted = observations.shift(LEFT).shift(LEFT).fill(RIGHT)
+        quarter = unwanted.shift(LEFT)-unwanted
+        period = quarter.shift(LEFT).is_not_blank()
 #         savepreviewhtml(period, fname= tab.name + "PREVIEW.html")
-    
-        prevention_duty = tab.excel_ref('D3').expand(RIGHT)
-        tenancy_type = tab.excel_ref('D4').expand(RIGHT)
-        reasons_for_breach = tab.excel_ref('D5').expand(RIGHT)
-        reasons_for_rent_arrears = tab.excel_ref('D6').expand(RIGHT)
-        observations = tab.excel_ref('D7').expand(RIGHT).expand(DOWN)-remove_notes
-#         savepreviewhtml(observations, fname= tab.name + "PREVIEW.html")
         dimensions = [
             HDim(quarter,'quarter',DIRECTLY,LEFT),
             HDim(period,'period',CLOSEST,ABOVE),
@@ -132,11 +129,11 @@ for tab in tabs:
         savepreviewhtml(tidy_sheet, fname= tab.name + "PREVIEW.html")
         trace.with_preview(tidy_sheet)
         trace.store("combined_dataframe", tidy_sheet.topandas())
-# df = trace.combine_and_trace(datasetTitle, "combined_dataframe")
-#Sheet = "A1"
-# df.drop(['initial_assessment', 'duty_owed', 'section_21'], axis=1, inplace=True)
+df = trace.combine_and_trace(datasetTitle, "combined_dataframe")
+Sheet = "A1"
+df.drop(['initial_assessment', 'duty_owed', 'section_21'], axis=1, inplace=True)
 # df
-# pd.DataFrame(df).to_csv("A2P-output.csv")
+pd.DataFrame(df).to_csv("A2P-output.csv")
 
 # +
 # df = trace.combine_and_trace(datasetTitle, "combined_dataframe")
@@ -157,7 +154,7 @@ for tab in tabs:
 
 #Number of households owed a relief duty by reason for loss, of last settled home England
 for tab in tabs:
-    columns=['Contents']
+    columns=['quarter', 'period', 'relief_prevention_duty', 'relief_tenancy_type', 'relief_reasons_for_breach', 'relief_reasons_for_rent_arrears']
     trace.start(datasetTitle, tab, columns, distribution.downloadURL)
     if tab.name in ['A2R']: #only transforming tab A2R for now
         print(tab.name)

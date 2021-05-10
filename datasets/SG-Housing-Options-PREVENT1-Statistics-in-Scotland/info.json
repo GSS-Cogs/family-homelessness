@@ -27,7 +27,7 @@
             },
             "Area": {
                 "parent": "http://purl.org/linked-data/sdmx/2009/dimension#refArea",
-                "value": "http://statistics.data.gov.uk/id/statistical-geography/{area}"
+                "value": "http://statistics.data.gov.uk/id/statistical-geography/{area}",
                 "codelist": false
             },
             "Measure Type": {

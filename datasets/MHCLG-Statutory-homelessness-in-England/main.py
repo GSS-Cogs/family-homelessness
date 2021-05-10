@@ -273,22 +273,30 @@ pd.DataFrame(df).to_csv("A4P-output.csv")
 #Number of households owed a relief duty by accommodation at time of application England
 
 for tab in tabs:
-    columns=['Contents']
+    columns=['quarter', 'period', 'accomodation_during_application', 'breakdown_of_accomodation', 'accomodation_type']
     trace.start(datasetTitle, tab, columns, distribution.downloadURL)
     if tab.name in ['A4R']: #only transforming tab A4R for now
         print(tab.name)
         
         remove_notes = tab.filter(contains_string('Notes')).expand(DOWN).expand(RIGHT)
-        quarter = tab.excel_ref('B6').expand(DOWN)-remove_notes
-        period = quarter.shift(LEFT).is_not_blank()-remove_notes 
-#         sheet_name = tab.name
+        accomodation_during_application = tab.filter("Total owed a relief duty1").expand(RIGHT)
+        breakdown_of_accomodation = accomodation_during_application.shift(DOWN).expand(RIGHT)
+        accomodation_type = breakdown_of_accomodation.shift(DOWN).expand(RIGHT)
+        observations = accomodation_type.fill(DOWN).expand(RIGHT).is_not_blank()-remove_notes
+        unwanted = observations.shift(LEFT).shift(LEFT).fill(RIGHT)
+        quarter = unwanted.shift(LEFT)-unwanted
+        period = quarter.shift(LEFT).is_not_blank()
 #         savepreviewhtml(period, fname= tab.name + "PREVIEW.html")
+#         quarter = tab.excel_ref('B6').expand(DOWN)-remove_notes
+#         period = quarter.shift(LEFT).is_not_blank()-remove_notes 
+# #         sheet_name = tab.name
+# #         savepreviewhtml(period, fname= tab.name + "PREVIEW.html")
         
-        accomodation_during_application = tab.excel_ref('D3').expand(RIGHT)
-        breakdown_of_accomodation = tab.excel_ref('D4').expand(RIGHT)
-        accomodation_type = tab.excel_ref('D5').expand(RIGHT)
-        observations = tab.excel_ref('D7').expand(DOWN).expand(RIGHT)-remove_notes
-#         savepreviewhtml(observations, fname= tab.name + "PREVIEW.html")
+#         accomodation_during_application = tab.excel_ref('D3').expand(RIGHT)
+#         breakdown_of_accomodation = tab.excel_ref('D4').expand(RIGHT)
+#         accomodation_type = tab.excel_ref('D5').expand(RIGHT)
+#         observations = tab.excel_ref('D7').expand(DOWN).expand(RIGHT)-remove_notes
+# #         savepreviewhtml(observations, fname= tab.name + "PREVIEW.html")
         dimensions = [
             HDim(quarter,'quarter',DIRECTLY,LEFT),
             HDim(period,'period',CLOSEST,ABOVE),

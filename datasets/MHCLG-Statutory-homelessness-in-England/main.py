@@ -193,26 +193,23 @@ pd.DataFrame(df).to_csv("A2R-output.csv")
 # Number of households owed a homelessness duty by support needs of household England
 
 for tab in tabs:
-    columns=['Contents']
+    columns=['quarter', 'period', 'total_households_with_supportneeds', 'households_with_one_supportneeds', 'households_with_two_supportneeds']
     trace.start(datasetTitle, tab, columns, distribution.downloadURL)
     if tab.name in ['A3']: #only transforming tab A3 for now
         print(tab.name)
         
         remove_notes = tab.filter(contains_string('Notes')).expand(DOWN).expand(RIGHT)
-        quarter = tab.excel_ref('B6').expand(DOWN)-remove_notes
-        period = quarter.shift(LEFT).is_not_blank()-remove_notes 
-#         sheet_name = tab.name
-#         savepreviewhtml(quarter, fname= tab.name + "PREVIEW.html")
-    
-        total_households_with_supportneeds = tab.excel_ref('D2').expand(RIGHT)
-        households_with_one_supportneeds = tab.excel_ref('D3').expand(RIGHT)
-        households_with_two_supportneeds = tab.excel_ref('D4').expand(RIGHT)
-        observations = tab.excel_ref('D6').expand(DOWN).expand(RIGHT)-remove_notes
-#         savepreviewhtml(observations, fname= tab.name + "PREVIEW.html")
+        total_households_with_supportneeds = tab.filter("Number of households").expand(RIGHT).is_not_blank()
+        households_with_one_supportneeds = tab.filter("Households with no support needs1").expand(RIGHT)
+        households_with_two_supportneeds = households_with_one_supportneeds.shift(DOWN).expand(RIGHT)
+        observations = households_with_two_supportneeds.fill(DOWN).expand(RIGHT).is_not_blank()-remove_notes
+        unwanted = observations.shift(LEFT).shift(LEFT).fill(RIGHT)
+        quarter = unwanted.shift(LEFT)-unwanted
+        period = quarter.shift(LEFT).is_not_blank()
         dimensions = [
             HDim(quarter,'quarter',DIRECTLY,LEFT),
             HDim(period,'period',CLOSEST,ABOVE),
-            HDim(total_households_with_supportneeds,'total_households_with_supportneeds',DIRECTLY, ABOVE),
+            HDim(total_households_with_supportneeds,'total_households_with_supportneeds',CLOSEST, LEFT),
             HDim(households_with_one_supportneeds,'households_with_one_supportneeds',DIRECTLY, ABOVE),
             HDim(households_with_two_supportneeds,'households_with_two_supportneeds',DIRECTLY, ABOVE),
             #HDimConst("sheet_name", sheet_name) #Might be handy to have for post processing when other tabs are running also 

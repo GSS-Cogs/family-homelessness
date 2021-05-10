@@ -64,16 +64,14 @@ for tab in tabs:
         print(tab.name)
         
         remove_notes = tab.filter(contains_string('Notes')).expand(DOWN).expand(RIGHT)
-        quarter = tab.excel_ref('B6').expand(DOWN)-remove_notes
-        period = quarter.shift(LEFT).is_not_blank()-remove_notes 
-#         sheet_name = tab.name
+        initial_assessment = tab.filter("Total initial assessments1").expand(RIGHT)
+        duty_owed = initial_assessment.shift(DOWN).expand(RIGHT)
+        section_21 = duty_owed.shift(DOWN).expand(RIGHT)
+        observations = section_21.fill(DOWN).expand(RIGHT).is_not_blank()
+        unwanted = observations.shift(LEFT).shift(LEFT).fill(RIGHT)
+        quarter = unwanted.shift(LEFT)-unwanted
+        period = quarter.shift(LEFT).is_not_blank()
 #         savepreviewhtml(period, fname= tab.name + "PREVIEW.html")
-    
-        initial_assessment = tab.excel_ref('D3').expand(RIGHT)
-        duty_owed = tab.excel_ref('D4').expand(RIGHT)
-        section_21 = tab.excel_ref('D5').expand(RIGHT)
-        observations = tab.excel_ref('D6').expand(RIGHT).expand(DOWN)-remove_notes
-#         savepreviewhtml(observations, fname= tab.name + "PREVIEW.html")
         dimensions = [
             HDim(quarter,'quarter',DIRECTLY,LEFT),
             HDim(period,'period',CLOSEST,ABOVE),
@@ -86,9 +84,9 @@ for tab in tabs:
         savepreviewhtml(tidy_sheet, fname= tab.name + "PREVIEW.html")
         trace.with_preview(tidy_sheet)
         trace.store("combined_dataframe", tidy_sheet.topandas())
-# df = trace.combine_and_trace(datasetTitle, "combined_dataframe")
+df = trace.combine_and_trace(datasetTitle, "combined_dataframe")
 # df
-# pd.DataFrame(df).to_csv("A1-output.csv")
+pd.DataFrame(df).to_csv("A1-output.csv")
 
 # +
 # df.rename(columns={'OBS' : 'Value', 'DATAMARKER' : 'Marker'}, inplace=True)

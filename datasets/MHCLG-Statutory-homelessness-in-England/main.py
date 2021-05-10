@@ -160,17 +160,14 @@ for tab in tabs:
         print(tab.name)
         
         remove_notes = tab.filter(contains_string('Notes')).expand(DOWN).expand(RIGHT)
-        quarter = tab.excel_ref('B7').expand(DOWN)-remove_notes
-        period = quarter.shift(LEFT).is_not_blank()-remove_notes 
-#         sheet_name = tab.name
-#         savepreviewhtml(period, fname= tab.name + "PREVIEW.html")
-
-        relief_prevention_duty = tab.excel_ref('D3').expand(RIGHT)
-        relief_tenancy_type = tab.excel_ref('D4').expand(RIGHT)
-        relief_reasons_for_breach = tab.excel_ref('D5').expand(RIGHT)
-        relief_reasons_for_rent_arrears = tab.excel_ref('D6').expand(RIGHT)
-        observations = tab.excel_ref('D7').expand(RIGHT).expand(DOWN)-remove_notes
-#         savepreviewhtml(observations, fname= tab.name + "PREVIEW.html")
+        relief_prevention_duty = tab.filter("Total owed a relief duty1").expand(RIGHT)
+        relief_tenancy_type = relief_prevention_duty.shift(DOWN).expand(RIGHT)
+        relief_reasons_for_breach = relief_tenancy_type.shift(DOWN).expand(RIGHT)
+        relief_reasons_for_rent_arrears = relief_reasons_for_breach.shift(DOWN).expand(RIGHT)
+        observations = relief_reasons_for_rent_arrears.fill(DOWN).expand(RIGHT).is_not_blank()
+        unwanted = observations.shift(LEFT).shift(LEFT).fill(RIGHT)
+        quarter = unwanted.shift(LEFT)-unwanted
+        period = quarter.shift(LEFT).is_not_blank()
         dimensions = [
             HDim(quarter,'quarter',DIRECTLY,LEFT),
             HDim(period,'period',CLOSEST,ABOVE),

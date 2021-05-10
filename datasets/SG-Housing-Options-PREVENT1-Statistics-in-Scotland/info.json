@@ -3,12 +3,12 @@
     "title": "Housing Options (PREVENT1) Statistics in Scotland",
     "publisher": "Scottish Government",
     "description": "The PREVENT1 data specification contains the core questions to be used in the monitoring of housing options work by local authorities. One month after the end of each quarter, Local Authorities are asked to submit an XML file containing the information.",
-    "landingPage": "https://www2.gov.scot/Topics/Statistics/Browse/Housing-Regeneration/RefTables",
+    "landingPage": "https://www.gov.scot/collections/homelessness-statistics/",
     "dataURL": "https://www.gov.scot/binaries/content/documents/govscot/publications/statistics/2020/12/housing-options-prevent1-statistics-scotland-2019-20/documents/tables/tables/govscot%3Adocument/tables.xlsx",
     "datasetNotes": [
         "Data on this page identified as latest version of \"Housing Options (PREVENT1) Statistics in Scotland [date]\" which is listed in the \"Statistics\" column of the table towards the top of the page. A link to the data is contained in the \"links\" column, named \"Excel Tables and Charts\". This opens a new page and access to the XLS file is via \"Open\" link located under heading \"Downloadable document\"."
     ],
-    "published": "2019-06-26",
+    "published": "2020-12-15",
     "families": [
         "homelessness"
     ],
@@ -22,14 +22,11 @@
         "columns": {
             "Period": {
                 "parent": "http://purl.org/linked-data/sdmx/2009/dimension#refPeriod",
-                "value": "http://reference.data.gov.uk/id/{+period}",
-                "codelist": false
+                "value": "http://reference.data.gov.uk/id/{+period}"
             },
             "Area": {
                 "parent": "http://purl.org/linked-data/sdmx/2009/dimension#refArea",
-                "value": "http://statistics.data.gov.uk/id/statistical-geography/{area}",
-                "description": "",
-                "codelist": false
+                "value": "http://statistics.data.gov.uk/id/statistical-geography/{area}"
             },
             "Measure Type": {
         		"dimension": "http://purl.org/linked-data/cube#measureType",

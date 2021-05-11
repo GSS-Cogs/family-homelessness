@@ -558,6 +558,7 @@ pd.DataFrame(df).to_csv("A8-output.csv")
 
 for tab in tabs:
     columns=['Contents']
+    columns = ['']
     trace.start(datasetTitle, tab, columns, distribution.downloadURL)
     if tab.name in ['A10']: #only transforming tab A10 for now
         print(tab.name)

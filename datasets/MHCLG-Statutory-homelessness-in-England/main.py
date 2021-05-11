@@ -406,20 +406,17 @@ pd.DataFrame(df).to_csv("A5R-output.csv")
 #Percentage in age and observations column needs to be cleansed
 
 for tab in tabs:
-    columns=['Contents']
+    columns=['quarter', 'period', 'age_of_applicants']
     trace.start(datasetTitle, tab, columns, distribution.downloadURL)
     if tab.name in ['A6']: #only transforming tab A6 for now
         print(tab.name)
         
         remove_notes = tab.filter(contains_string('Notes')).expand(DOWN).expand(RIGHT)
-        quarter = tab.excel_ref('B5').expand(DOWN)-remove_notes
-        period = quarter.shift(LEFT).is_not_blank()-remove_notes 
-#         sheet_name = tab.name
-#         savepreviewhtml(quarter, fname= tab.name + "PREVIEW.html")
-
-        age_of_applicants = tab.excel_ref('D3').expand(RIGHT)
-        observations = tab.excel_ref('D5').expand(DOWN).expand(RIGHT)-remove_notes
-#         savepreviewhtml(observations, fname= tab.name + "PREVIEW.html")
+        age_of_applicants = tab.filter("Total owed a prevention or relief duty").expand(RIGHT)
+        observations = age_of_applicants.fill(DOWN).is_not_blank()-remove_notes
+        unwanted = observations.shift(LEFT).shift(LEFT).fill(RIGHT)
+        quarter = unwanted.shift(LEFT)-unwanted
+        period = quarter.shift(LEFT).is_not_blank()
         dimensions = [
             HDim(quarter,'quarter',DIRECTLY,LEFT),
             HDim(period,'period',CLOSEST,ABOVE),
@@ -453,11 +450,10 @@ pd.DataFrame(df).to_csv("A6-output.csv")
 # Number of households assessed as a result of a referral, including under the Duty to Refer England
 
 for tab in tabs:
-    columns=['Contents']
+    columns=['Contents']    
     trace.start(datasetTitle, tab, columns, distribution.downloadURL)
     if tab.name in ['A7']: #only transforming tab A7 for now
         print(tab.name)
-        
         remove_notes = tab.filter(contains_string('Notes')).expand(DOWN).expand(RIGHT)
         quarter = tab.excel_ref('B6').expand(DOWN)-remove_notes
         period = quarter.shift(LEFT).is_not_blank()-remove_notes 

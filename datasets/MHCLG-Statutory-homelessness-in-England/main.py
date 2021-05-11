@@ -317,21 +317,18 @@ pd.DataFrame(df).to_csv("A4R-output.csv")
 #The columns with % needs to be filtered
 
 for tab in tabs:
-    columns=['Contents']
+    columns=['quarter', 'period', 'household_composition', 'gender']
     trace.start(datasetTitle, tab, columns, distribution.downloadURL)
     if tab.name in ['A5P']: #only transforming tab A5P for now
         print(tab.name)
         
         remove_notes = tab.filter(contains_string('Notes')).expand(DOWN).expand(RIGHT)
-        quarter = tab.excel_ref('B6').expand(DOWN)-remove_notes
-        period = quarter.shift(LEFT).is_not_blank()-remove_notes 
-#         sheet_name = tab.name
-#         savepreviewhtml(period, fname= tab.name + "PREVIEW.html")
-
-        household_composition = tab.excel_ref('D3').expand(RIGHT)
-        gender = tab.excel_ref('D4').expand(RIGHT)
-        observations = tab.excel_ref('D7').expand(DOWN).expand(RIGHT)-remove_notes
-#         savepreviewhtml(observations, fname= tab.name + "PREVIEW.html")
+        household_composition = tab.filter("Total owed a prevention duty").expand(RIGHT)
+        gender = household_composition.shift(DOWN).expand(RIGHT)
+        observations = gender.fill(DOWN).expand(RIGHT).is_not_blank()-remove_notes
+        unwanted = observations.shift(LEFT).shift(LEFT).fill(RIGHT)
+        quarter = unwanted.shift(LEFT)-unwanted
+        period = quarter.shift(LEFT).is_not_blank()
         dimensions = [
             HDim(quarter,'quarter',DIRECTLY,LEFT),
             HDim(period,'period',CLOSEST,ABOVE),

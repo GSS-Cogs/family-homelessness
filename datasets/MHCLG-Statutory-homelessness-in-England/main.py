@@ -554,20 +554,17 @@ pd.DataFrame(df).to_csv("A8-output.csv")
 #Employment status of main applicants assessed as owed a prevention or relief duty by local authority England
 
 for tab in tabs:
-    columns=['Contents']
+    columns = ['quarter', 'period', 'prevention_or_relief_duty']
     trace.start(datasetTitle, tab, columns, distribution.downloadURL)
     if tab.name in ['A10']: #only transforming tab A10 for now
         print(tab.name)
-        
-        cell = tab.excel_ref('A1')
         remove_notes = tab.filter(contains_string('Notes')).expand(DOWN).expand(RIGHT)
-        quarter = cell.shift(1, 4).fill(DOWN)-remove_notes
-        period = quarter.shift(LEFT).is_not_blank()-remove_notes
-#         savepreviewhtml(quarter, fname= tab.name + "PREVIEW.html")
-        
-        prevention_or_relief_duty = tab.filter('Total owed a prevention or relief duty').expand(RIGHT)
-        observations = prevention_or_relief_duty.fill(DOWN).expand(RIGHT).is_not_blank()
-#         savepreviewhtml(observations, fname = tab.name + "PREVIEW.html")
+        prevention_or_relief_duty = tab.filter("Total owed a prevention or relief duty").expand(RIGHT)
+        observations = prevention_or_relief_duty.fill(DOWN).is_not_blank()-remove_notes
+        unwanted = observations.shift(LEFT).shift(LEFT).fill(RIGHT)
+        quarter = unwanted.shift(LEFT)-unwanted
+        period = quarter.shift(LEFT).is_not_blank()
+        savepreviewhtml(period, fname= tab.name + "PREVIEW.html")
         dimensions = [
             HDim(quarter,'quarter',DIRECTLY,LEFT),
             HDim(period,'period',CLOSEST,ABOVE),

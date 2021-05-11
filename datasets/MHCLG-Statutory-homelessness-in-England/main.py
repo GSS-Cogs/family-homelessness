@@ -503,6 +503,22 @@ pd.DataFrame(df).to_csv("A7-output.csv")
 #Percentage in observations column needs to be cleansed
 
 for tab in tabs:
+#     columns=['Contents']
+    columns=['quarter', 'period', 'ethnicity_of_main_applicants', 'breakdown_of_ethnicity_of_main_applicants']
+    trace.start(datasetTitle, tab, columns, distribution.downloadURL)
+    if tab.name in ['A8']: #only transforming tab A8 for now
+        print(tab.name)
+        
+        remove_notes = tab.filter(contains_string('Notes')).expand(DOWN).expand(RIGHT)
+        ethnicity_of_main_applicants = tab.filter("Total owed a prevention or relief duty1").expand(RIGHT)
+        breakdown_of_ethnicity_of_main_applicants = ethnicity_of_main_applicants.shift(DOWN)
+        observations = breakdown_of_ethnicity_of_main_applicants.fill(DOWN).is_not_blank()-remove_notes
+        unwanted = observations.shift(LEFT).shift(LEFT).fill(RIGHT)
+        quarter = unwanted.shift(LEFT)-unwanted
+        period = quarter.shift(LEFT).is_not_blank()
+        savepreviewhtml(period, fname= tab.name + "PREVIEW.html")
+
+for tab in tabs:
     columns=['Contents']
     trace.start(datasetTitle, tab, columns, distribution.downloadURL)
     if tab.name in ['A8']: #only transforming tab A8 for now

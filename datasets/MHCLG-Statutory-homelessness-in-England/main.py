@@ -564,7 +564,6 @@ for tab in tabs:
         unwanted = observations.shift(LEFT).shift(LEFT).fill(RIGHT)
         quarter = unwanted.shift(LEFT)-unwanted
         period = quarter.shift(LEFT).is_not_blank()
-        savepreviewhtml(period, fname= tab.name + "PREVIEW.html")
         dimensions = [
             HDim(quarter,'quarter',DIRECTLY,LEFT),
             HDim(period,'period',CLOSEST,ABOVE),

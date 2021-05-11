@@ -604,21 +604,16 @@ pd.DataFrame(df).to_csv("A10-output.csv")
 # Number of households owed a homelessness duty by sexual identification of lead applicant England
 
 for tab in tabs:
-    columns=['Contents']
+    columns = ['quarter', 'period', 'sexual_identification']
     trace.start(datasetTitle, tab, columns, distribution.downloadURL)
     if tab.name in ['A12']: #only transforming tab A12 for now
         print(tab.name)
-        
-        cell = tab.excel_ref('A1')
         remove_notes = tab.filter(contains_string('Notes')).expand(DOWN).expand(RIGHT)
-        quarter = cell.shift(1, 4).fill(DOWN)-remove_notes
-        period = quarter.shift(LEFT).is_not_blank()-remove_notes
-#         savepreviewhtml(quarter, fname= tab.name + "PREVIEW.html")
-
         sexual_identification = tab.filter("Total owed a prevention or relief duty").expand(RIGHT)
-        observations = sexual_identification.waffle(quarter)
-#         savepreviewhtml(observations, fname= tab.name + "PREVIEW.html")
-
+        observations = sexual_identification.fill(DOWN).is_not_blank()-remove_notes
+        unwanted = observations.shift(LEFT).shift(LEFT).fill(RIGHT)
+        quarter = unwanted.shift(LEFT)-unwanted
+        period = quarter.shift(LEFT).is_not_blank()
         dimensions = [
             HDim(quarter,'quarter',DIRECTLY,LEFT),
             HDim(period,'period',CLOSEST,ABOVE),
@@ -661,21 +656,17 @@ pd.DataFrame(df).to_csv("A12-output.csv")
 #Number of households whose prevention duty ended by reason for duty end England
 
 for tab in tabs:
-    columns=['Contents']
+    columns = ['quarter', 'period', 'prevention_duty_ended', 'moved_or_stayed_accomodation']
     trace.start(datasetTitle, tab, columns, distribution.downloadURL)
     if tab.name in ['P1']: #only transforming tab P1 for now
         print(tab.name)
-        
-        cell = tab.excel_ref('A1')
         remove_notes = tab.filter(contains_string('Notes')).expand(DOWN).expand(RIGHT)
-        quarter = cell.shift(1, 4).fill(DOWN)-remove_notes
-        period = quarter.shift(LEFT).is_not_blank()-remove_notes
-#         savepreviewhtml(period, fname= tab.name + "PREVIEW.html")
-        
         prevention_duty_ended = tab.filter("Total number of households whose prevention duty ended1").expand(RIGHT)
-        moved_or_stayed_accomodation = prevention_duty_ended.shift(DOWN).expand(RIGHT)
-        observations = moved_or_stayed_accomodation.waffle(quarter).is_not_blank()
-#         savepreviewhtml(moved_or_stayed_accomodation, fname= tab.name + "PREVIEW.html")
+        moved_or_stayed_accomodation = prevention_duty_ended.shift(DOWN)
+        observations = moved_or_stayed_accomodation.fill(DOWN).is_not_blank()-remove_notes
+        unwanted = observations.shift(LEFT).shift(LEFT).fill(RIGHT)
+        quarter = unwanted.shift(LEFT)-unwanted
+        period = quarter.shift(LEFT).is_not_blank()
         dimensions = [
             HDim(quarter,'quarter',DIRECTLY,LEFT),
             HDim(period,'period',CLOSEST,ABOVE),

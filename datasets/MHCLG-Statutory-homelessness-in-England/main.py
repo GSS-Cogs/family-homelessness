@@ -446,23 +446,22 @@ df.drop(['household_composition', 'gender'], axis=1, inplace=True)
 df.drop(['relief_duty_household_composition', 'relief_duty_gender'], axis=1, inplace=True)
 # df
 pd.DataFrame(df).to_csv("A6-output.csv")
-# +
+# -
 # Number of households assessed as a result of a referral, including under the Duty to Refer England
-
 for tab in tabs:
-    columns=['Contents']    
+    columns=['quarter', 'period', 'total_referred_households', 'total_households_duty_refer2', 'breakdown_total_households_duty_refer2']    
     trace.start(datasetTitle, tab, columns, distribution.downloadURL)
     if tab.name in ['A7']: #only transforming tab A7 for now
         print(tab.name)
+        
         remove_notes = tab.filter(contains_string('Notes')).expand(DOWN).expand(RIGHT)
-        quarter = tab.excel_ref('B6').expand(DOWN)-remove_notes
-        period = quarter.shift(LEFT).is_not_blank()-remove_notes 
-#         sheet_name = tab.name
-#         savepreviewhtml(period, fname= tab.name + "PREVIEW.html")
-        total_referred_households = tab.excel_ref('D3').expand(RIGHT)
-        total_households_duty_refer2 = tab.excel_ref('D4').expand(RIGHT)
-        breakdown_total_households_duty_refer2 = tab.excel_ref('D5').expand(RIGHT)
-        observations = tab.excel_ref('D6').expand(DOWN).expand(RIGHT)-remove_notes
+        total_referred_households = tab.filter("Total households assessed as a result of a referral1").expand(RIGHT)
+        total_households_duty_refer2 = total_referred_households.shift(DOWN)
+        breakdown_total_households_duty_refer2 = total_households_duty_refer2.shift(DOWN)
+        observations = breakdown_total_households_duty_refer2.fill(DOWN).is_not_blank()-remove_notes
+        unwanted = observations.shift(LEFT).shift(LEFT).fill(RIGHT)
+        quarter = unwanted.shift(LEFT)-unwanted
+        period = quarter.shift(LEFT).is_not_blank()
 #         savepreviewhtml(observations, fname= tab.name + "PREVIEW.html")
         dimensions = [
             HDim(quarter,'quarter',DIRECTLY,LEFT),
@@ -558,7 +557,6 @@ pd.DataFrame(df).to_csv("A8-output.csv")
 
 for tab in tabs:
     columns=['Contents']
-    columns = ['']
     trace.start(datasetTitle, tab, columns, distribution.downloadURL)
     if tab.name in ['A10']: #only transforming tab A10 for now
         print(tab.name)

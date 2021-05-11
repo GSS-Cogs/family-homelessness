@@ -371,35 +371,34 @@ for tab in tabs:
         unwanted = observations.shift(LEFT).shift(LEFT).fill(RIGHT)
         quarter = unwanted.shift(LEFT)-unwanted
         period = quarter.shift(LEFT).is_not_blank()
-        savepreviewhtml(period, fname= tab.name + "PREVIEW.html")
-#         dimensions = [
-#             HDim(quarter,'quarter',DIRECTLY,LEFT),
-#             HDim(period,'period',CLOSEST,ABOVE),
-#             HDim(relief_duty_household_composition,'relief_duty_household_composition',DIRECTLY, ABOVE),
-#             HDim(relief_duty_gender,'relief_duty_gender',DIRECTLY, ABOVE),
-#             #HDimConst("sheet_name", sheet_name) #Might be handy to have for post processing when other tabs are running also 
-#         ]
-#         tidy_sheet = ConversionSegment(tab, dimensions, observations)
-#         savepreviewhtml(tidy_sheet, fname= tab.name + "PREVIEW.html")
-#         trace.with_preview(tidy_sheet)
-#         trace.store("combined_dataframe", tidy_sheet.topandas())
-# df = trace.combine_and_trace(datasetTitle, "combined_dataframe")
-# #Sheet = "A1"
-# df.drop(['initial_assessment', 'duty_owed', 'section_21'], axis=1, inplace=True)
-# #Sheet = "A2P"
-# df.drop(['prevention_duty', 'tenancy_type', 'reasons_for_breach', 'reasons_for_rent_arrears'], axis=1, inplace=True)
-# #Sheet = "A2R"
-# df.drop(['relief_prevention_duty', 'relief_tenancy_type', 'relief_reasons_for_breach', 'relief_reasons_for_rent_arrears'], axis=1, inplace=True)
-# #Sheet = "A3"
-# df.drop(['total_households_with_supportneeds', 'households_with_one_supportneeds', 'households_with_two_supportneeds'], axis=1, inplace=True)
-# #Sheet = "A4P"
-# df.drop(['rented_sector', 'prs_srs', 'breakdown_of_prs_srs'], axis=1, inplace=True)
-# #Sheet = "A4R"
-# df.drop(['accomodation_during_application', 'breakdown_of_accomodation', 'accomodation_type'], axis=1, inplace=True)
-# #Sheet = "A5P"
-# df.drop(['household_composition', 'gender'], axis=1, inplace=True)
-# # df
-# pd.DataFrame(df).to_csv("A5R-output.csv")
+        dimensions = [
+            HDim(quarter,'quarter',DIRECTLY,LEFT),
+            HDim(period,'period',CLOSEST,ABOVE),
+            HDim(relief_duty_household_composition,'relief_duty_household_composition',DIRECTLY, ABOVE),
+            HDim(relief_duty_gender,'relief_duty_gender',DIRECTLY, ABOVE),
+            #HDimConst("sheet_name", sheet_name) #Might be handy to have for post processing when other tabs are running also 
+        ]
+        tidy_sheet = ConversionSegment(tab, dimensions, observations)
+        savepreviewhtml(tidy_sheet, fname= tab.name + "PREVIEW.html")
+        trace.with_preview(tidy_sheet)
+        trace.store("combined_dataframe", tidy_sheet.topandas())
+df = trace.combine_and_trace(datasetTitle, "combined_dataframe")
+#Sheet = "A1"
+df.drop(['initial_assessment', 'duty_owed', 'section_21'], axis=1, inplace=True)
+#Sheet = "A2P"
+df.drop(['prevention_duty', 'tenancy_type', 'reasons_for_breach', 'reasons_for_rent_arrears'], axis=1, inplace=True)
+#Sheet = "A2R"
+df.drop(['relief_prevention_duty', 'relief_tenancy_type', 'relief_reasons_for_breach', 'relief_reasons_for_rent_arrears'], axis=1, inplace=True)
+#Sheet = "A3"
+df.drop(['total_households_with_supportneeds', 'households_with_one_supportneeds', 'households_with_two_supportneeds'], axis=1, inplace=True)
+#Sheet = "A4P"
+df.drop(['rented_sector', 'prs_srs', 'breakdown_of_prs_srs'], axis=1, inplace=True)
+#Sheet = "A4R"
+df.drop(['accomodation_during_application', 'breakdown_of_accomodation', 'accomodation_type'], axis=1, inplace=True)
+#Sheet = "A5P"
+df.drop(['household_composition', 'gender'], axis=1, inplace=True)
+# df
+pd.DataFrame(df).to_csv("A5R-output.csv")
 
 
 # +

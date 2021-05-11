@@ -503,7 +503,6 @@ pd.DataFrame(df).to_csv("A7-output.csv")
 #Percentage in observations column needs to be cleansed
 
 for tab in tabs:
-#     columns=['Contents']
     columns=['quarter', 'period', 'ethnicity_of_main_applicants', 'breakdown_of_ethnicity_of_main_applicants']
     trace.start(datasetTitle, tab, columns, distribution.downloadURL)
     if tab.name in ['A8']: #only transforming tab A8 for now
@@ -516,24 +515,7 @@ for tab in tabs:
         unwanted = observations.shift(LEFT).shift(LEFT).fill(RIGHT)
         quarter = unwanted.shift(LEFT)-unwanted
         period = quarter.shift(LEFT).is_not_blank()
-        savepreviewhtml(period, fname= tab.name + "PREVIEW.html")
-
-for tab in tabs:
-    columns=['Contents']
-    trace.start(datasetTitle, tab, columns, distribution.downloadURL)
-    if tab.name in ['A8']: #only transforming tab A8 for now
-        print(tab.name)
-        
-        remove_notes = tab.filter(contains_string('Notes')).expand(DOWN).expand(RIGHT)
-        quarter = tab.excel_ref('B6').expand(DOWN)-remove_notes
-        period = quarter.shift(LEFT).is_not_blank()-remove_notes 
-#         sheet_name = tab.name
 #         savepreviewhtml(period, fname= tab.name + "PREVIEW.html")
-    
-        ethnicity_of_main_applicants = tab.excel_ref('D3').expand(RIGHT)
-        breakdown_of_ethnicity_of_main_applicants = tab.excel_ref('D4').expand(RIGHT)
-        observations = tab.excel_ref('D6').expand(DOWN).expand(RIGHT)-remove_notes
-#         savepreviewhtml(observations, fname= tab.name + "PREVIEW.html")
         dimensions = [
             HDim(quarter,'quarter',DIRECTLY,LEFT),
             HDim(period,'period',CLOSEST,ABOVE),

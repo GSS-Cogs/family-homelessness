@@ -1,13 +1,13 @@
 #!/usr/bin/env python
 # coding: utf-8
 
-# In[52]:
+# In[1]:
 
 
 # # WG Rough Sleeper Count
 
 
-# In[53]:
+# In[2]:
 
 
 import pandas as pd
@@ -26,7 +26,7 @@ def mid(s, offset, amount):
     return s[offset:offset+amount]
 
 
-# In[54]:
+# In[3]:
 
 
 infoFileName = 'info.json'
@@ -38,7 +38,7 @@ distro = scraper.distribution(latest=True, title='Dataset')
 distro._mediaType = 'application/json'
 
 
-# In[55]:
+# In[4]:
 
 
 df = distro.as_pandas()
@@ -46,7 +46,7 @@ df = distro.as_pandas()
 df.head()
 
 
-# In[56]:
+# In[5]:
 
 
 # # Quick check on what columns we need to keep
@@ -83,7 +83,7 @@ df.drop(drop_list, inplace=True, axis=1)
 df.head()
 
 
-# In[57]:
+# In[6]:
 
 
 # For everything which isn't the Data column, it's categorical so...
@@ -96,14 +96,14 @@ df['Value'] = df['Data'].astype(int)
 df.drop('Data', inplace=True, axis=1)
 
 
-# In[58]:
+# In[7]:
 
 
 # Geographies!
 #df['Geography'] = df['Area_AltCode1'].apply(lambda x: f"http://statistics.data.gov.uk/id/statistical-geography/{x}")
 
 
-# In[59]:
+# In[8]:
 
 
 # Marker (For the geography though it applies to values as well)
@@ -117,39 +117,39 @@ df.rename({'Measure_ItemName_ENG': 'Measure', 'Year_ItemName_ENG': 'Period', 'Ar
 df.head()
 
 
-# In[60]:
+# In[9]:
 
 
 df['Period'] = df.apply(lambda x: left(x['Period'] + str(x['Measure_Code']),8) if x['Measure_Code'] in [1, 4] else x['Period'], axis = 1)
 
-periodMeasure = {'2015-161' : 'gregorian-interval/2015-11-25T23:00:00/P4H',
-                 '2016-171' : 'gregorian-interval/2016-11-03T22:00:00/P7H',
-                 '2017-181' : 'gregorian-interval/2017-11-09T22:00:00/P7H',
-                 '2018-191' : 'gregorian-interval/2018-11-08T22:00:00/P7H',
-                 '2019-201' : 'gregorian-interval/2019-11-08T22:00:00/P7H',
+periodMeasure = {'2015-161' : 'gregorian-interval/2015-11-25T23:00:00/PT4H',
+                 '2016-171' : 'gregorian-interval/2016-11-03T22:00:00/PT7H',
+                 '2017-181' : 'gregorian-interval/2017-11-09T22:00:00/PT7H',
+                 '2018-191' : 'gregorian-interval/2018-11-08T22:00:00/PT7H',
+                 '2019-201' : 'gregorian-interval/2019-11-08T22:00:00/PT7H',
                  '2015-16' : 'gregorian-day/2015-11-25',
                  '2016-17' : 'gregorian-day/2016-11-03',
                  '2017-18' : 'gregorian-day/2017-11-09',
                  '2018-19' : 'gregorian-day/2018-11-08',
                  '2019-20' : 'gregorian-day/2019-11-08',
-                 '2015-164' : 'gregorian-interval/2015-11-02/P2W',
-                 '2016-174' : 'gregorian-interval/2016-11-10/P2W',
-                 '2017-184' : 'gregorian-interval/2017-11-15/P2W',
-                 '2018-194' : 'gregorian-interval/2018-11-16/P2W',
-                 '2019-204' : 'gregorian-interval/2019-11-16/P2W'}
+                 '2015-164' : 'gregorian-interval/2015-11-02T00:00:00/P14D',
+                 '2016-174' : 'gregorian-interval/2016-11-10T00:00:00/P14D',
+                 '2017-184' : 'gregorian-interval/2017-11-15T00:00:00/P14D',
+                 '2018-194' : 'gregorian-interval/2018-11-16T0:00:00/P14D',
+                 '2019-204' : 'gregorian-interval/2019-11-16T0:00:00/P14D'}
 
 df = df.replace({'Period' : periodMeasure})
 
 df
 
 
-# In[61]:
+# In[10]:
 
 
 dfBackup = df
 
 
-# In[62]:
+# In[11]:
 
 
 dfAdditional = dfBackup.loc[dfBackup['Marker'].notna()]
@@ -161,14 +161,14 @@ dfAdditional = dfAdditional.drop(columns=['Additional Beds'])
 dfAdditional
 
 
-# In[63]:
+# In[12]:
 
 
 df = pd.concat([df, dfAdditional])
 df
 
 
-# In[64]:
+# In[13]:
 
 
 # For the periods
@@ -199,7 +199,7 @@ df = df.drop_duplicates(subset=None, keep="first", inplace=False)
 df
 
 
-# In[65]:
+# In[14]:
 
 
 scraper.dataset.title = 'Rough Sleeper Count'
@@ -218,14 +218,14 @@ scraper.dataset.comment = comments
 cubes.add_cube(scraper, df, scraper.title)
 
 
-# In[67]:
+# In[15]:
 
 
 # Write cube
 cubes.output_all()
 
 
-# In[68]:
+# In[16]:
 
 
 from IPython.core.display import HTML

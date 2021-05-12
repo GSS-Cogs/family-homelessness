@@ -1,14 +1,14 @@
 #!/usr/bin/env python
 # coding: utf-8
 
-# In[76]:
+# In[1]:
 
 
 # -*- coding: utf-8 -*-
 # # SG Housing Options  PREVENT1  Statistics in Scotland
 
 
-# In[77]:
+# In[2]:
 
 
 import pandas as pd
@@ -18,7 +18,7 @@ import json
 from gssutils import *
 
 
-# In[78]:
+# In[3]:
 
 
 infoFileName = 'info.json'
@@ -30,7 +30,7 @@ scraper.dataset.family = info['families']
 scraper
 
 
-# In[79]:
+# In[4]:
 
 
 scraper.distribution(latest=True)
@@ -53,7 +53,7 @@ def wrap(tab: xypath.xypath.Table, x_bag: xypath.xypath.Bag, y_bag: xypath.xypat
 df = pd.DataFrame()
 
 
-# In[80]:
+# In[5]:
 
 
 # Table 1
@@ -84,7 +84,7 @@ df = df.append(tmp_df, ignore_index=True, sort=False)
 del tab, geographies, period, values, tmp_df, tmp_dfCount, tmp_dfPercent
 
 
-# In[81]:
+# In[6]:
 
 
 # Table 2: Unique households making PREVENT1 approaches, 2019/20
@@ -125,7 +125,7 @@ df = df.append(tmp_df, ignore_index=True, sort=False)
 del tab, geographies, drop, values, tmp_df
 
 
-# In[82]:
+# In[7]:
 
 
 # Table 3: Number of PREVENT1 approaches made by households, 2019/20
@@ -169,7 +169,7 @@ df = df.append(tmp_df, ignore_index=True, sort=False)
 del tab, geographies, approaches, values, tmp_df, tmp_dfCount, tmp_dfPercent
 
 
-# In[83]:
+# In[8]:
 
 
 # Table 4: Number of open PREVENT1 approaches as at 31st March, 2015 to 2020
@@ -207,7 +207,7 @@ df = df.append(tmp_df, ignore_index=True, sort=False)
 del tab, geographies, period, values, tmp_df, tmp_dfCount, tmp_dfPercent
 
 
-# In[84]:
+# In[9]:
 
 
 # Table 5: Number of PREVENT1 approaches by property of applicant, 2014/15 to 2019/20
@@ -246,7 +246,7 @@ df = df.append(tmp_df, ignore_index=True, sort=False)
 del tab, properties, period, values, tmp_df, tmp_dfCount, tmp_dfPercent
 
 
-# In[85]:
+# In[10]:
 
 
 # Table 6: Reason for PREVENT1 approach, 2014/15 to 2019/20
@@ -303,7 +303,7 @@ df = df.append(tmp_df, ignore_index=True, sort=False)
 del tmp_df, tab, reasons, period, values, headers, dimensions, tmp_dfCount, tmp_dfPercent
 
 
-# In[86]:
+# In[11]:
 
 
 # Table 7: Reason for PREVENT1 approach by local authority, 2019/20
@@ -341,7 +341,7 @@ df = df.append(tmp_df, ignore_index=True, sort=False)
 del tab, geography, reason, values, tmp_df, tmp_dfCount, tmp_dfPercent
 
 
-# In[87]:
+# In[12]:
 
 
 # Table 8: Number of PREVENT1 approaches by property of applicant, 2014/15 to 2019/20
@@ -379,7 +379,7 @@ df = df.append(tmp_df, ignore_index=True, sort=False)
 del tab, prevention, period, values, tmp_df, tmp_dfCount, tmp_dfPercent
 
 
-# In[88]:
+# In[13]:
 
 
 # Table 9: Prevention activities carried out by local authority, 2019/20
@@ -417,7 +417,7 @@ df = df.append(tmp_df, ignore_index=True, sort=False)
 del tab, geography, prevention, values, tmp_df, tmp_dfCount, tmp_dfPercent
 
 
-# In[89]:
+# In[14]:
 
 
 # Table 10: Organisation carrying out prevention activities, 2014/15 to 2019/20
@@ -457,7 +457,7 @@ df = df.append(tmp_df, ignore_index=True, sort=False)
 del tab, organisation, period, values, tmp_df, tmp_dfCount, tmp_dfPercent
 
 
-# In[90]:
+# In[15]:
 
 
 # Table 11: Maximum type of activity, 2014/15 to 2019/20
@@ -497,7 +497,7 @@ df = df.append(tmp_df, ignore_index=True, sort=False)
 del tab, activity_tier, period, values, tmp_df, tmp_dfCount, tmp_dfPercent
 
 
-# In[91]:
+# In[16]:
 
 
 # Table 12: Maximum type of activity by local authority, 2019/20
@@ -539,7 +539,7 @@ df = df.append(tmp_df, ignore_index=True, sort=False)
 del tab, geography, activity_tier, values, tmp_df, tmp_dfCount, tmp_dfPercent
 
 
-# In[92]:
+# In[17]:
 
 
 # Table 13: Outcome of PREVENT1 approach, 2014/15 to 2019/20
@@ -577,7 +577,7 @@ df = df.append(tmp_df, ignore_index=True, sort=False)
 del tab, outcome, period, values, tmp_df, tmp_dfCount, tmp_dfPercent
 
 
-# In[93]:
+# In[18]:
 
 
 # Table 14: Maximum type of activity by local authority, 2019/20
@@ -617,7 +617,7 @@ df = df.append(tmp_df, ignore_index=True, sort=False)
 del tab, geography, outcome, values, tmp_df
 
 
-# In[94]:
+# In[19]:
 
 
 # Table 15: Average time taken (days) to complete PREVENT1 approach by local authority, 2019/20
@@ -654,14 +654,14 @@ df = df.append(tmp_df, ignore_index=True, sort=False)
 del tab, geography, period, values, tmp_df
 
 
-# In[95]:
+# In[20]:
 
 
 df
 df[['measure', 'unit']].drop_duplicates()
 
 
-# In[96]:
+# In[21]:
 
 
 df = df.rename(columns={'OBS': 'Value'})
@@ -760,7 +760,7 @@ df['Value'] = df.apply(lambda x: round(x['Value'], 1) if 'rate' in x['Unit'] els
 df
 
 
-# In[97]:
+# In[22]:
 
 
 out = Path('codelists')
@@ -779,7 +779,7 @@ if CODELISTS:
             dfcode.drop_duplicates().to_csv(out / f'{pathify(col)}.csv', index = False)
 
 
-# In[98]:
+# In[23]:
 
 
 COLUMNS_TO_NOT_PATHIFY = ['Area', 'Percentage of Breakdown', 'Value']
@@ -793,8 +793,10 @@ for col in df.columns.values.tolist():
 		raise Exception('Failed to pathify column "{}".'.format(col)) from err
 
 
-# In[99]:
+# In[24]:
 
+
+df = df.drop(columns = ['Percentage of Breakdown'])
 
 scraper.dataset.comment = 'Some Figures have been rounded to the nearest 5 for disclosure control purposes.'                           'The PREVENT1 data specification contains the core questions to be used in the monitoring of housing options work by local authorities.'                           'Applicants may select multiple responses, which is why total reason figures are greater than the number of approaches'
 
@@ -802,14 +804,14 @@ scraper.dataset.comment = 'Some Figures have been rounded to the nearest 5 for d
 cubes.add_cube(scraper, df, scraper.title)
 
 
-# In[100]:
+# In[25]:
 
 
 # Write cube
 cubes.output_all()
 
 
-# In[101]:
+# In[26]:
 
 
 from IPython.core.display import HTML
@@ -820,10 +822,10 @@ for col in df:
         display(df[col].cat.categories)
 
 
-# In[102]:
+# In[27]:
 
 
-metadata_json = open("./out/housing-options-prevent1-statistics-in-scotland.csv-metadata.json", "r")
+""""metadata_json = open("./out/housing-options-prevent1-statistics-in-scotland.csv-metadata.json", "r")
 metadata = json.load(metadata_json)
 metadata_json.close()
 
@@ -833,5 +835,5 @@ for obj in metadata["tables"][0]["tableSchema"]["columns"]:
 
 metadata_json = open("./out/housing-options-prevent1-statistics-in-scotland.csv-metadata.json", "w")
 json.dump(metadata, metadata_json, indent=4)
-metadata_json.close()
+metadata_json.close()"""
 

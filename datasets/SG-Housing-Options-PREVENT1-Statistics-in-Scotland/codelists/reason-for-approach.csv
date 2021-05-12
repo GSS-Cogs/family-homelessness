@@ -1,32 +1,32 @@
 Label,Notation,Parent Notation,Sort Priority
 All,all,,0
 Homeless Type reasons,homeless-type-reasons,,1
-Termination of tenancy / mortgage due to rent arrears / default on payments,termination-of-tenancy-/-mortgage-due-to-rent-arrears-/-default-on-payments,,2
+Termination of tenancy or mortgage due to rent arrears or default on payments,termination-of-tenancy-or-mortgage-due-to-rent-arrears-or-default-on-payments,,2
 Other action by landlord resulting in the termination of the tenancy,other-action-by-landlord-resulting-in-the-termination-of-the-tenancy,,3
 Applicant terminated secure accommodation,applicant-terminated-secure-accommodation,,4
-Loss of service / tied accommodation,loss-of-service-/-tied-accommodation,,5
-Discharge from prison / hospital / care / other institution,discharge-from-prison-/-hospital-/-care-/-other-institution,,6
+Loss of service or tied accommodation,loss-of-service-or-tied-accommodation,,5
+Discharge from prison or hospital or care or other institution,discharge-from-prison-or-hospital-or-care-or-other-institution,,6
 "Emergency (fire, flood, storm, closing order from Environmental Health etc.)",emergency-fire-flood-storm-closing-order-from-environmental-health-etc,,7
 Forced division and sale of matrimonial home,forced-division-and-sale-of-matrimonial-home,,8
 Other reason for loss of accommodation,other-reason-for-loss-of-accommodation,,9
 Dispute within household: violent or abusive,dispute-within-household-violent-or-abusive,,10
-Dispute within household / relationship breakdown: non-violent,dispute-within-household-/-relationship-breakdown-non-violent,,11
+Dispute within household or relationship breakdown: non-violent,dispute-within-household-or-relationship-breakdown-non-violent,,11
 Fleeing non-domestic violence,fleeing-non-domestic-violence,,12
 Harassment,harassment,,13
 Overcrowding,overcrowding,,14
 Asked to leave,asked-to-leave,,15
-Other reason for leaving accommodation / household,other-reason-for-leaving-accommodation-/-household,,16
+Other reason for leaving accommodation or household,other-reason-for-leaving-accommodation-or-household,,16
 Prevent type reasons,prevent-type-reasons,,17
 General housing options advice,general-housing-options-advice,,18
 Benefit issues & Welfare Reform,benefit-issues-welfare-reform,,19
 Property condition,property-condition,,20
 Accommodation unsuitable,accommodation-unsuitable,,21
-Household experiencing anti-social behaviour / neighbour problems / hate crime,household-experiencing-anti-social-behaviour-/-neighbour-problems-/-hate-crime,,22
+Household experiencing anti-social behaviour or neighbour problems or hate crime,household-experiencing-anti-social-behaviour-or-neighbour-problems-or-hate-crime,,22
 Household member needing care,household-member-needing-care,,23
-Personal issues – affordability / financial difficulties,personal-issues-affordability-/-financial-difficulties,,24
+Personal issues – affordability or financial difficulties,personal-issues-affordability-or-financial-difficulties,,24
 Risk of losing accommodation,risk-of-losing-accommodation,,25
 Landlord issue,landlord-issue,,26
 Other,other,,27
 Accommodation is no longer available,accommodation-is-no-longer-available,,28
-Had to leave accommodation/household,had-to-leave-accommodation/household,,29
-Property may no longer be suitable/available in the future,property-may-no-longer-be-suitable/available-in-the-future,,30
+Had to leave accommodation or household,had-to-leave-accommodationorhousehold,,29
+Property may no longer be suitable or available in the future,property-may-no-longer-be-suitableoravailable-in-the-future,,30

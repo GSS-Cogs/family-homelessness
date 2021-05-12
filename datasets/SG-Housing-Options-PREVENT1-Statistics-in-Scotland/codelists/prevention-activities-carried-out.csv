@@ -1,13 +1,13 @@
 Label,Notation,Parent Notation,Sort Priority
 All,all,,0
-Mediation/outreach work,mediation/outreach-work,,1
-Financial assistance/advice,financial-assistance/advice,,2
-Rent/repairs/referrals/negotiation with landlords,rent/repairs/referrals/negotiation-with-landlords,,3
+Mediation or outreach work,mediationoroutreach-work,,1
+Financial assistance or advice,financial-assistanceoradvice,,2
+Rent or repairs or referrals or negotiation with landlords,rentorrepairsorreferralsornegotiation-with-landlords,,3
 Help to remain in accommodation,help-to-remain-in-accommodation,,4
-Mortgage/home ownership advice,mortgage/home-ownership-advice,,5
-Tenancy/social care support/adaptations to property,tenancy/social-care-support/adaptations-to-property,,6
-Referral to health/social work/employment services,referral-to-health/social-work/employment-services,,7
+Mortgageorhome ownership advice,mortgageorhome-ownership-advice,,5
+Tenancy or social care support or adaptations to property,tenancyorsocial-care-supportoradaptations-to-property,,6
+Referral to health or social work or employment services,referral-to-healthorsocial-workoremployment-services,,7
 Client informed of rights under homelessness legislation,client-informed-of-rights-under-homelessness-legislation,,8
-General Housing advice/tenancy rights advice,general-housing-advice/tenancy-rights-advice,,9
+General Housing advice or tenancy rights advice,general-housing-adviceortenancy-rights-advice,,9
 Help to move property,help-to-move-property,,10
 Other,other,,11

@@ -135,8 +135,8 @@ periodMeasure = {'2015-161' : 'gregorian-interval/2015-11-25T23:00:00/PT4H',
                  '2015-164' : 'gregorian-interval/2015-11-02T00:00:00/P14D',
                  '2016-174' : 'gregorian-interval/2016-11-10T00:00:00/P14D',
                  '2017-184' : 'gregorian-interval/2017-11-15T00:00:00/P14D',
-                 '2018-194' : 'gregorian-interval/2018-11-16T0:00:00/P14D',
-                 '2019-204' : 'gregorian-interval/2019-11-16T0:00:00/P14D'}
+                 '2018-194' : 'gregorian-interval/2018-11-16T00:00:00/P14D',
+                 '2019-204' : 'gregorian-interval/2019-11-16T00:00:00/P14D'}
 
 df = df.replace({'Period' : periodMeasure})
 

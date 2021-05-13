@@ -178,12 +178,14 @@ for tab in tabs:
         trace.with_preview(tidy_sheet)
         trace.store("combined_dataframe", tidy_sheet.topandas())
 df = trace.combine_and_trace(datasetTitle, "combined_dataframe")
+
 df['reason_for_loss_or_loss_of_tenancy'] = df['reason_for_loss_of_home_1']+df['end_of_tenancy_2']+df['reason_for_end_of_tenancy_3']+df['change_of_circumstances_4']
 df.drop(['reason_for_loss_of_home_1', 'end_of_tenancy_2', 'reason_for_end_of_tenancy_3', 'change_of_circumstances_4'], axis=1, inplace=True)
 
 df.rename(columns={'OBS' : 'Value', 'DATAMARKER' : 'Marker'}, inplace=True)
 df["Period"]= df["Period"].str.split(",", n = -1, expand = True)[3]
 
+#sheet=A1
 df.drop(['temp_assessment_duty_type_1', 'temp_assessment_duty_type_2', 'temp_assessment_duty_type_3'], axis=1, inplace=True)
 df.head()
 #A specific spec isn't available for "A2P" so stage-2 transform to be done latter
@@ -197,18 +199,14 @@ for tab in tabs:
         print(tab.name)
     
         remove_notes = tab.filter(contains_string('Notes')).expand(DOWN).expand(RIGHT)
-        ons_geo = tab.excel_ref('A6').fill(DOWN).is_not_blank() - remove_notes
-        period = tab.excel_ref('A1').is_not_blank() #period can be extracted from this cell 
-        sheet_name = tab.name
-#         savepreviewhtml(period, fname= tab.name + "PREVIEW.html")
-
-        relief_duty_by_reason = tab.excel_ref('C3').expand(RIGHT)
-        end_of_AST = tab.excel_ref('C4').expand(RIGHT)
-        reason_for_end_of_AST = tab.excel_ref('C5').expand(RIGHT)
-        reason_for_rent_arrears = tab.excel_ref('C6').expand(RIGHT)
-        observations = tab.excel_ref('C7').expand(DOWN).expand(RIGHT).is_not_blank() - remove_notes
-#         savepreviewhtml(observations, fname= tab.name + "PREVIEW.html")
-        
+        relief_duty_by_reason = tab.filter("Total owed a relief duty1").expand(RIGHT)
+        end_of_AST = relief_duty_by_reason.shift(DOWN)
+        reason_for_end_of_AST = end_of_AST.shift(DOWN)
+        reason_for_rent_arrears = reason_for_end_of_AST.shift(DOWN)
+        observations = reason_for_rent_arrears.fill(DOWN).expand(RIGHT).is_not_blank()-remove_notes
+        unwanted = observations.shift(LEFT).shift(LEFT).shift(LEFT).shift(LEFT).fill(RIGHT)
+        ons_geo = unwanted.shift(LEFT)-unwanted
+        period = relief_duty_by_reason.shift(ABOVE).shift(ABOVE).fill(LEFT).is_not_blank()        
         dimensions = [
             HDim(ons_geo,'ONS Geography Code',DIRECTLY,LEFT),
             HDim(period,'Period',CLOSEST,ABOVE),
@@ -227,12 +225,14 @@ df = trace.combine_and_trace(datasetTitle, "combined_dataframe")
 df['total_relief_duty_by_reason'] = df['relief_duty_by_reason'] + df['end_of_AST']+df['reason_for_end_of_AST']+df['reason_for_rent_arrears']
 df.drop(['relief_duty_by_reason', 'end_of_AST', 'reason_for_end_of_AST', 'reason_for_rent_arrears'], axis =1, inplace=True)
 
+#sheet=A1
 df.drop(['temp_assessment_duty_type_1', 'temp_assessment_duty_type_2', 'temp_assessment_duty_type_3'], axis=1, inplace=True)
+#sheet=A2P
 df.drop(['reason_for_loss_of_home_1', 'end_of_tenancy_2', 'reason_for_end_of_tenancy_3', 'change_of_circumstances_4'], axis=1, inplace=True)
 
 df.rename(columns={'OBS' : 'Value', 'DATAMARKER' : 'Marker'}, inplace=True)
 df["Period"]= df["Period"].str.split(",", n = -1, expand = True)[3]
-df
+df.head()
 
 # +
 for tab in tabs:

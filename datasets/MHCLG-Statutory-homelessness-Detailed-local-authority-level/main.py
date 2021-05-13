@@ -53,16 +53,13 @@ datasetTitle = original_tabs.title
 for tab in tabs:
     print(tab.name)
 
-# + endofcell="--"
+# +
 for tab in tabs:
     columns=['TO DO']
     trace.start(datasetTitle, tab, columns, original_tabs.downloadURL)
     if tab.name in ['A1']: #only transforming tab A1 for now
     
         remove_notes = tab.filter(contains_string('Notes')).expand(DOWN).expand(RIGHT)
-#         ons_geo = tab.excel_ref('A6').expand(DOWN).is_not_blank() - remove_notes
-#         period = tab.excel_ref('A1').is_not_blank() #period can be extracted from this cell 
-        
         temp_assessment_duty_type_1 = tab.filter("Total initial assessments1,2").expand(RIGHT)
         temp_assessment_duty_type_2 = temp_assessment_duty_type_1.shift(DOWN).expand(RIGHT)
         temp_assessment_duty_type_3 = temp_assessment_duty_type_2.shift(DOWN).expand(RIGHT)
@@ -71,13 +68,7 @@ for tab in tabs:
         ons_geo = unwanted.shift(LEFT)-unwanted
         period = temp_assessment_duty_type_1.shift(ABOVE).shift(ABOVE).fill(LEFT).is_not_blank()
         sheet_name = tab.name
-#         savepreviewhtml(period, fname= tab.name + "PREVIEW.html")
-    
-#         temp_assessment_duty_type_1 = tab.excel_ref('C3').expand(RIGHT)
-#         temp_assessment_duty_type_2 = tab.excel_ref('C4').expand(RIGHT)
-#         temp_assessment_duty_type_3 = tab.excel_ref('C5').expand(RIGHT)
-#         observations = tab.excel_ref('C6').expand(DOWN).expand(RIGHT).is_not_blank() - remove_notes
-        
+
         dimensions = [
             HDim(ons_geo,'ONS Geography Code',DIRECTLY,LEFT),
             HDim(period,'Period',CLOSEST,ABOVE),
@@ -90,10 +81,7 @@ for tab in tabs:
         savepreviewhtml(tidy_sheet, fname= tab.name + "PREVIEW.html")
         trace.with_preview(tidy_sheet)
         trace.store("combined_dataframe", tidy_sheet.topandas())
-    else:
-        continue 
 
-# # +
 # Below is how I matched the values up - I just took this info from the spec for tab A1
 
 # Initial Assessments                                                   Duty Type Owned
@@ -107,58 +95,59 @@ for tab in tabs:
 # - Households assessed as threatened with homelessness per(000s)       - N/A
 # - Households assessed as homeless per(000s)                           - N/A
 
-# # +
 df = trace.combine_and_trace(datasetTitle, "combined_dataframe")
 df.rename(columns={'OBS' : 'Value', 'DATAMARKER' : 'Marker'}, inplace=True)
 df["Period"]= df["Period"].str.split(",", n = 1, expand = True)[1]
-# df
+
 #Bring the 3 temp columns together - we will then decide the Duty Type Owed values based on them
-# df['assessment_duty_type'] = df['temp_assessment_duty_type_1'] + df['temp_assessment_duty_type_2'] + df['temp_assessment_duty_type_3']
+df['assessment_duty_type'] = df['temp_assessment_duty_type_1'] + df['temp_assessment_duty_type_2'] + df['temp_assessment_duty_type_3']
+
 #drop the other temp ones as no longer needed 
-# df.drop(['temp_assessment_duty_type_1', 'temp_assessment_duty_type_2', 'temp_assessment_duty_type_3'], axis=1, inplace=True)
+df.drop(['temp_assessment_duty_type_1', 'temp_assessment_duty_type_2', 'temp_assessment_duty_type_3'], axis=1, inplace=True)
+
 #Check the outputs of the temp column
-# df['assessment_duty_type'].unique()
-#Use lambda function to map to correct values we want for Inital assessmrnt column first 
+df['assessment_duty_type'].unique()
 
-# df['Initial Circumstance Assessment'] = df['assessment_duty_type'].map(lambda x: 'Total Initial Assessments' if 'Total initial assessments1' in x 
-#                                                                        else ('Total owed a prevention of relief duty' if 'Assessed as owed a dutyTotal owed a prevention or relief duty' in x 
-#                                                                              else ('Threatened with homelessness within 56 days' if 'Threatened with homelessness within 56 days - \nPrevention duty owed' in x else
-#                                                                                   ('Due to service of valid Section 21 Notice' if 'Of which:due to service of valid Section 21 Notice3' in x 
-#                                                                                    else ('Homeless' if 'Homeless - \nRelief duty owed4' in x 
-#                                                                                         else ('Not homeless nor threatened with homelessness within 56 days' if 'Not homeless nor threatened with homelessness within 56 days - no duty owed' in x 
-#                                                                                              else ('Number of Households in area (000s)' if 'Number of households\n in area4 (000s)' in x 
-#                                                                                                   else('Households assessed as threatened with homelessness per(000s)' if 'Households assessed as threatened with homelessness\nper (000s)' in x
-#                                                                                                      else ('Households assessed as homeless per(000s)' if 'Households assessed as homeless\nper (000s)' in x else x )))))))))
+#replacement of values done as per transformation style guide
+tmp_1 = {'Total initial assessments1,2':'Total Initial Assessments', 
+'Assessed as owed a dutyTotal owed a prevention or relief duty':'Total owed a prevention of relief duty',
+'Threatened with homelessness within 56 days - \nPrevention duty owed':'Threatened with homelessness within 56 days',
+'Of which:due to service of valid Section 21 Notice3':'Due to service of valid Section 21 Notice', 
+'Homeless - \nRelief duty owed4':'Homeless',
+'Not homeless nor threatened with homelessness within 56 days - no duty owed':'Not homeless nor threatened with homelessness within 56 days',
+'Number of households\n in area4 (000s)':'Number of Households in area (000s)',
+'Households assessed as threatened with homelessness\nper (000s)':'Households assessed as threatened with homelessness per(000s)',
+'Households assessed as homeless\nper (000s)':'Households assessed as homeless per(000s)'}
 
-# #drop other temp column 
-# df.drop(['assessment_duty_type'], axis=1, inplace=True)
-# #map Duty Type Owned values based on Initial Circumstance Assessment column values 
-# df['Duty Type Owned values'] = df['Initial Circumstance Assessment'].map(lambda x: 'N/A' if 'Total Initial Assessments' in x 
-#                                                                        else ('Relief' if 'Total owed a prevention of relief duty' in x 
-#                                                                              else ('Prevention' if 'Threatened with homelessness within 56 days' in x else
-#                                                                                   ('Prevention' if 'Due to service of valid Section 21 Notice' in x 
-#                                                                                    else ('Relief' if 'Homeless' in x 
-#                                                                                         else ('No duty owed' if 'Not homeless nor threatened with homelessness within 56 days' in x 
-#                                                                                              else ('All' if 'Number of Households in area (000s)' in x 
-#                                                                                                   else('N/A' if 'Households assessed as threatened with homelessness per(000s)' in x
-#                                                                                                      else ('N/A' if 'Households assessed as homeless per(000s)' in x else x )))))))))
+df['Initial Circumstance Assessment'] = df['assessment_duty_type'].replace(tmp_1)
 
-# -
+#drop other temp column 
+df.drop(['assessment_duty_type'], axis=1, inplace=True)
+
+#replacement of values done as per transformation style guide
+temp_2 = {'Total Initial Assessments':'N/A',
+'Total owed a prevention of relief duty':'Relief', 
+'Threatened with homelessness within 56 days':'Prevention',
+'Due to service of valid Section 21 Notice':'Prevention',
+'Homeless':'Relief',
+'Not homeless nor threatened with homelessness within 56 days':'No duty owed',
+'Number of Households in area (000s)':'All', 
+'Households assessed as threatened with homelessness per(000s)':'N/A',
+'Households assessed as homeless per(000s)':'N/A'}
+
+df['Duty Type Owned values'] = df['Initial Circumstance Assessment'].replace(temp_2)
 
 #Checking values are what I expect 
-# df['Duty Type Owned values'].unique()
+df['Duty Type Owned values'].unique()
 
 #Checking values are what I expect 
-# df['Initial Circumstance Assessment'].unique()
+df['Initial Circumstance Assessment'].unique()
 
-# df.head()
+df.head()
 
-# # +
 # Note all the other dimension's will need to be added but they seem to be contants for this tab anyway 
 # so could always add them in later and use the sheet name as reference or something along those lines. 
 # Hope this helps. 
-# -
-# --
 # +
 for tab in tabs:
     columns=['TO DO']

@@ -111,7 +111,7 @@ for tab in tabs:
 df = trace.combine_and_trace(datasetTitle, "combined_dataframe")
 df.rename(columns={'OBS' : 'Value', 'DATAMARKER' : 'Marker'}, inplace=True)
 df["Period"]= df["Period"].str.split(",", n = 1, expand = True)[1]
-df
+# df
 #Bring the 3 temp columns together - we will then decide the Duty Type Owed values based on them
 # df['assessment_duty_type'] = df['temp_assessment_duty_type_1'] + df['temp_assessment_duty_type_2'] + df['temp_assessment_duty_type_3']
 #drop the other temp ones as no longer needed 
@@ -167,6 +167,7 @@ for tab in tabs:
         print(tab.name)
     
         remove_notes = tab.filter(contains_string('Notes')).expand(DOWN).expand(RIGHT)
+        
 #         ons_geo = tab.excel_ref('A6').fill(DOWN).is_not_blank() - remove_notes
 #         period = tab.excel_ref('A1').is_not_blank() #period can be extracted from this cell 
 #         sheet_name = tab.name

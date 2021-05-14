@@ -242,23 +242,20 @@ for tab in tabs:
         print(tab.name)
         
         remove_notes = tab.filter(contains_string('Notes')).expand(DOWN).expand(RIGHT)
-        ons_geo = tab.excel_ref('A4').fill(DOWN).is_not_blank() - remove_notes # "-" suppressed in geography code to be processed in stage-2 transformation
-        period = tab.excel_ref('A1').is_not_blank() #period can be extracted from this cell 
-        sheet_name = tab.name
-        
-        total_no_of_households = tab.excel_ref('C2').expand(RIGHT)
-        reason_of_households_with_support_needs = tab.excel_ref('C3').expand(RIGHT)
-        total_households_and_no_of_people_with_support_needs = tab.excel_ref('C4').expand(RIGHT)
-        observations = tab.excel_ref('C5').expand(DOWN).expand(RIGHT).is_not_blank() - remove_notes
-#         savepreviewhtml(observations, fname= tab.name + "PREVIEW.html")
-        
+        reason_of_households_with_support_needs = tab.filter("Households with no support needs owed duty1,2").expand(RIGHT)
+        total_no_of_households = reason_of_households_with_support_needs.shift(ABOVE)
+        total_households_with_support_needs = reason_of_households_with_support_needs.shift(DOWN)
+        observations = total_households_with_support_needs.fill(DOWN).expand(RIGHT).is_not_blank()-remove_notes
+        unwanted = observations.shift(LEFT).shift(LEFT).shift(LEFT).shift(LEFT).fill(RIGHT)
+        ons_geo = unwanted.shift(LEFT)-unwanted
+        period = total_no_of_households.shift(ABOVE).fill(LEFT).is_not_blank()
         dimensions = [
             HDim(ons_geo,'ONS Geography Code',DIRECTLY,LEFT),
             HDim(period,'Period',CLOSEST,ABOVE),
-            HDim(total_no_of_households,'total_no_of_households',DIRECTLY, ABOVE),
+            HDim(total_no_of_households,'total_no_of_households',CLOSEST, LEFT),
             HDim(reason_of_households_with_support_needs,'reason_of_households_with_support_needs',DIRECTLY, ABOVE),
-            HDim(total_households_and_no_of_people_with_support_needs,'total_households_and_no_of_people_with_support_needs',DIRECTLY, ABOVE)
-            #HDimConst("sheet_name", sheet_name) #Might be handy to have for post processing when other tabs are running also 
+            HDim(total_households_with_support_needs,'total_households_with_support_needs', DIRECTLY, ABOVE),
+#             HDimConst("sheet_name", sheet_name) #Might be handy to have for post processing when other tabs are running also 
         ]
         tidy_sheet = ConversionSegment(tab, dimensions, observations)
         savepreviewhtml(tidy_sheet, fname= tab.name + "PREVIEW.html")
@@ -273,38 +270,34 @@ df.drop(['reason_for_loss_of_home_1', 'end_of_tenancy_2', 'reason_for_end_of_ten
 #sheet:A2R_
 df.drop(['relief_duty_by_reason', 'end_of_AST', 'reason_for_end_of_AST', 'reason_for_rent_arrears'], axis =1, inplace=True)
 
-df
-
-
-#This output csv file has 3+ value
-pd.DataFrame(df['total_households_and_no_of_people_with_support_needs'].unique()).to_csv('output.csv')
+# df['total_households_with_support_needs'].unique()
+#Assignment
+temp =  {'1.0':'Households with one support need', 
+         '2.0':'Households with two support needs',
+         '3+':'Households with three or more support needs'}
+#Replacement
+df['total_households_with_support_needs'] = df['total_households_with_support_needs'].replace(temp)
 
 #sheet:A3 - combine three series into one series in the dataframe
-df['total_no_of_households_with_support_needs'] = df['total_no_of_households'] + df['reason_of_households_with_support_needs'] + df['total_households_and_no_of_people_with_support_needs']
+df['support_needs_of_household'] = df['total_no_of_households'] + df['reason_of_households_with_support_needs'] + df['total_households_with_support_needs']
 
 # sheet:A3
-df.drop(['total_no_of_households', 'reason_of_households_with_support_needs', 'total_households_and_no_of_people_with_support_needs'], axis=1, inplace=True)
-
-#This output CSv doesn't have 3+ or has Number of households3+. Needs further investigation
-pd.DataFrame(df['total_no_of_households_with_support_needs'].unique()).to_csv('output.csv')
-
-df.rename(columns={'OBS' : 'Value', 'DATAMARKER' : 'Marker'}, inplace=True)
-df["Period"]= df["Period"].str.split(",", n = 1, expand = True)[1]
-
-# df['total_households_with_support_needs'] = df['total_no_of_households_with_support_needs'].map(lambda x: "Households with one support need" if '1.0' in x else x)
+df.drop(['total_no_of_households', 'reason_of_households_with_support_needs', 'total_households_with_support_needs'], axis=1, inplace=True)
 
 # The Requirement
-# H  - Total households with support needs (Already extracted from spreadsheet)
+# H  - Total households with support needs
 # I4 - Households with one support need
 # J4 - Households with two support needs
 # K4 - Households with three or more support needs
 
-# Above three column names needs to be processed. Blocked. Needs investigation
+df.rename(columns={'OBS' : 'Value', 'DATAMARKER' : 'Marker'}, inplace=True)
+df["Period"]= df["Period"].str.split(",", n = 1, expand = True)[1]
+# df.head()
 
-# pd.api.types.is_string_dtype(df['total_households_and_no_of_people_with_support_needs'])
+df['support_needs_of_household'].unique()
 
-# For now moving on to the next tab or sheet
-df
+# 'Number of householdsHouseholds with three or more support needs',is a odd value. Needs investigation.
+#'Households with one or more support needs owed duty1,2Total households with support needs',is a odd value. Needs investigation.
 
 # +
 #Number of households owed a prevention duty by accommodation at time of application England
@@ -348,7 +341,7 @@ df.drop(['reason_for_loss_of_home_1', 'end_of_tenancy_2', 'reason_for_end_of_ten
 #sheet:A2R_
 df.drop(['relief_duty_by_reason', 'end_of_AST', 'reason_for_end_of_AST', 'reason_for_rent_arrears'], axis =1, inplace=True)
 # sheet:A3
-df.drop(['total_no_of_households', 'reason_of_households_with_support_needs', 'total_households_and_no_of_people_with_support_needs'], axis=1, inplace=True)
+df.drop(['total_no_of_households', 'reason_of_households_with_support_needs', 'total_households_with_support_needs'], axis=1, inplace=True)
 
 df.rename(columns={'OBS' : 'Value', 'DATAMARKER' : 'Marker'}, inplace=True)
 df["Period"]= df["Period"].str.split(",", n = 1, expand = True)[1]

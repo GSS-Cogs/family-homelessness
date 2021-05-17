@@ -300,7 +300,7 @@ df['support_needs_of_household'].unique()
 df['Period'].unique()
 # df.head()
 
-# unwanted values in period column, needs further investigation
+# unwanted values in period column, Values form A2P. needs further investigation
 # 'Number of householdsHouseholds with three or more support needs',is a odd value. Needs investigation.
 #'Households with one or more support needs owed duty1,2Total households with support needs',is a odd value. Needs investigation.
 
@@ -367,8 +367,12 @@ temp = {'Total PRS':'Private rented sector total',
         'Psychiatric hospital':'Homeless on departure from institution psychiatric hospital'}
 df['Accommodation Type'] = df['total_prevention'].replace(temp)
 df.drop(['total_prevention'], axis=1, inplace=True)
-df['Accommodation Type'].unique()
+# df['Accommodation Type'].unique()
+# df['Period'].unique()
 df.head()
+
+
+# unwanted values in period column, Values form A2P. needs further investigation
 #Number of households owed a homelessness duty by accommodation at time of application
 
 # +

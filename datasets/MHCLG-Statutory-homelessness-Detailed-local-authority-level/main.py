@@ -54,6 +54,106 @@ for tab in tabs:
     print(tab.name)
 
 # +
+###############################################################################
+#             Investigation
+# -
+
+for tab in tabs:
+    columns=['TO DO']
+    trace.start(datasetTitle, tab, columns, original_tabs.downloadURL)
+    if tab.name in ['A1']: #only transforming tab A1 for now
+        remove_notes = tab.filter(contains_string('Notes')).expand(DOWN).expand(RIGHT)
+        temp_assessment_duty_type_1 = tab.filter("Total initial assessments1,2").expand(RIGHT)
+        temp_assessment_duty_type_2 = temp_assessment_duty_type_1.shift(DOWN).expand(RIGHT)
+        temp_assessment_duty_type_3 = temp_assessment_duty_type_2.shift(DOWN).expand(RIGHT)
+        observations = temp_assessment_duty_type_3.fill(DOWN).expand(RIGHT).is_not_blank()-remove_notes
+        unwanted = observations.shift(LEFT).shift(LEFT).shift(LEFT).shift(LEFT).fill(RIGHT)
+        ons_geo = unwanted.shift(LEFT)-unwanted
+        period = temp_assessment_duty_type_1.shift(ABOVE).shift(ABOVE).fill(LEFT).is_not_blank()
+        sheet_name = tab.name
+        dimensions = [
+            HDim(ons_geo,'ONS Geography Code',DIRECTLY,LEFT),
+            HDim(period,'Period',CLOSEST,ABOVE),
+            HDim(temp_assessment_duty_type_1,'temp_assessment_duty_type_1',DIRECTLY, ABOVE),
+            HDim(temp_assessment_duty_type_2,'temp_assessment_duty_type_2',DIRECTLY, ABOVE),
+            HDim(temp_assessment_duty_type_3,'temp_assessment_duty_type_3',DIRECTLY, ABOVE),
+            #HDimConst("sheet_name", sheet_name) #Might be handy to have for post processing when other tabs are running also 
+        ]
+        tidy_sheet = ConversionSegment(tab, dimensions, observations)
+        savepreviewhtml(tidy_sheet, fname= tab.name + "PREVIEW.html")
+        trace.with_preview(tidy_sheet)
+        #convert to pandas df
+        df = tidy_sheet.topandas()
+        #run individual post processing 
+        df["Period"]= df["Period"].str.split(", ", n = 1, expand = True)[1]
+        print(df['Period'].unique())
+        #add to combined df
+        trace.store("combined_dataframe", df )
+    if tab.name in ['A2P']: #only transforming tab A2P for now
+        print(tab.name)
+        remove_notes = tab.filter(contains_string('Notes')).expand(DOWN).expand(RIGHT)
+        reason_for_loss_of_home_1 = tab.filter("Total owed a prevention duty1").expand(RIGHT)
+        end_of_tenancy_2 = reason_for_loss_of_home_1.shift(DOWN)
+        reason_for_end_of_tenancy_3 = end_of_tenancy_2.shift(DOWN)
+        change_of_circumstances_4 = reason_for_end_of_tenancy_3.shift(DOWN)
+        observations = change_of_circumstances_4.fill(DOWN).expand(RIGHT).is_not_blank()-remove_notes
+        unwanted = observations.shift(LEFT).shift(LEFT).shift(LEFT).shift(LEFT).fill(RIGHT)
+        ons_geo = unwanted.shift(LEFT)-unwanted
+        period = reason_for_loss_of_home_1.shift(ABOVE).shift(ABOVE).fill(LEFT).is_not_blank()
+        dimensions = [
+            HDim(ons_geo,'ONS Geography Code',DIRECTLY,LEFT),
+            HDim(period,'Period',CLOSEST,ABOVE),
+            HDim(reason_for_loss_of_home_1,'reason_for_loss_of_home_1',DIRECTLY, ABOVE),
+            HDim(end_of_tenancy_2,'end_of_tenancy_2',DIRECTLY, ABOVE),
+            HDim(reason_for_end_of_tenancy_3,'reason_for_end_of_tenancy_3',DIRECTLY, ABOVE),
+            HDim(change_of_circumstances_4,'change_of_circumstances_4',DIRECTLY, ABOVE),
+            #HDimConst("sheet_name", sheet_name) #Might be handy to have for post processing when other tabs are running also 
+        ]
+        tidy_sheet = ConversionSegment(tab, dimensions, observations)
+        savepreviewhtml(tidy_sheet, fname= tab.name + "PREVIEW.html")
+        trace.with_preview(tidy_sheet)
+        df = tidy_sheet.topandas()
+        df["Period"]= df["Period"].str.split(", ", n = -1, expand = True)[3]
+        print(df['Period'].unique())
+        trace.store("combined_dataframe", df)
+    if tab.name in ['A3']: #only transforming tab A3 for now
+        print(tab.name)
+        remove_notes = tab.filter(contains_string('Notes')).expand(DOWN).expand(RIGHT)
+        reason_of_households_with_support_needs = tab.filter("Households with no support needs owed duty1,2").expand(RIGHT)
+        total_no_of_households = reason_of_households_with_support_needs.shift(ABOVE)
+        total_households_with_support_needs = reason_of_households_with_support_needs.shift(DOWN)
+        observations = total_households_with_support_needs.fill(DOWN).expand(RIGHT).is_not_blank()-remove_notes
+        unwanted = observations.shift(LEFT).shift(LEFT).shift(LEFT).shift(LEFT).fill(RIGHT)
+        ons_geo = unwanted.shift(LEFT)-unwanted
+        period = tab.excel_ref('A1') #reason_of_households_with_support_needs.shift(ABOVE).shift(ABOVE).fill(LEFT).is_not_blank()
+        dimensions = [
+            HDim(ons_geo,'ONS Geography Code',DIRECTLY,LEFT),
+            HDim(period,'Period',CLOSEST,ABOVE),
+            HDim(total_no_of_households,'total_no_of_households',CLOSEST, LEFT),
+            HDim(reason_of_households_with_support_needs,'reason_of_households_with_support_needs',DIRECTLY, ABOVE),
+            HDim(total_households_with_support_needs,'total_households_with_support_needs', DIRECTLY, ABOVE),
+# #             HDimConst("sheet_name", sheet_name) #Might be handy to have for post processing when other tabs are running also 
+        ]
+        tidy_sheet = ConversionSegment(tab, dimensions, observations)
+        savepreviewhtml(tidy_sheet, fname= tab.name + "PREVIEW.html")
+        trace.with_preview(tidy_sheet)
+        df = tidy_sheet.topandas()
+        df['Period']= df['Period'].str.split(", ", n = 1, expand = True)[1]
+        print(df['Period'].unique())
+        trace.store("combined_dataframe", df)
+    ###### repeat for all tabs and add to combined_dataframe 
+## once all tabs have been tansfromed and added to combined_dataframe df they can be brought together once to begin general post processing
+df = trace.combine_and_trace(datasetTitle, "combined_dataframe")
+df.rename(columns={'OBS' : 'Value', 'DATAMARKER' : 'Marker'}, inplace=True)
+df['Period'].unique()
+
+stop
+
+# +
+###############################################################################
+#             End
+
+# +
 for tab in tabs:
     columns=['TO DO']
     trace.start(datasetTitle, tab, columns, original_tabs.downloadURL)

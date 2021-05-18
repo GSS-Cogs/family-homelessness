@@ -3,6 +3,7 @@
     "title": "Homelessness in Scotland: Update [date]",
     "publisher": "Scottish Government",
     "description": "This bulletin provides information on local authority homelessness applications, assessments and outcomes. It also provides data on the number of households in temporary accommodation, along with the number of households in unsuitable temporary accommodation as defined in the Homeless Persons (Unsuitable Accommodation) (Scotland) Order 2014.\nThe bulletin is based on data collected from local authorities through the HL1 case-level homeless applications data collection along with the HL2 aggregate temporary accommodation summary return and the HL3 case-level temporary accommodation return.",
+    "dataURL": "https://www.gov.scot/binaries/content/documents/govscot/publications/statistics/2021/03/homelessness-scotland-update-30-september-2020/documents/tables-march-2021/tables-march-2021/govscot%3Adocument/tables-march-2021.xlsx",
     "landingPage": "https://www2.gov.scot/Topics/Statistics/Browse/Housing-Regeneration/RefTables#Publications",
     "datasetNotes": [
         "Data on this page identified as latest version of \"Homelessness in Scotland: Update to [date]\" which is listed in the \"Statistics\" column of the table at the top of the page. A link to the data is contained in the \"links\" column, named \"Publication (HTML, PDF, tables and charts)\". This opens a new page and access to the two XLS files is via \"supporting files\" located at the top RHS of the page."

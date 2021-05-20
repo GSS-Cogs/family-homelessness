@@ -132,7 +132,7 @@ for tab in tabs:
 
         #Checking values are what I expect 
         df['Initial Circumstance Assessment'].unique()
-#         df["Period"].unique()
+#       df["Period"].unique()
         print(df['Period'].unique())
         #add to combined df
         trace.store("combined_dataframe", df)
@@ -177,19 +177,9 @@ for tab in tabs:
         print(df['Period'].unique())
         trace.store("combined_dataframe", df)
         
-# df['reason_for_loss_or_loss_of_tenancy'] = df['reason_for_loss_of_home_1']+df['end_of_tenancy_2']+df['reason_for_end_of_tenancy_3']+df['change_of_circumstances_4']
-# df.drop(['reason_for_loss_of_home_1', 'end_of_tenancy_2', 'reason_for_end_of_tenancy_3'], axis=1, inplace=True)
-
-# df.rename(columns={'OBS' : 'Value', 'DATAMARKER' : 'Marker'}, inplace=True)
-# df["Period"]= df["Period"].str.split(",", n = -1, expand = True)[3]
-
-# #sheet=A1
-# df.drop(['temp_assessment_duty_type_1', 'temp_assessment_duty_type_2', 'temp_assessment_duty_type_3'], axis=1, inplace=True)
-# df.head()
-# df['Period'].unique()
 #A specific spec isn't available for "A2P" so stage-2 transform to be done latter
+# -
 
-# +
 #Number of households owed a relief duty by reason for loss, or threat of loss, of last settled home England
 for tab in tabs:
     columns=['TO DO']
@@ -226,19 +216,7 @@ for tab in tabs:
 
         print(df['Period'].unique())
         trace.store("combined_dataframe", df)
-
-# df['total_relief_duty_by_reason'] = df['relief_duty_by_reason'] + df['end_of_AST']+df['reason_for_end_of_AST']+df['reason_for_rent_arrears']
-# df.drop(['relief_duty_by_reason', 'end_of_AST', 'reason_for_end_of_AST', 'reason_for_rent_arrears'], axis =1, inplace=True)
-
-# #sheet=A1
-# df.drop(['temp_assessment_duty_type_1', 'temp_assessment_duty_type_2', 'temp_assessment_duty_type_3'], axis=1, inplace=True)
-# #sheet=A2P
-# df.drop(['reason_for_loss_of_home_1', 'end_of_tenancy_2', 'reason_for_end_of_tenancy_3', 'change_of_circumstances_4'], axis=1, inplace=True)
-
-# df.rename(columns={'OBS' : 'Value', 'DATAMARKER' : 'Marker'}, inplace=True)
-# df["Period"]= df["Period"].str.split(",", n = -1, expand = True)[3]
-# df.head()
-# df["Period"].unique()
+#A specific spec isn't available for "A2P" so stage-2 transform to be done latter
 
 # +
 for tab in tabs:
@@ -290,22 +268,13 @@ for tab in tabs:
 # J4 - Households with two support needs
 # K4 - Households with three or more support needs
 
-# unwanted values in period column, Values form A2P. needs further investigation
 # 'Number of householdsHouseholds with three or more support needs',is a odd value. Needs investigation.
 #'Households with one or more support needs owed duty1,2Total households with support needs',is a odd value. Needs investigation.
-# -
 
-df = trace.combine_and_trace(datasetTitle, "combined_dataframe")
-df.rename(columns={'OBS' : 'Value', 'DATAMARKER' : 'Marker'}, inplace=True)
-df.head()
-
-df['Duty Type Owned values'].unique()
-
-df['Reason For Loss Or Loss Of Tenancy'].unique()
-
-df['Total Relief Duty By Reason'].unique()
-
-df['Support needs of household'].unique()
+# +
+# df = trace.combine_and_trace(datasetTitle, "combined_dataframe")
+# df.rename(columns={'OBS' : 'Value', 'DATAMARKER' : 'Marker'}, inplace=True)
+# df.head()
 
 # +
 #Number of households owed a prevention duty by accommodation at time of application England
@@ -323,8 +292,6 @@ for tab in tabs:
         unwanted = observations.shift(LEFT).shift(LEFT).shift(LEFT).shift(LEFT).fill(RIGHT)
         ons_geo = unwanted.shift(LEFT)-unwanted
         period = prevention_duty_owed_by_sector.shift(ABOVE).shift(ABOVE).fill(LEFT).is_not_blank()
-#         savepreviewhtml(prs_srs_homeless_on_departure_from_institution, fname= tab.name + "PREVIEW.html")
-
         dimensions = [
             HDim(ons_geo,'ONS Geography Code',DIRECTLY,LEFT),
             HDim(period,'Period',CLOSEST,ABOVE),
@@ -336,27 +303,12 @@ for tab in tabs:
         tidy_sheet = ConversionSegment(tab, dimensions, observations)
         savepreviewhtml(tidy_sheet, fname= tab.name + "PREVIEW.html")
         trace.with_preview(tidy_sheet)
-        trace.store("combined_dataframe", tidy_sheet.topandas())
-df = trace.combine_and_trace(datasetTitle, "combined_dataframe")
-df['total_prevention'] = df['prs_srs_homeless_on_departure_from_institution']+df['status_of_occupation']
-#sheet:A4P
-df.drop(['prevention_duty_owed_by_sector', 'prs_srs_homeless_on_departure_from_institution', 'status_of_occupation'],axis=1,inplace=True)
-# df
-#sheet:A1
-df.drop(['temp_assessment_duty_type_1', 'temp_assessment_duty_type_2', 'temp_assessment_duty_type_3'], axis=1, inplace=True)
-#sheet:A2P
-df.drop(['reason_for_loss_of_home_1', 'end_of_tenancy_2', 'reason_for_end_of_tenancy_3', 'change_of_circumstances_4'], axis=1, inplace=True)
-#sheet:A2R_
-df.drop(['relief_duty_by_reason', 'end_of_AST', 'reason_for_end_of_AST', 'reason_for_rent_arrears'], axis =1, inplace=True)
-# sheet:A3
-df.drop(['total_no_of_households', 'reason_of_households_with_support_needs', 'total_households_with_support_needs'], axis=1, inplace=True)
-
-df.rename(columns={'OBS' : 'Value', 'DATAMARKER' : 'Marker'}, inplace=True)
-df["Period"]= df["Period"].str.split(",", n = 1, expand = True)[1]
-
-# df['total_prevention'].filter(lambda x: type(x.value) != 'Of which:'not in x.value)
-df['total_prevention'].unique()
-temp = {'Total PRS':'Private rented sector total',
+        df = tidy_sheet.topandas()
+        df["Period"]= df["Period"].str.split(",", n = 1, expand = True)[1]
+        df['total_prevention'] = df['prs_srs_homeless_on_departure_from_institution']+df['status_of_occupation']
+        df.drop(['prevention_duty_owed_by_sector', 'prs_srs_homeless_on_departure_from_institution', 'status_of_occupation'],axis=1,inplace=True)
+        
+        temp = {'Total PRS':'Private rented sector total',
         'Of which:Self-contained':'Private rented sector self-contained',
         'House in multiple occupation (HMO)':'Private rented sector house in multiple occupation',
         'Lodging (not with family or friends)':'Private rented sector lodging (not with friends and family)',
@@ -368,12 +320,9 @@ temp = {'Total PRS':'Private rented sector total',
         'Custody':'Homeless on departure from institution custody',
         'General \nhospital':'Homeless on departure from institution general hospital',
         'Psychiatric hospital':'Homeless on departure from institution psychiatric hospital'}
-df['Accommodation Type'] = df['total_prevention'].replace(temp)
-df.drop(['total_prevention'], axis=1, inplace=True)
-# df['Accommodation Type'].unique()
-# df['Period'].unique()
-df.head()
-
+        df['Accommodation Type'] = df['total_prevention'].replace(temp)
+        df.drop(['total_prevention'], axis=1, inplace=True)
+        trace.store("combined_dataframe", df)
 
 # unwanted values in period column, Values form A2P. needs further investigation
 #Number of households owed a homelessness duty by accommodation at time of application

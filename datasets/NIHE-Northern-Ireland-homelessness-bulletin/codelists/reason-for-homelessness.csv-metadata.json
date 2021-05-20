@@ -32,7 +32,7 @@
                 },
                 "required": false,
                 "propertyUrl": "skos:broader",
-                "valueUrl": "http://gss-data.org.uk/data/gss_data/homelessness/nihe-northern-ireland-homelessness-bulletin#concept/reason-for-homelessness/{parent_notation}"
+                "valueUrl": "http://gss-data.org.uk/data/gss_data/homelessness/nihe-northern-ireland-homelessness-bulletin#concept/reason-for-homelessness/{+parent_notation}"
             },
             {
                 "titles": "Sort Priority",
@@ -53,7 +53,7 @@
             }
         ],
         "primaryKey": "notation",
-        "aboutUrl": "http://gss-data.org.uk/data/gss_data/homelessness/nihe-northern-ireland-homelessness-bulletin#concept/reason-for-homelessness/{notation}"
+        "aboutUrl": "http://gss-data.org.uk/data/gss_data/homelessness/nihe-northern-ireland-homelessness-bulletin#concept/reason-for-homelessness/{+notation}"
     },
     "prov:hadDerivation": {
         "@id": "http://gss-data.org.uk/data/gss_data/homelessness/nihe-northern-ireland-homelessness-bulletin#scheme/reason-for-homelessness",
@@ -99,7 +99,7 @@
             },
             "dc:modified": {
                 "@type": "dateTime",
-                "@value": "2020-12-15T00:00:00"
+                "@value": "2021-05-20T11:59:17.249505"
             },
             "http://publishmydata.com/pmdcat#markdownDescription": {
                 "@type": "https://www.w3.org/ns/iana/media-types/text/markdown#Resource",

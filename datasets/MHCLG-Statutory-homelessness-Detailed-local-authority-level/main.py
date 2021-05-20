@@ -63,7 +63,7 @@ for tab in tabs:
 
         dimensions = [
             HDim(ons_geo,'ONS Geography Code',DIRECTLY,LEFT),
-            HDim(period,'Period',CLOSEST,ABOVE),
+            HDim(period,'Period',CLOSEST,LEFT),
             HDim(temp_assessment_duty_type_1,'temp_assessment_duty_type_1',DIRECTLY, ABOVE),
             HDim(temp_assessment_duty_type_2,'temp_assessment_duty_type_2',DIRECTLY, ABOVE),
             HDim(temp_assessment_duty_type_3,'temp_assessment_duty_type_3',DIRECTLY, ABOVE),
@@ -125,10 +125,10 @@ for tab in tabs:
         'Households assessed as threatened with homelessness per(000s)':'N/A',
         'Households assessed as homeless per(000s)':'N/A'}
 
-        df['Duty Type Owned values'] = df['Initial Circumstance Assessment'].replace(temp_2)
+        df['Duty Type'] = df['Initial Circumstance Assessment'].replace(temp_2)
 
         #Checking values are what I expect 
-        df['Duty Type Owned values'].unique()
+        df['Duty Type'].unique()
 
         #Checking values are what I expect 
         df['Initial Circumstance Assessment'].unique()
@@ -157,7 +157,7 @@ for tab in tabs:
         period = reason_for_loss_of_home_1.shift(ABOVE).shift(ABOVE).fill(LEFT).is_not_blank()
         dimensions = [
             HDim(ons_geo,'ONS Geography Code',DIRECTLY,LEFT),
-            HDim(period,'Period',CLOSEST,ABOVE),
+            HDim(period,'Period',CLOSEST,LEFT),
             HDim(reason_for_loss_of_home_1,'reason_for_loss_of_home_1',DIRECTLY, ABOVE),
             HDim(end_of_tenancy_2,'end_of_tenancy_2',DIRECTLY, ABOVE),
             HDim(reason_for_end_of_tenancy_3,'reason_for_end_of_tenancy_3',DIRECTLY, ABOVE),
@@ -198,7 +198,7 @@ for tab in tabs:
         period = relief_duty_by_reason.shift(ABOVE).shift(ABOVE).fill(LEFT).is_not_blank()        
         dimensions = [
             HDim(ons_geo,'ONS Geography Code',DIRECTLY,LEFT),
-            HDim(period,'Period',CLOSEST,ABOVE),
+            HDim(period,'Period',CLOSEST,LEFT),
             HDim(relief_duty_by_reason,'relief_duty_by_reason',DIRECTLY, ABOVE),
             HDim(end_of_AST,'end_of_AST',DIRECTLY, ABOVE),
             HDim(reason_for_end_of_AST,'reason_for_end_of_AST',DIRECTLY, ABOVE),
@@ -235,7 +235,7 @@ for tab in tabs:
         period = reason_of_households_with_support_needs.shift(ABOVE).shift(ABOVE).fill(LEFT).is_not_blank()
         dimensions = [
             HDim(ons_geo,'ONS Geography Code',DIRECTLY,LEFT),
-            HDim(period,'Period',CLOSEST,ABOVE),
+            HDim(period,'Period',CLOSEST,LEFT),
             HDim(total_no_of_households,'total_no_of_households',CLOSEST, LEFT),
             HDim(reason_of_households_with_support_needs,'reason_of_households_with_support_needs',DIRECTLY, ABOVE),
             HDim(total_households_with_support_needs,'total_households_with_support_needs', DIRECTLY, ABOVE),
@@ -275,8 +275,8 @@ for tab in tabs:
 # df = trace.combine_and_trace(datasetTitle, "combined_dataframe")
 # df.rename(columns={'OBS' : 'Value', 'DATAMARKER' : 'Marker'}, inplace=True)
 # df.head()
+# -
 
-# +
 #Number of households owed a prevention duty by accommodation at time of application England
 for tab in tabs:
     columns=['TO DO']
@@ -292,13 +292,15 @@ for tab in tabs:
         unwanted = observations.shift(LEFT).shift(LEFT).shift(LEFT).shift(LEFT).fill(RIGHT)
         ons_geo = unwanted.shift(LEFT)-unwanted
         period = prevention_duty_owed_by_sector.shift(ABOVE).shift(ABOVE).fill(LEFT).is_not_blank()
+        sheet = tab.name
+#         savepreviewhtml(sheet, fname= tab.name + "PREVIEW.html")
         dimensions = [
             HDim(ons_geo,'ONS Geography Code',DIRECTLY,LEFT),
-            HDim(period,'Period',CLOSEST,ABOVE),
+            HDim(period,'Period',CLOSEST,LEFT),
             HDim(prevention_duty_owed_by_sector,'prevention_duty_owed_by_sector',DIRECTLY, ABOVE),
             HDim(prs_srs_homeless_on_departure_from_institution,'prs_srs_homeless_on_departure_from_institution',DIRECTLY, ABOVE),
             HDim(status_of_occupation,'status_of_occupation',DIRECTLY, ABOVE),
-#             HDimConst("sheet_name", sheet_name) #Might be handy to have for post processing when other tabs are running also 
+            HDimConst("sheet", tab.name) #Might be handy to have for post processing when other tabs are running also 
         ]
         tidy_sheet = ConversionSegment(tab, dimensions, observations)
         savepreviewhtml(tidy_sheet, fname= tab.name + "PREVIEW.html")
@@ -322,10 +324,27 @@ for tab in tabs:
         'Psychiatric hospital':'Homeless on departure from institution psychiatric hospital'}
         df['Accommodation Type'] = df['total_prevention'].replace(temp)
         df.drop(['total_prevention'], axis=1, inplace=True)
+#         trace.store("combined_dataframe", df)
+        df['Duty Type'] = df['sheet'].apply(lambda x: "tab.Prevention" if x == 'A4P' else x)
+#         df.head(5)
+        df.drop(['sheet'], axis=1, inplace=True)
         trace.store("combined_dataframe", df)
-
+#tab.prevention to be changed to prevention
 # unwanted values in period column, Values form A2P. needs further investigation
 #Number of households owed a homelessness duty by accommodation at time of application
+
+df = trace.combine_and_trace(datasetTitle, "combined_dataframe")
+df.rename(columns={'OBS' : 'Value', 'DATAMARKER' : 'Marker'}, inplace=True)
+df.head()
+
+# df['sheet'].unique()
+#validity checks
+df['Accommodation Type'].value_counts()
+
+#validity checks
+df['Duty Type'].value_counts()
+
+
 
 # +
 # Number of households owed a relief duty by accommodation at time of application England
@@ -348,7 +367,7 @@ for tab in tabs:
 #         savepreviewhtml(observations, fname= tab.name + "PREVIEW.html")
         dimensions = [
             HDim(ons_geo,'ONS Geography Code',DIRECTLY,LEFT),
-            HDim(period,'Period',CLOSEST,ABOVE),
+            HDim(period,'Period',CLOSEST,LEFT),
             HDim(relief_duty_owed_by_sector,'relief_duty_owed_by_sector',DIRECTLY, ABOVE),
             HDim(relief_prs_srs_homeless_on_departure_from_institution,'relief_prs_srs_homeless_on_departure_from_institution',DIRECTLY, ABOVE),
             HDim(relief_status_of_occupation,'relief_status_of_occupation',DIRECTLY, ABOVE)

@@ -45,14 +45,15 @@ datasetTitle = original_tabs.title
 for tab in tabs:
     print(tab.name)
 
+# +
 for tab in tabs:
     columns=['TO DO']
     trace.start(datasetTitle, tab, columns, original_tabs.downloadURL)
     if tab.name in ['A1']: #only transforming tab A1 for now
-    
+        trace.start(datasetTitle, tab, columns, original_tabs.downloadURL)
         remove_notes = tab.filter(contains_string('Notes')).assert_one().expand(DOWN).expand(RIGHT)
         temp_assessment_duty_type_1 = tab.filter("Total initial assessments1,2").assert_one().expand(RIGHT)
-        temp_assessment_duty_type_2 = temp_assessment_duty_type_1.shift(DOWN).expand(RIGHT)
+        temp_assessment_duty_type_2 = temp_assessment_duty_type_1.shift(DOWN).expand(RIGHT)            
         temp_assessment_duty_type_3 = temp_assessment_duty_type_2.shift(DOWN).expand(RIGHT)
         observations = temp_assessment_duty_type_3.fill(DOWN).expand(RIGHT).is_not_blank()-remove_notes
         unwanted = observations.shift(LEFT).shift(LEFT).shift(LEFT).shift(LEFT).fill(RIGHT)
@@ -75,7 +76,7 @@ for tab in tabs:
         df = tidy_sheet.topandas()
         #run individual post processing 
         df["Period"]= df["Period"].str.split(", ", n = 1, expand = True)[1]
-            #Bring the 3 temp columns together - we will then decide the Duty Type Owed values based on them
+        #Bring the 3 temp columns together - we will then decide the Duty Type Owed values based on them
         df['assessment_duty_type'] = df['temp_assessment_duty_type_1'] + df['temp_assessment_duty_type_2'] + df['temp_assessment_duty_type_3']
 
         #drop the other temp ones as no longer needed 
@@ -83,21 +84,21 @@ for tab in tabs:
 
         #Check the outputs of the temp column
         df['assessment_duty_type'].unique()
-        
+
         # Below is how I matched the values up - I just took this info from the spec for tab A1
 
-    # Initial Assessments                                                   Duty Type Owned
-    # - Total Initial Assessments                                           - N/A
-    # - Total owed a prevention of relief duty                              - Relief
-    # - Threatened with homelessness within 56 days                         - Prevention
-    # - Due to service of valid Section 21 Notice                           - Prevention
-    # - Homeless                                                            - Relief
-    # - Not homeless nor threatened with homelessness within 56 days        - No duty owed
-    # - Number of Households in area (000s)                                 - All
-    # - Households assessed as threatened with homelessness per(000s)       - N/A
-    # - Households assessed as homeless per(000s)                           - N/A
+        # Initial Assessments                                                   Duty Type Owned
+        # - Total Initial Assessments                                           - N/A
+        # - Total owed a prevention of relief duty                              - Relief
+        # - Threatened with homelessness within 56 days                         - Prevention
+        # - Due to service of valid Section 21 Notice                           - Prevention
+        # - Homeless                                                            - Relief
+        # - Not homeless nor threatened with homelessness within 56 days        - No duty owed
+        # - Number of Households in area (000s)                                 - All
+        # - Households assessed as threatened with homelessness per(000s)       - N/A
+        # - Households assessed as homeless per(000s)                           - N/A
 
-        #replacement of values done as per transformation style guide
+         #replacement of values done as per transformation style guide
         tmp_1 = {'Total initial assessments1,2':'Total Initial Assessments', 
         'Assessed as owed a dutyTotal owed a prevention or relief duty':'Total owed a prevention of relief duty',
         'Threatened with homelessness within 56 days - \nPrevention duty owed':'Threatened with homelessness within 56 days',
@@ -107,7 +108,6 @@ for tab in tabs:
         'Number of households\n in area4 (000s)':'Number of Households in area (000s)',
         'Households assessed as threatened with homelessness\nper (000s)':'Households assessed as threatened with homelessness per(000s)',
         'Households assessed as homeless\nper (000s)':'Households assessed as homeless per(000s)'}
-
         df['Initial Circumstance Assessment'] = df['assessment_duty_type'].replace(tmp_1)
 
         #drop other temp column 
@@ -131,10 +131,11 @@ for tab in tabs:
 
         #Checking values are what I expect 
         df['Initial Circumstance Assessment'].unique()
-#       df["Period"].unique()
+#         df["Period"].unique()
         print(df['Period'].unique())
         #add to combined df
         trace.store("combined_dataframe", df)
+        
 # Note all the other dimension's will need to be added but they seem to be contants for this tab anyway 
 # so could always add them in later and use the sheet name as reference or something along those lines. 
 # Hope this helps. 
@@ -280,11 +281,11 @@ for tab in tabs:
 for tab in tabs:
     columns=['TO DO']
     trace.start(datasetTitle, tab, columns, original_tabs.downloadURL)
-    if tab.name in ['A4P']: #only transforming tab A4P for now
+    if tab.name in ['A4P', 'A4R']: #only transforming tab A4P for now
         print(tab.name)
         
         remove_notes = tab.filter(contains_string('Notes')).assert_one().expand(DOWN).expand(RIGHT)
-        prevention_duty_owed_by_sector = tab.filter('Total owed a prevention duty1,2').assert_one().expand(RIGHT)
+        prevention_duty_owed_by_sector = tab.filter('Private rented sector').assert_one().shift(LEFT).expand(RIGHT)
         prs_srs_homeless_on_departure_from_institution = prevention_duty_owed_by_sector.shift(DOWN).expand(RIGHT)
         status_of_occupation = prs_srs_homeless_on_departure_from_institution.shift(DOWN).expand(RIGHT)
         observations = status_of_occupation.fill(DOWN).expand(RIGHT).is_not_blank()-remove_notes
@@ -304,10 +305,15 @@ for tab in tabs:
         tidy_sheet = ConversionSegment(tab, dimensions, observations)
         savepreviewhtml(tidy_sheet, fname= tab.name + "PREVIEW.html")
         trace.with_preview(tidy_sheet)
+        
         df = tidy_sheet.topandas()
+        
         df["Period"]= df["Period"].str.split(",", n = 1, expand = True)[1]
+        
         df['total_prevention'] = df['prs_srs_homeless_on_departure_from_institution']+df['status_of_occupation']
         df.drop(['prevention_duty_owed_by_sector', 'prs_srs_homeless_on_departure_from_institution', 'status_of_occupation'],axis=1,inplace=True)
+        
+        print(df['total_prevention'])
         
         temp = {'Total PRS':'Private rented sector total',
         'Of which:Self-contained':'Private rented sector self-contained',
@@ -318,14 +324,20 @@ for tab in tabs:
         'Registered provider tenant':'Social rented sector registered provider tenant',
         'Supported housing / hostel':'Social rented sector supported housing or hostel',
         'Total homeless on departure from institution':'Homeless on departure from institution total',
-        'Custody':'Homeless on departure from institution custody',
+        'Of which:Custody':'Homeless on departure from institution custody',
         'General \nhospital':'Homeless on departure from institution general hospital',
         'Psychiatric hospital':'Homeless on departure from institution psychiatric hospital'}
+        
         df['Accommodation Type'] = df['total_prevention'].replace(temp)
         df.drop(['total_prevention'], axis=1, inplace=True)
+        
+        print(df['Accommodation Type'].unique())
 #         trace.store("combined_dataframe", df)
-        df['Duty Type'] = df['sheet'].apply(lambda x: "tab.Prevention" if x == 'A4P' else x)
+        if tab.name == 'A4P':
+            df['Duty Type'] = df['sheet'].apply(lambda x: "tab.Prevention" if x == 'A4P' else x)
 #         df.head(5)
+        if tab.name == 'A4R':
+            df['Duty Type'] = df['sheet'].apply(lambda x: "tab.Relief" if x == 'A4R' else x)
         df.drop(['sheet'], axis=1, inplace=True)
         trace.store("combined_dataframe", df)
 #tab.prevention to be changed to prevention
@@ -346,56 +358,99 @@ df['Duty Type'].value_counts()
 
 
 # +
-# Number of households owed a relief duty by accommodation at time of application England
+#  This transformation may not be required as it is merged with the above transformation
 
-for tab in tabs:
-    columns=['TO DO']
-    trace.start(datasetTitle, tab, columns, original_tabs.downloadURL)
-    if tab.name in ['A4R']: #only transforming tab A4R for now
-        print(tab.name)
+
+# # Number of households owed a relief duty by accommodation at time of application England
+
+# for tab in tabs:
+#     columns=['TO DO']
+#     trace.start(datasetTitle, tab, columns, original_tabs.downloadURL)
+#     if tab.name in ['A4R']: #only transforming tab A4R for now
+#         print(tab.name)
         
-        remove_notes = tab.filter(contains_string('Notes')).expand(DOWN).expand(RIGHT)
-        ons_geo = tab.excel_ref('A4').fill(DOWN).is_not_blank() - remove_notes # "-" suppressed in geography code to be processed in stage-2 transformation
-        period = tab.excel_ref('A1').is_not_blank() #period can be extracted from this cell 
-        sheet_name = tab.name
+#         remove_notes = tab.filter(contains_string('Notes')).expand(DOWN).expand(RIGHT)
+#         relief_duty_owed_by_sector = tab.filter("Total owed a  relief duty1,2").assert_one().expand(RIGHT)
+#         relief_prs_srs_homeless_on_departure_from_institution = relief_duty_owed_by_sector.shift(DOWN)
+#         relief_status_of_occupation = relief_prs_srs_homeless_on_departure_from_institution.shift(DOWN)
+#         observations = relief_status_of_occupation.fill(DOWN).expand(RIGHT).is_not_blank()-remove_notes
+#         unwanted = observations.shift(LEFT).shift(LEFT).shift(LEFT).shift(LEFT).fill(RIGHT)
+#         ons_geo = unwanted.shift(LEFT)-unwanted
+#         period = relief_duty_owed_by_sector.shift(ABOVE).shift(ABOVE).fill(LEFT).is_not_blank()
+#         sheet = tab.name
+# #         savepreviewhtml(period, fname= tab.name + "PREVIEW.html")
+#         dimensions = [
+#             HDim(ons_geo,'ONS Geography Code',DIRECTLY,LEFT),
+#             HDim(period,'Period',CLOSEST,LEFT),
+#             HDim(relief_duty_owed_by_sector,'relief_duty_owed_by_sector',DIRECTLY, ABOVE),
+#             HDim(relief_prs_srs_homeless_on_departure_from_institution,'relief_prs_srs_homeless_on_departure_from_institution',DIRECTLY, ABOVE),
+#             HDim(relief_status_of_occupation,'relief_status_of_occupation',DIRECTLY, ABOVE),
+#             HDimConst("sheet", tab.name) #Might be handy to have for post processing when other tabs are running also 
+#         ]
+#         tidy_sheet = ConversionSegment(tab, dimensions, observations)
+#         savepreviewhtml(tidy_sheet, fname= tab.name + "PREVIEW.html")
+#         trace.with_preview(tidy_sheet)
+#         df = tidy_sheet.topandas()
         
-        relief_duty_owed_by_sector = tab.excel_ref('C3').expand(RIGHT)
-        relief_prs_srs_homeless_on_departure_from_institution = tab.excel_ref('C4').expand(RIGHT)
-        relief_status_of_occupation = tab.excel_ref('C5').expand(RIGHT)
-        observations = tab.excel_ref('C6').expand(DOWN).expand(RIGHT).is_not_blank() - remove_notes
-#         savepreviewhtml(observations, fname= tab.name + "PREVIEW.html")
-        dimensions = [
-            HDim(ons_geo,'ONS Geography Code',DIRECTLY,LEFT),
-            HDim(period,'Period',CLOSEST,LEFT),
-            HDim(relief_duty_owed_by_sector,'relief_duty_owed_by_sector',DIRECTLY, ABOVE),
-            HDim(relief_prs_srs_homeless_on_departure_from_institution,'relief_prs_srs_homeless_on_departure_from_institution',DIRECTLY, ABOVE),
-            HDim(relief_status_of_occupation,'relief_status_of_occupation',DIRECTLY, ABOVE)
-#             HDimConst("sheet_name", sheet_name) #Might be handy to have for post processing when other tabs are running also 
-        ]
-        tidy_sheet = ConversionSegment(tab, dimensions, observations)
-        savepreviewhtml(tidy_sheet, fname= tab.name + "PREVIEW.html")
-        trace.with_preview(tidy_sheet)
-        trace.store("combined_dataframe", tidy_sheet.topandas())
+#         df["Period"]= df["Period"].str.split(",", n = 1, expand = True)[1]
+        
+#         #Sheet = A2R
+#         df['Relief_Total'] = df['relief_prs_srs_homeless_on_departure_from_institution']+df['relief_status_of_occupation']
+#         df.drop(['relief_duty_owed_by_sector', 'relief_prs_srs_homeless_on_departure_from_institution', 'relief_status_of_occupation'], axis=1, inplace=True)
+#         print(df.head())
+# #         print(df['Relief_Total'].unique())
+        
+# #         tmp = {'Total PRS':'Private rented sector total',
+# #         'Of which:Self-contained':'Private rented sector self-contained',
+# #         'House in multiple occupation (HMO)':'Private rented sector house in multiple occupation',
+# #         'Lodging (not with family or friends)':'Private rented sector lodging (not with friends and family)',
+# #         'Total SRS':'Social rented sector total',
+# #         'Of which:Council \ntenant':'Social rented sector council tenant',
+# #         'Registered provider tenant':'Social rented sector registered provider tenant',
+# #         'Supported housing / hostel':'Social rented sector supported housing or hostel',
+# #         'Total homeless on departure from institution':'Homeless on departure from institution total',
+# #         'Of which:Custody':'Homeless on departure from institution custody',
+# #         'General \nhospital':'Homeless on departure from institution general hospital',
+# #         'Psychiatric hospital':'Homeless on departure from institution psychiatric hospital'}
+        
+        
+# #         df['Accommodation Type'] = df['Relief_Total'].replace(tmp)
+# #         df.drop(['Relief_Total'], axis=1, inplace=True)
+# #         print(df['Accommodation Type'].unique())
+        
+# #         df['Duty Type'] = df['sheet'].apply(lambda x: "tab.Relief" if x == 'A4R' else x)
+# #         df.drop(['sheet'], axis=1, inplace=True)
+
+# #         trace.store("combined_dataframe", tidy_sheet.topandas())
+
+# #Sheet = A2R
+# # df['Relief_Total'] = df['relief_duty_owed_by_sector']+df['relief_prs_srs_homeless_on_departure_from_institution']+df['relief_status_of_occupation']
+# # df.drop(['relief_duty_owed_by_sector', 'relief_prs_srs_homeless_on_departure_from_institution', 'relief_status_of_occupation'], axis=1, inplace=True)
+
+# # #sheet:A1
+# # df.drop(['temp_assessment_duty_type_1', 'temp_assessment_duty_type_2', 'temp_assessment_duty_type_3'], axis=1, inplace=True)
+# # #sheet:A2P
+# # df.drop(['reason_for_loss_of_home_1', 'end_of_tenancy_2', 'reason_for_end_of_tenancy_3', 'change_of_circumstances_4'], axis=1, inplace=True)
+# # #sheet:A2R_
+# # df.drop(['relief_duty_by_reason', 'end_of_AST', 'reason_for_end_of_AST', 'reason_for_rent_arrears'], axis =1, inplace=True)
+# # # sheet:A3
+# # df.drop(['total_no_of_households', 'reason_of_households_with_support_needs', 'total_households_and_no_of_people_with_support_needs'], axis=1, inplace=True)
+# # #sheet:A4P
+# # df.drop(['prevention_duty_owed_by_sector', 'prs_srs_homeless_on_departure_from_institution', 'status_of_occupation'],axis=1,inplace=True)
+
+# # df.rename(columns={'OBS' : 'Value', 'DATAMARKER' : 'Marker'}, inplace=True)
+
+
+
+# -
+
 df = trace.combine_and_trace(datasetTitle, "combined_dataframe")
-#Sheet = A2R
-df['Relief_Total'] = df['relief_duty_owed_by_sector']+df['relief_prs_srs_homeless_on_departure_from_institution']+df['relief_status_of_occupation']
-df.drop(['relief_duty_owed_by_sector', 'relief_prs_srs_homeless_on_departure_from_institution', 'relief_status_of_occupation'], axis=1, inplace=True)
-
-#sheet:A1
-df.drop(['temp_assessment_duty_type_1', 'temp_assessment_duty_type_2', 'temp_assessment_duty_type_3'], axis=1, inplace=True)
-#sheet:A2P
-df.drop(['reason_for_loss_of_home_1', 'end_of_tenancy_2', 'reason_for_end_of_tenancy_3', 'change_of_circumstances_4'], axis=1, inplace=True)
-#sheet:A2R_
-df.drop(['relief_duty_by_reason', 'end_of_AST', 'reason_for_end_of_AST', 'reason_for_rent_arrears'], axis =1, inplace=True)
-# sheet:A3
-df.drop(['total_no_of_households', 'reason_of_households_with_support_needs', 'total_households_and_no_of_people_with_support_needs'], axis=1, inplace=True)
-#sheet:A4P
-df.drop(['prevention_duty_owed_by_sector', 'prs_srs_homeless_on_departure_from_institution', 'status_of_occupation'],axis=1,inplace=True)
-
 df.rename(columns={'OBS' : 'Value', 'DATAMARKER' : 'Marker'}, inplace=True)
-df["Period"]= df["Period"].str.split(",", n = 1, expand = True)[1]
+df.head()
 
-df
+df['Accommodation Type'].value_counts()
+
+df['Duty Type'].value_counts()
 
 # +
 # Number of households owed a prevention duty by household composition England

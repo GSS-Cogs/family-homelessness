@@ -15,13 +15,12 @@ trace = TransformTrace()
 df = pd.DataFrame()
 cubes = Cubes("info.json")
 info = json.load(open('info.json')) 
-scraper = Scraper(seed = "info.json")
-# scraper.distributions = [x for x in scraper.distributions if hasattr(x, "mediaType")] 
-scraper
+scraper = Scraper(seed = "info.json") 
+required = [x.title for x in scraper.distributions if "October to December 2020" in x.title]
+assert len(required) == 1, 'Aborting more than 1 October to December 2020" source file found'
 
 
-original_tabs = scraper.distribution(title = lambda x: "Detailed local authority level tables: October to December 2020" in x)
-# original_tabs = scraper.distribution(latest = True, mediaType=ODS)
+original_tabs = scraper.distribution(title = required[0])
 original_tabs
 
 
@@ -51,8 +50,8 @@ for tab in tabs:
     trace.start(datasetTitle, tab, columns, original_tabs.downloadURL)
     if tab.name in ['A1']: #only transforming tab A1 for now
     
-        remove_notes = tab.filter(contains_string('Notes')).expand(DOWN).expand(RIGHT)
-        temp_assessment_duty_type_1 = tab.filter("Total initial assessments1,2").expand(RIGHT)
+        remove_notes = tab.filter(contains_string('Notes')).assert_one().expand(DOWN).expand(RIGHT)
+        temp_assessment_duty_type_1 = tab.filter("Total initial assessments1,2").assert_one().expand(RIGHT)
         temp_assessment_duty_type_2 = temp_assessment_duty_type_1.shift(DOWN).expand(RIGHT)
         temp_assessment_duty_type_3 = temp_assessment_duty_type_2.shift(DOWN).expand(RIGHT)
         observations = temp_assessment_duty_type_3.fill(DOWN).expand(RIGHT).is_not_blank()-remove_notes
@@ -146,8 +145,8 @@ for tab in tabs:
     if tab.name in ['A2P']: #only transforming tab A2P for now
         print(tab.name)
     
-        remove_notes = tab.filter(contains_string('Notes')).expand(DOWN).expand(RIGHT)
-        reason_for_loss_of_home_1 = tab.filter("Total owed a prevention duty1").expand(RIGHT)
+        remove_notes = tab.filter(contains_string('Notes')).assert_one().expand(DOWN).expand(RIGHT)
+        reason_for_loss_of_home_1 = tab.filter("Total owed a prevention duty1").assert_one().expand(RIGHT)
         end_of_tenancy_2 = reason_for_loss_of_home_1.shift(DOWN)
         reason_for_end_of_tenancy_3 = end_of_tenancy_2.shift(DOWN)
         change_of_circumstances_4 = reason_for_end_of_tenancy_3.shift(DOWN)
@@ -187,8 +186,8 @@ for tab in tabs:
     if tab.name in ['A2R_']: #only transforming tab A2P for now
         print(tab.name)
     
-        remove_notes = tab.filter(contains_string('Notes')).expand(DOWN).expand(RIGHT)
-        relief_duty_by_reason = tab.filter("Total owed a relief duty1").expand(RIGHT)
+        remove_notes = tab.filter(contains_string('Notes')).assert_one().expand(DOWN).expand(RIGHT)
+        relief_duty_by_reason = tab.filter("Total owed a relief duty1").assert_one().expand(RIGHT)
         end_of_AST = relief_duty_by_reason.shift(DOWN)
         reason_for_end_of_AST = end_of_AST.shift(DOWN)
         reason_for_rent_arrears = reason_for_end_of_AST.shift(DOWN)
@@ -225,8 +224,8 @@ for tab in tabs:
     if tab.name in ['A3']: #only transforming tab A3 for now
         print(tab.name)
         
-        remove_notes = tab.filter(contains_string('Notes')).expand(DOWN).expand(RIGHT)
-        reason_of_households_with_support_needs = tab.filter("Households with no support needs owed duty1,2").expand(RIGHT)
+        remove_notes = tab.filter(contains_string('Notes')).assert_one().expand(DOWN).expand(RIGHT)
+        reason_of_households_with_support_needs = tab.filter("Households with no support needs owed duty1,2").assert_one().expand(RIGHT)
         total_no_of_households = reason_of_households_with_support_needs.shift(ABOVE)
         total_households_with_support_needs = reason_of_households_with_support_needs.shift(DOWN)
         observations = total_households_with_support_needs.fill(DOWN).expand(RIGHT).is_not_blank()-remove_notes
@@ -284,8 +283,8 @@ for tab in tabs:
     if tab.name in ['A4P']: #only transforming tab A4P for now
         print(tab.name)
         
-        remove_notes = tab.filter(contains_string('Notes')).expand(DOWN).expand(RIGHT)
-        prevention_duty_owed_by_sector = tab.filter('Total owed a prevention duty1,2').expand(RIGHT)
+        remove_notes = tab.filter(contains_string('Notes')).assert_one().expand(DOWN).expand(RIGHT)
+        prevention_duty_owed_by_sector = tab.filter('Total owed a prevention duty1,2').assert_one().expand(RIGHT)
         prs_srs_homeless_on_departure_from_institution = prevention_duty_owed_by_sector.shift(DOWN).expand(RIGHT)
         status_of_occupation = prs_srs_homeless_on_departure_from_institution.shift(DOWN).expand(RIGHT)
         observations = status_of_occupation.fill(DOWN).expand(RIGHT).is_not_blank()-remove_notes

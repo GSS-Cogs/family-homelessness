@@ -285,7 +285,7 @@ for tab in tabs:
         print(tab.name)
         
         remove_notes = tab.filter(contains_string('Notes')).assert_one().expand(DOWN).expand(RIGHT)
-        prevention_duty_owed_by_sector = tab.filter('Private rented sector').assert_one().shift(LEFT).expand(RIGHT)
+        prevention_duty_owed_by_sector = tab.filter('Private rented sector').assert_one().shift(LEFT).shift(LEFT).expand(RIGHT)
         prs_srs_homeless_on_departure_from_institution = prevention_duty_owed_by_sector.shift(DOWN).expand(RIGHT)
         status_of_occupation = prs_srs_homeless_on_departure_from_institution.shift(DOWN).expand(RIGHT)
         observations = status_of_occupation.fill(DOWN).expand(RIGHT).is_not_blank()-remove_notes

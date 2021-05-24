@@ -260,6 +260,7 @@ for tab in tabs:
         observations = prevention_duty_owed_by_household.shift(DOWN).fill(DOWN).expand(RIGHT).is_not_blank()-remove_notes
         unwanted = observations.shift(LEFT).shift(LEFT).shift(LEFT).shift(LEFT).fill(RIGHT)
         ons_geo = unwanted.shift(LEFT)-unwanted
+        sheet = tab.name
         period = prevention_duty_owed_by_household.shift(ABOVE).shift(ABOVE).fill(LEFT).is_not_blank()
 #         savepreviewhtml(observations, fname= tab.name + "PREVIEW.html")
         dimensions = [
@@ -267,6 +268,7 @@ for tab in tabs:
             HDim(period,'Period',CLOSEST,LEFT),
             HDim(prevention_duty_owed_by_household,'prevention_duty_owed_by_household',DIRECTLY, ABOVE),
             HDim(single_parent_adult_male_female,'single_parent_adult_male_female',DIRECTLY, ABOVE),
+            HDimConst('sheet', tab.name),
 #             HDimConst("sheet_name", sheet_name) #Might be handy to have for post processing when other tabs are running also 
         ]
         tidy_sheet = ConversionSegment(tab, dimensions, observations)
@@ -280,9 +282,17 @@ for tab in tabs:
         df['Household composition'] = df['prevention_duty_owed_by_household']+df['single_parent_adult_male_female']
         df.drop(['prevention_duty_owed_by_household', 'single_parent_adult_male_female'], axis=1, inplace=True)
         
+        #a5p&a5r.prevention &relief to be changed
+        if tab.name == 'A5P':
+            df['Duty Type'] = df['sheet'].apply(lambda x: "a5p.Prevention" if x == 'A5P' else x)
+#         df.head(5)
+        if tab.name == 'A5R':
+            df['Duty Type'] = df['sheet'].apply(lambda x: "a5r.Relief" if x == 'A5R' else x)
+        df.drop(['sheet'], axis=1, inplace=True)
         
         
-        print(df['Household composition'].value_counts())
+#         print(df['Household composition'].value_counts())
+        print(df['Duty Type'].value_counts())
         trace.store("combined_dataframe", tidy_sheet.topandas())
 # +
 # # Number of households owed a relief duty by household composition England

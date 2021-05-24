@@ -15,12 +15,12 @@ trace = TransformTrace()
 df = pd.DataFrame()
 cubes = Cubes("info.json")
 info = json.load(open('info.json')) 
-scraper = Scraper(seed = "info.json") 
-required = [x.title for x in scraper.distributions if "October to December 2020" in x.title]
+metadata = Scraper(seed = "info.json") 
+required = [x.title for x in metadata.distributions if "October to December 2020" in x.title]
 assert len(required) == 1, 'Aborting more than 1 October to December 2020" source file found'
 
 
-original_tabs = scraper.distribution(title = required[0])
+original_tabs = metadata.distribution(title = required[0])
 original_tabs
 
 
@@ -143,11 +143,11 @@ for tab in tabs:
 for tab in tabs:
     columns=['TO DO']
     trace.start(datasetTitle, tab, columns, original_tabs.downloadURL)
-    if tab.name in ['A2P']: #only transforming tab A2P for now
+    if tab.name in ['A2P', 'A2R_']: #only transforming tab A2P for now
         print(tab.name)
     
         remove_notes = tab.filter(contains_string('Notes')).assert_one().expand(DOWN).expand(RIGHT)
-        reason_for_loss_of_home_1 = tab.filter("Total owed a prevention duty1").assert_one().expand(RIGHT)
+        reason_for_loss_of_home_1 = tab.filter("End of assured shorthold (AST) private rented tenancy, due to..").assert_one().shift(LEFT).shift(LEFT).expand(RIGHT)
         end_of_tenancy_2 = reason_for_loss_of_home_1.shift(DOWN)
         reason_for_end_of_tenancy_3 = end_of_tenancy_2.shift(DOWN)
         change_of_circumstances_4 = reason_for_end_of_tenancy_3.shift(DOWN)
@@ -155,6 +155,7 @@ for tab in tabs:
         unwanted = observations.shift(LEFT).shift(LEFT).shift(LEFT).shift(LEFT).fill(RIGHT)
         ons_geo = unwanted.shift(LEFT)-unwanted
         period = reason_for_loss_of_home_1.shift(ABOVE).shift(ABOVE).fill(LEFT).is_not_blank()
+        sheet = tab.name
         dimensions = [
             HDim(ons_geo,'ONS Geography Code',DIRECTLY,LEFT),
             HDim(period,'Period',CLOSEST,LEFT),
@@ -162,7 +163,7 @@ for tab in tabs:
             HDim(end_of_tenancy_2,'end_of_tenancy_2',DIRECTLY, ABOVE),
             HDim(reason_for_end_of_tenancy_3,'reason_for_end_of_tenancy_3',DIRECTLY, ABOVE),
             HDim(change_of_circumstances_4,'change_of_circumstances_4',DIRECTLY, ABOVE),
-            #HDimConst("sheet_name", sheet_name) #Might be handy to have for post processing when other tabs are running also 
+            HDimConst("sheet", tab.name) #Might be handy to have for post processing when other tabs are running also 
         ]
         tidy_sheet = ConversionSegment(tab, dimensions, observations)
         savepreviewhtml(tidy_sheet, fname= tab.name + "PREVIEW.html")
@@ -170,53 +171,60 @@ for tab in tabs:
         df = tidy_sheet.topandas()
         df["Period"]= df["Period"].str.split(", ", n = -1, expand = True)[3]
         
-        df['Reason For Loss Or Loss Of Tenancy'] = df['reason_for_loss_of_home_1']+df['end_of_tenancy_2']+df['reason_for_end_of_tenancy_3']+df['change_of_circumstances_4']
+        df['Reason for loss or threat of loss of home'] = df['reason_for_loss_of_home_1']+df['end_of_tenancy_2']+df['reason_for_end_of_tenancy_3']+df['change_of_circumstances_4']
         df.drop(['reason_for_loss_of_home_1', 'end_of_tenancy_2', 'reason_for_end_of_tenancy_3','change_of_circumstances_4'], axis=1, inplace=True)
 
 
         print(df['Period'].unique())
+        print(df['Reason for loss or threat of loss of home'].unique())
+        if tab.name == 'A2P':
+            df['Duty Type'] = df['sheet'].apply(lambda x: "a2p.Prevention" if x == 'A2P' else x)
+#         df.head(5)
+        if tab.name == 'A2R_':
+            df['Duty Type'] = df['sheet'].apply(lambda x: "a2r.Relief" if x == 'A2R_' else x)
+        df.drop(['sheet'], axis=1, inplace=True)
         trace.store("combined_dataframe", df)
         
-#A specific spec isn't available for "A2P" so stage-2 transform to be done latter
-# -
+#More clarity needed on Spec.
 
-#Number of households owed a relief duty by reason for loss, or threat of loss, of last settled home England
-for tab in tabs:
-    columns=['TO DO']
-    trace.start(datasetTitle, tab, columns, original_tabs.downloadURL)
-    if tab.name in ['A2R_']: #only transforming tab A2P for now
-        print(tab.name)
+# +
+# #Number of households owed a relief duty by reason for loss, or threat of loss, of last settled home England
+# for tab in tabs:
+#     columns=['TO DO']
+#     trace.start(datasetTitle, tab, columns, original_tabs.downloadURL)
+#     if tab.name in ['A2R_']: #only transforming tab A2P for now
+#         print(tab.name)
     
-        remove_notes = tab.filter(contains_string('Notes')).assert_one().expand(DOWN).expand(RIGHT)
-        relief_duty_by_reason = tab.filter("Total owed a relief duty1").assert_one().expand(RIGHT)
-        end_of_AST = relief_duty_by_reason.shift(DOWN)
-        reason_for_end_of_AST = end_of_AST.shift(DOWN)
-        reason_for_rent_arrears = reason_for_end_of_AST.shift(DOWN)
-        observations = reason_for_rent_arrears.fill(DOWN).expand(RIGHT).is_not_blank()-remove_notes
-        unwanted = observations.shift(LEFT).shift(LEFT).shift(LEFT).shift(LEFT).fill(RIGHT)
-        ons_geo = unwanted.shift(LEFT)-unwanted
-        period = relief_duty_by_reason.shift(ABOVE).shift(ABOVE).fill(LEFT).is_not_blank()        
-        dimensions = [
-            HDim(ons_geo,'ONS Geography Code',DIRECTLY,LEFT),
-            HDim(period,'Period',CLOSEST,LEFT),
-            HDim(relief_duty_by_reason,'relief_duty_by_reason',DIRECTLY, ABOVE),
-            HDim(end_of_AST,'end_of_AST',DIRECTLY, ABOVE),
-            HDim(reason_for_end_of_AST,'reason_for_end_of_AST',DIRECTLY, ABOVE),
-            HDim(reason_for_rent_arrears,'reason_for_rent_arrears',DIRECTLY, ABOVE),
-            #HDimConst("sheet_name", sheet_name) #Might be handy to have for post processing when other tabs are running also 
-        ]
-        tidy_sheet = ConversionSegment(tab, dimensions, observations)
-        savepreviewhtml(tidy_sheet, fname= tab.name + "PREVIEW.html")
-        trace.with_preview(tidy_sheet)
-        df = tidy_sheet.topandas()
-        df["Period"]= df["Period"].str.split(", ", n = -1, expand = True)[3]
+#         remove_notes = tab.filter(contains_string('Notes')).assert_one().expand(DOWN).expand(RIGHT)
+#         relief_duty_by_reason = tab.filter("Total owed a relief duty1").assert_one().expand(RIGHT)
+#         end_of_AST = relief_duty_by_reason.shift(DOWN)
+#         reason_for_end_of_AST = end_of_AST.shift(DOWN)
+#         reason_for_rent_arrears = reason_for_end_of_AST.shift(DOWN)
+#         observations = reason_for_rent_arrears.fill(DOWN).expand(RIGHT).is_not_blank()-remove_notes
+#         unwanted = observations.shift(LEFT).shift(LEFT).shift(LEFT).shift(LEFT).fill(RIGHT)
+#         ons_geo = unwanted.shift(LEFT)-unwanted
+#         period = relief_duty_by_reason.shift(ABOVE).shift(ABOVE).fill(LEFT).is_not_blank()        
+#         dimensions = [
+#             HDim(ons_geo,'ONS Geography Code',DIRECTLY,LEFT),
+#             HDim(period,'Period',CLOSEST,LEFT),
+#             HDim(relief_duty_by_reason,'relief_duty_by_reason',DIRECTLY, ABOVE),
+#             HDim(end_of_AST,'end_of_AST',DIRECTLY, ABOVE),
+#             HDim(reason_for_end_of_AST,'reason_for_end_of_AST',DIRECTLY, ABOVE),
+#             HDim(reason_for_rent_arrears,'reason_for_rent_arrears',DIRECTLY, ABOVE),
+#             #HDimConst("sheet_name", sheet_name) #Might be handy to have for post processing when other tabs are running also 
+#         ]
+#         tidy_sheet = ConversionSegment(tab, dimensions, observations)
+#         savepreviewhtml(tidy_sheet, fname= tab.name + "PREVIEW.html")
+#         trace.with_preview(tidy_sheet)
+#         df = tidy_sheet.topandas()
+#         df["Period"]= df["Period"].str.split(", ", n = -1, expand = True)[3]
         
-        df['Total Relief Duty By Reason'] = df['relief_duty_by_reason'] + df['end_of_AST']+df['reason_for_end_of_AST']+df['reason_for_rent_arrears']
-        df.drop(['relief_duty_by_reason', 'end_of_AST', 'reason_for_end_of_AST', 'reason_for_rent_arrears'], axis =1, inplace=True)
+#         df['Total Relief Duty By Reason'] = df['relief_duty_by_reason'] + df['end_of_AST']+df['reason_for_end_of_AST']+df['reason_for_rent_arrears']
+#         df.drop(['relief_duty_by_reason', 'end_of_AST', 'reason_for_end_of_AST', 'reason_for_rent_arrears'], axis =1, inplace=True)
 
-        print(df['Period'].unique())
-        trace.store("combined_dataframe", df)
-#A specific spec isn't available for "A2P" so stage-2 transform to be done latter
+#         print(df['Period'].unique())
+#         trace.store("combined_dataframe", df)
+# #A specific spec isn't available for "A2P" so stage-2 transform to be done latter
 
 # +
 for tab in tabs:
@@ -275,8 +283,8 @@ for tab in tabs:
 # df = trace.combine_and_trace(datasetTitle, "combined_dataframe")
 # df.rename(columns={'OBS' : 'Value', 'DATAMARKER' : 'Marker'}, inplace=True)
 # df.head()
-# -
 
+# +
 #Number of households owed a prevention duty by accommodation at time of application England
 for tab in tabs:
     columns=['TO DO']
@@ -313,7 +321,7 @@ for tab in tabs:
         df['total_prevention'] = df['prs_srs_homeless_on_departure_from_institution']+df['status_of_occupation']
         df.drop(['prevention_duty_owed_by_sector', 'prs_srs_homeless_on_departure_from_institution', 'status_of_occupation'],axis=1,inplace=True)
         
-        print(df['total_prevention'])
+#         print(df['total_prevention'])
         
         temp = {'Total PRS':'Private rented sector total',
         'Of which:Self-contained':'Private rented sector self-contained',
@@ -331,7 +339,7 @@ for tab in tabs:
         df['Accommodation Type'] = df['total_prevention'].replace(temp)
         df.drop(['total_prevention'], axis=1, inplace=True)
         
-        print(df['Accommodation Type'].unique())
+#         print(df['Accommodation Type'].unique())
 #         trace.store("combined_dataframe", df)
         if tab.name == 'A4P':
             df['Duty Type'] = df['sheet'].apply(lambda x: "tab.Prevention" if x == 'A4P' else x)
@@ -344,16 +352,20 @@ for tab in tabs:
 # unwanted values in period column, Values form A2P. needs further investigation
 #Number of households owed a homelessness duty by accommodation at time of application
 
-df = trace.combine_and_trace(datasetTitle, "combined_dataframe")
-df.rename(columns={'OBS' : 'Value', 'DATAMARKER' : 'Marker'}, inplace=True)
-df.head()
+# +
+# df = trace.combine_and_trace(datasetTitle, "combined_dataframe")
+# df.rename(columns={'OBS' : 'Value', 'DATAMARKER' : 'Marker'}, inplace=True)
+# df.head()
 
-# df['sheet'].unique()
-#validity checks
-df['Accommodation Type'].value_counts()
+# +
+# # df['sheet'].unique()
+# #validity checks
+# df['Accommodation Type'].value_counts()
 
-#validity checks
-df['Duty Type'].value_counts()
+# +
+# #validity checks
+# df['Duty Type'].value_counts()
+# -
 
 
 
@@ -448,7 +460,7 @@ df = trace.combine_and_trace(datasetTitle, "combined_dataframe")
 df.rename(columns={'OBS' : 'Value', 'DATAMARKER' : 'Marker'}, inplace=True)
 df.head()
 
-df['Accommodation Type'].value_counts()
+df['Reason for loss or threat of loss of home'].value_counts()
 
 df['Duty Type'].value_counts()
 

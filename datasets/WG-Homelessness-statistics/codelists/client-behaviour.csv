@@ -1,0 +1,12 @@
+Label,Notation,Parent Notation,Sort Priority
+Successful prevention,successful-prevention,,0
+Unsuccessful prevention,unsuccessful-prevention,,1
+Assistance refused,assistance-refused,,2
+Non co operation,non-co-operation,,3
+Other reasons,other-reasons,,4
+Application withdrawn,application-withdrawn,,5
+Application withdrawn due to loss of contact,application-withdrawn-due-to-loss-of-contact,,6
+Successfully relieved,successfully-relieved,,7
+Unsuccessfully relieved,unsuccessfully-relieved,,8
+Positively discharged,positively-discharged,,9
+All,all,,10

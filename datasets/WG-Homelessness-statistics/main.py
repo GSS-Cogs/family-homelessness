@@ -1,9 +1,16 @@
-# # WG Homelessness statistics 
+#!/usr/bin/env python
+# coding: utf-8
 
-from gssutils import * 
+# In[116]:
+
+
+# # WG Homelessness statistics
+
+from gssutils import *
 import pandas as pd
 import numpy as np
-import json 
+import json
+import glob
 
 infoFileName = 'info.json'
 info    = json.load(open(infoFileName))
@@ -11,8 +18,16 @@ scraper = Scraper(seed=infoFileName)
 cubes   = Cubes(infoFileName)
 scraper
 
+
+# In[117]:
+
+
 distro = scraper.distribution(title=lambda x: "Dataset" in x)
 distro
+
+
+# In[118]:
+
 
 df = distro.as_pandas()
 
@@ -50,7 +65,7 @@ drop_list = [
     'Outcomes_SortOrder', # Not required
     'Outcomes_Hierarchy', # Not required
     'Outcomes_ItemNotes_ENG', # Only one value which isn't necessary as it is evident from data availability
-    'Household_ItemNotes_ENG', 
+    'Household_ItemNotes_ENG',
     'Household_Code', # Not required
     'Household_SortOrder', # Not required
     'Household_ItemNotes_ENG', # All blank (checked in cell above - must be included otherwise)
@@ -68,12 +83,7 @@ df.drop(drop_list, inplace=True, axis=1)
 df['Value'] = df['Data'].astype(int)
 df.drop('Data', inplace=True, axis=1)
 
-# Geographies!
-df['Geography'] = df['Area_AltCode1'].apply(lambda x: f"http://statistics.data.gov.uk/id/statistical-geography/{x}")
-df.drop('Area_AltCode1', inplace=True, axis=1)
-
-# Measure
-df.rename({'Measure_ItemName_ENG': 'Measure'}, inplace=True, axis=1)
+df.rename({'Measure_ItemName_ENG': 'Measure', 'Area_AltCode1' : 'Geography'}, inplace=True, axis=1)
 
 # For periods
 df['Period_Code'].cat.categories
@@ -95,7 +105,7 @@ df['Period_Code'].cat.categories
 #
 # October-December is assigned a value of 201516Q3, which means these are government year and quarters not calendar years and quarters. If the value has a q in it it is a government quarter, otherwise a government year. Enter lambda functions with an anonymous dictionary
 
-df['Period_Code'].cat.rename_categories(lambda x: {True: f"/id/government-quarter/{x[:4]}-Q{x[-1:]}", False: f"/id/government-year/{x[:4]}-{x[-3:-1]}"}.get("Q" in x), inplace=True)
+df['Period_Code'].cat.rename_categories(lambda x: {True: f"government-quarter/{x[:4]}-Q{x[-1:]}", False: f"government-year/{x[:4]}-{x[-3:-1]}"}.get("Q" in x), inplace=True)
 df.rename({'Period_Code': 'Period'}, inplace=True)
 
 # # Outcomes
@@ -154,33 +164,54 @@ df = df.drop(df[df['client-behaviour'] == 'DROP'].index)
 # Clean up the Value column
 df['Value'] = df['Value'].astype(int)
 df.loc[df['Value'] == -999999999, 'Marker'] = 'suppressed'
-df.loc[df['Value'] == -999999999, 'Value'] = np.nan
+df.loc[df['Value'] == -999999999, 'Value'] = ''
 
 
+# In[119]:
 
-# +
 
 for col in df.columns:
-    if col not in ['Value', 'Geography']:
+    if col not in ['Value', 'Geography', 'Period_Code']:
         df[col] = df[col].astype('category')
         df[col].cat.rename_categories(lambda x: pathify(x), inplace=True)
-# -
+
+
+# In[120]:
+
 
 # Fix the Household column
 df.rename({'Household_ItemName_ENG': 'household-type'}, axis=1, inplace=True)
 df['household-type'].cat.rename_categories({'total': 'all-household'}, inplace=True)
 
-# Pathify the column heads
-df.rename(lambda x: pathify(x), axis=1, inplace=True)
+df = df.rename(columns = {'household-type' : 'Household Type',
+                          'Period_Code' : 'Period',
+                          'client-behaviour' : 'Client Behaviour',
+                          'duty' : 'Duty',
+                          'grounds-for-duty' : 'Grounds for Duty'})
 
-# # Test cell for welsh national statistics for year 2019-2020 to aide in pivot table creation and cross referencing
-#
-# test = df.loc[(df['Geography'] == 'http-//statistics-data-gov-uk/id/statistical-geography/w92000004') & (df['Period_Code'] == '/id/government-year/2019-20'), ['client-behaviour', 'duty', 'grounds-for-duty', 'Value', 'Household_ItemName_ENG']]
-#
-# test.to_excel('text.xlsx')
+df['Value'] = df.apply(lambda x: int(x['Value']) if x['Marker'] == '' else x['Value'], axis = 1)
 
-# Add dataframe is in the cube
+df['Grounds for Duty'] = df['Grounds for Duty'].cat.add_categories('not-applicable').fillna('not-applicable')
+df['Client Behaviour'] = df['Client Behaviour'].cat.add_categories('all').fillna('all')
+
+df = df[['Period', 'Geography', 'Household Type', 'Client Behaviour', 'Duty', 'Grounds for Duty', 'Value', 'Marker']]
+df
+
+
+# In[121]:
+
+
 cubes.add_cube(scraper, df, scraper.title)
 
 
+# In[122]:
+
+
 cubes.output_all()
+
+
+# In[123]:
+
+
+
+

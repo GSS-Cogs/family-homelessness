@@ -363,21 +363,21 @@ for tab in tabs:
         observations = age_of_main_applicants.waffle(ons_geo)-total_unwanted
         sheet = tab.name
 #         savepreviewhtml(total_unwanted, fname= tab.name + "PREVIEW.html")
-#         dimensions = [
-#             HDim(ons_geo,'ONS Geography Code',DIRECTLY,LEFT),
-#             HDim(period,'Period',CLOSEST,ABOVE),
-#             HDim(age_of_main_applicants,'age_of_main_applicants',DIRECTLY, ABOVE),
-#             HDimConst("sheet", tab.name) #Might be handy to have for post processing when other tabs are running also 
-#         ]
-#         tidy_sheet = ConversionSegment(tab, dimensions, observations)
-#         savepreviewhtml(tidy_sheet, fname= tab.name + "PREVIEW.html")
-#         trace.with_preview(tidy_sheet)
-#         df = tidy_sheet.topandas()
+        dimensions = [
+            HDim(ons_geo,'ONS Geography Code',DIRECTLY,LEFT),
+            HDim(period,'Period',CLOSEST,ABOVE),
+            HDim(age_of_main_applicants,'age_of_main_applicants',DIRECTLY, ABOVE),
+            HDimConst("sheet", tab.name) #Might be handy to have for post processing when other tabs are running also 
+        ]
+        tidy_sheet = ConversionSegment(tab, dimensions, observations)
+        savepreviewhtml(tidy_sheet, fname= tab.name + "PREVIEW.html")
+        trace.with_preview(tidy_sheet)
+        df = tidy_sheet.topandas()
         
-#         df["Period"]= df["Period"].str.split(",", n = 1, expand = True)[1]
+        df["Period"]= df["Period"].str.split(",", n = 1, expand = True)[1]
         
         
-#         trace.store("combined_dataframe", tidy_sheet.topandas())
+        trace.store("combined_dataframe", tidy_sheet.topandas())
 
 # (E3:W3) Age (including total and not known)
 # Measure Type = Applicant

@@ -1,6 +1,6 @@
 {
     "@context": "http://www.w3.org/ns/csvw",
-    "@id": "http://gss-data.org.uk/data/gss_data/homelessness/homelessness-statistics#scheme/client-behaviour",
+    "@id": "http://gss-data.org.uk/data/gss_data/homelessness/wg-homelessness-statistics#scheme/client-behaviour",
     "url": "client-behaviour.csv",
     "rdfs:label": "Client Behaviour",
     "dc:title": "Client Behaviour",
@@ -32,7 +32,7 @@
                 },
                 "required": false,
                 "propertyUrl": "skos:broader",
-                "valueUrl": "http://gss-data.org.uk/data/gss_data/homelessness/homelessness-statistics#concept/client-behaviour/{parent_notation}"
+                "valueUrl": "http://gss-data.org.uk/data/gss_data/homelessness/wg-homelessness-statistics#concept/client-behaviour/{parent_notation}"
             },
             {
                 "titles": "Sort Priority",
@@ -49,14 +49,14 @@
             {
                 "virtual": true,
                 "propertyUrl": "skos:inScheme",
-                "valueUrl": "http://gss-data.org.uk/data/gss_data/homelessness/homelessness-statistics#scheme/client-behaviour"
+                "valueUrl": "http://gss-data.org.uk/data/gss_data/homelessness/wg-homelessness-statistics#scheme/client-behaviour"
             }
         ],
         "primaryKey": "notation",
-        "aboutUrl": "http://gss-data.org.uk/data/gss_data/homelessness/homelessness-statistics#concept/client-behaviour/{notation}"
+        "aboutUrl": "http://gss-data.org.uk/data/gss_data/homelessness/wg-homelessness-statistics#concept/client-behaviour/{notation}"
     },
     "prov:hadDerivation": {
-        "@id": "http://gss-data.org.uk/data/gss_data/homelessness/homelessness-statistics#scheme/client-behaviour",
+        "@id": "http://gss-data.org.uk/data/gss_data/homelessness/wg-homelessness-statistics#scheme/client-behaviour",
         "@type": [
             "skos:ConceptScheme",
             "http://publishmydata.com/pmdcat#ConceptScheme"
@@ -64,16 +64,16 @@
     },
     "rdfs:seeAlso": [
         {
-            "@id": "http://gss-data.org.uk/data/gss_data/homelessness/homelessness-statistics#scheme/client-behaviour/dataset",
+            "@id": "http://gss-data.org.uk/data/gss_data/homelessness/wg-homelessness-statistics#scheme/client-behaviour/dataset",
             "@type": [
                 "dcat:Dataset",
                 "http://publishmydata.com/pmdcat#Dataset"
             ],
             "http://publishmydata.com/pmdcat#datasetContents": {
-                "@id": "http://gss-data.org.uk/data/gss_data/homelessness/homelessness-statistics#scheme/client-behaviour"
+                "@id": "http://gss-data.org.uk/data/gss_data/homelessness/wg-homelessness-statistics#scheme/client-behaviour"
             },
             "http://publishmydata.com/pmdcat#graph": {
-                "@id": "http://gss-data.org.uk/data/gss_data/homelessness/homelessness-statistics#scheme/client-behaviour"
+                "@id": "http://gss-data.org.uk/data/gss_data/homelessness/wg-homelessness-statistics#scheme/client-behaviour"
             },
             "rdfs:label": "Client Behaviour",
             "dc:title": "Client Behaviour",
@@ -109,17 +109,17 @@
         {
             "@id": "http://gss-data.org.uk/catalog/vocabularies",
             "dcat:record": {
-                "@id": "http://gss-data.org.uk/data/gss_data/homelessness/homelessness-statistics#scheme/client-behaviour/catalog-record"
+                "@id": "http://gss-data.org.uk/data/gss_data/homelessness/wg-homelessness-statistics#scheme/client-behaviour/catalog-record"
             }
         },
         {
-            "@id": "http://gss-data.org.uk/data/gss_data/homelessness/homelessness-statistics#scheme/client-behaviour/catalog-record",
+            "@id": "http://gss-data.org.uk/data/gss_data/homelessness/wg-homelessness-statistics#scheme/client-behaviour/catalog-record",
             "@type": "dcat:CatalogRecord",
             "foaf:primaryTopic": {
-                "@id": "http://gss-data.org.uk/data/gss_data/homelessness/homelessness-statistics#scheme/client-behaviour/dataset"
+                "@id": "http://gss-data.org.uk/data/gss_data/homelessness/wg-homelessness-statistics#scheme/client-behaviour/dataset"
             },
             "http://publishmydata.com/pmdcat#metadataGraph": {
-                "@id": "http://gss-data.org.uk/data/gss_data/homelessness/homelessness-statistics#scheme/client-behaviour"
+                "@id": "http://gss-data.org.uk/data/gss_data/homelessness/wg-homelessness-statistics#scheme/client-behaviour"
             },
             "dc:title": "Client Behaviour Catalog Record",
             "rdfs:label": "Client Behaviour Catalog Record",

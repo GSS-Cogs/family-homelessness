@@ -1,6 +1,6 @@
 {
     "@context": "http://www.w3.org/ns/csvw",
-    "@id": "http://gss-data.org.uk/data/gss_data/homelessness/homelessness-statistics#scheme/duty",
+    "@id": "http://gss-data.org.uk/data/gss_data/homelessness/wg-homelessness-statistics#scheme/duty",
     "url": "duty.csv",
     "rdfs:label": "Duty",
     "dc:title": "Duty",
@@ -32,7 +32,7 @@
                 },
                 "required": false,
                 "propertyUrl": "skos:broader",
-                "valueUrl": "http://gss-data.org.uk/data/gss_data/homelessness/homelessness-statistics#concept/duty/{parent_notation}"
+                "valueUrl": "http://gss-data.org.uk/data/gss_data/homelessness/wg-homelessness-statistics#concept/duty/{parent_notation}"
             },
             {
                 "titles": "Sort Priority",
@@ -49,14 +49,14 @@
             {
                 "virtual": true,
                 "propertyUrl": "skos:inScheme",
-                "valueUrl": "http://gss-data.org.uk/data/gss_data/homelessness/homelessness-statistics#scheme/duty"
+                "valueUrl": "http://gss-data.org.uk/data/gss_data/homelessness/wg-homelessness-statistics#scheme/duty"
             }
         ],
         "primaryKey": "notation",
-        "aboutUrl": "http://gss-data.org.uk/data/gss_data/homelessness/homelessness-statistics#concept/duty/{notation}"
+        "aboutUrl": "http://gss-data.org.uk/data/gss_data/homelessness/wg-homelessness-statistics#concept/duty/{notation}"
     },
     "prov:hadDerivation": {
-        "@id": "http://gss-data.org.uk/data/gss_data/homelessness/homelessness-statistics#scheme/duty",
+        "@id": "http://gss-data.org.uk/data/gss_data/homelessness/wg-homelessness-statistics#scheme/duty",
         "@type": [
             "skos:ConceptScheme",
             "http://publishmydata.com/pmdcat#ConceptScheme"
@@ -64,16 +64,16 @@
     },
     "rdfs:seeAlso": [
         {
-            "@id": "http://gss-data.org.uk/data/gss_data/homelessness/homelessness-statistics#scheme/duty/dataset",
+            "@id": "http://gss-data.org.uk/data/gss_data/homelessness/wg-homelessness-statistics#scheme/duty/dataset",
             "@type": [
                 "dcat:Dataset",
                 "http://publishmydata.com/pmdcat#Dataset"
             ],
             "http://publishmydata.com/pmdcat#datasetContents": {
-                "@id": "http://gss-data.org.uk/data/gss_data/homelessness/homelessness-statistics#scheme/duty"
+                "@id": "http://gss-data.org.uk/data/gss_data/homelessness/wg-homelessness-statistics#scheme/duty"
             },
             "http://publishmydata.com/pmdcat#graph": {
-                "@id": "http://gss-data.org.uk/data/gss_data/homelessness/homelessness-statistics#scheme/duty"
+                "@id": "http://gss-data.org.uk/data/gss_data/homelessness/wg-homelessness-statistics#scheme/duty"
             },
             "rdfs:label": "Duty",
             "dc:title": "Duty",
@@ -109,17 +109,17 @@
         {
             "@id": "http://gss-data.org.uk/catalog/vocabularies",
             "dcat:record": {
-                "@id": "http://gss-data.org.uk/data/gss_data/homelessness/homelessness-statistics#scheme/duty/catalog-record"
+                "@id": "http://gss-data.org.uk/data/gss_data/homelessness/wg-homelessness-statistics#scheme/duty/catalog-record"
             }
         },
         {
-            "@id": "http://gss-data.org.uk/data/gss_data/homelessness/homelessness-statistics#scheme/duty/catalog-record",
+            "@id": "http://gss-data.org.uk/data/gss_data/homelessness/wg-homelessness-statistics#scheme/duty/catalog-record",
             "@type": "dcat:CatalogRecord",
             "foaf:primaryTopic": {
-                "@id": "http://gss-data.org.uk/data/gss_data/homelessness/homelessness-statistics#scheme/duty/dataset"
+                "@id": "http://gss-data.org.uk/data/gss_data/homelessness/wg-homelessness-statistics#scheme/duty/dataset"
             },
             "http://publishmydata.com/pmdcat#metadataGraph": {
-                "@id": "http://gss-data.org.uk/data/gss_data/homelessness/homelessness-statistics#scheme/duty"
+                "@id": "http://gss-data.org.uk/data/gss_data/homelessness/wg-homelessness-statistics#scheme/duty"
             },
             "dc:title": "Duty Catalog Record",
             "rdfs:label": "Duty Catalog Record",

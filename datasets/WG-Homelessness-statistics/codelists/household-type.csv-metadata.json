@@ -1,6 +1,6 @@
 {
     "@context": "http://www.w3.org/ns/csvw",
-    "@id": "http://gss-data.org.uk/data/gss_data/homelessness/homelessness-statistics#scheme/household-type",
+    "@id": "http://gss-data.org.uk/data/gss_data/homelessness/wg-homelessness-statistics#scheme/household-type",
     "url": "household-type.csv",
     "rdfs:label": "Household Type",
     "dc:title": "Household Type",
@@ -32,7 +32,7 @@
                 },
                 "required": false,
                 "propertyUrl": "skos:broader",
-                "valueUrl": "http://gss-data.org.uk/data/gss_data/homelessness/homelessness-statistics#concept/household-type/{parent_notation}"
+                "valueUrl": "http://gss-data.org.uk/data/gss_data/homelessness/wg-homelessness-statistics#concept/household-type/{parent_notation}"
             },
             {
                 "titles": "Sort Priority",
@@ -49,14 +49,14 @@
             {
                 "virtual": true,
                 "propertyUrl": "skos:inScheme",
-                "valueUrl": "http://gss-data.org.uk/data/gss_data/homelessness/homelessness-statistics#scheme/household-type"
+                "valueUrl": "http://gss-data.org.uk/data/gss_data/homelessness/wg-homelessness-statistics#scheme/household-type"
             }
         ],
         "primaryKey": "notation",
-        "aboutUrl": "http://gss-data.org.uk/data/gss_data/homelessness/homelessness-statistics#concept/household-type/{notation}"
+        "aboutUrl": "http://gss-data.org.uk/data/gss_data/homelessness/wg-homelessness-statistics#concept/household-type/{notation}"
     },
     "prov:hadDerivation": {
-        "@id": "http://gss-data.org.uk/data/gss_data/homelessness/homelessness-statistics#scheme/household-type",
+        "@id": "http://gss-data.org.uk/data/gss_data/homelessness/wg-homelessness-statistics#scheme/household-type",
         "@type": [
             "skos:ConceptScheme",
             "http://publishmydata.com/pmdcat#ConceptScheme"
@@ -64,16 +64,16 @@
     },
     "rdfs:seeAlso": [
         {
-            "@id": "http://gss-data.org.uk/data/gss_data/homelessness/homelessness-statistics#scheme/household-type/dataset",
+            "@id": "http://gss-data.org.uk/data/gss_data/homelessness/wg-homelessness-statistics#scheme/household-type/dataset",
             "@type": [
                 "dcat:Dataset",
                 "http://publishmydata.com/pmdcat#Dataset"
             ],
             "http://publishmydata.com/pmdcat#datasetContents": {
-                "@id": "http://gss-data.org.uk/data/gss_data/homelessness/homelessness-statistics#scheme/household-type"
+                "@id": "http://gss-data.org.uk/data/gss_data/homelessness/wg-homelessness-statistics#scheme/household-type"
             },
             "http://publishmydata.com/pmdcat#graph": {
-                "@id": "http://gss-data.org.uk/data/gss_data/homelessness/homelessness-statistics#scheme/household-type"
+                "@id": "http://gss-data.org.uk/data/gss_data/homelessness/wg-homelessness-statistics#scheme/household-type"
             },
             "rdfs:label": "Household Type",
             "dc:title": "Household Type",
@@ -109,17 +109,17 @@
         {
             "@id": "http://gss-data.org.uk/catalog/vocabularies",
             "dcat:record": {
-                "@id": "http://gss-data.org.uk/data/gss_data/homelessness/homelessness-statistics#scheme/household-type/catalog-record"
+                "@id": "http://gss-data.org.uk/data/gss_data/homelessness/wg-homelessness-statistics#scheme/household-type/catalog-record"
             }
         },
         {
-            "@id": "http://gss-data.org.uk/data/gss_data/homelessness/homelessness-statistics#scheme/household-type/catalog-record",
+            "@id": "http://gss-data.org.uk/data/gss_data/homelessness/wg-homelessness-statistics#scheme/household-type/catalog-record",
             "@type": "dcat:CatalogRecord",
             "foaf:primaryTopic": {
-                "@id": "http://gss-data.org.uk/data/gss_data/homelessness/homelessness-statistics#scheme/household-type/dataset"
+                "@id": "http://gss-data.org.uk/data/gss_data/homelessness/wg-homelessness-statistics#scheme/household-type/dataset"
             },
             "http://publishmydata.com/pmdcat#metadataGraph": {
-                "@id": "http://gss-data.org.uk/data/gss_data/homelessness/homelessness-statistics#scheme/household-type"
+                "@id": "http://gss-data.org.uk/data/gss_data/homelessness/wg-homelessness-statistics#scheme/household-type"
             },
             "dc:title": "Household Type Catalog Record",
             "rdfs:label": "Household Type Catalog Record",

@@ -1,6 +1,6 @@
 {
     "@context": "http://www.w3.org/ns/csvw",
-    "@id": "http://gss-data.org.uk/data/gss_data/homelessness/homelessness-statistics#scheme/grounds-for-duty",
+    "@id": "http://gss-data.org.uk/data/gss_data/homelessness/wg-homelessness-statistics#scheme/grounds-for-duty",
     "url": "grounds-for-duty.csv",
     "rdfs:label": "Grounds For Duty",
     "dc:title": "Grounds For Duty",
@@ -32,7 +32,7 @@
                 },
                 "required": false,
                 "propertyUrl": "skos:broader",
-                "valueUrl": "http://gss-data.org.uk/data/gss_data/homelessness/homelessness-statistics#concept/grounds-for-duty/{parent_notation}"
+                "valueUrl": "http://gss-data.org.uk/data/gss_data/homelessness/wg-homelessness-statistics#concept/grounds-for-duty/{parent_notation}"
             },
             {
                 "titles": "Sort Priority",
@@ -49,14 +49,14 @@
             {
                 "virtual": true,
                 "propertyUrl": "skos:inScheme",
-                "valueUrl": "http://gss-data.org.uk/data/gss_data/homelessness/homelessness-statistics#scheme/grounds-for-duty"
+                "valueUrl": "http://gss-data.org.uk/data/gss_data/homelessness/wg-homelessness-statistics#scheme/grounds-for-duty"
             }
         ],
         "primaryKey": "notation",
-        "aboutUrl": "http://gss-data.org.uk/data/gss_data/homelessness/homelessness-statistics#concept/grounds-for-duty/{notation}"
+        "aboutUrl": "http://gss-data.org.uk/data/gss_data/homelessness/wg-homelessness-statistics#concept/grounds-for-duty/{notation}"
     },
     "prov:hadDerivation": {
-        "@id": "http://gss-data.org.uk/data/gss_data/homelessness/homelessness-statistics#scheme/grounds-for-duty",
+        "@id": "http://gss-data.org.uk/data/gss_data/homelessness/wg-homelessness-statistics#scheme/grounds-for-duty",
         "@type": [
             "skos:ConceptScheme",
             "http://publishmydata.com/pmdcat#ConceptScheme"
@@ -64,16 +64,16 @@
     },
     "rdfs:seeAlso": [
         {
-            "@id": "http://gss-data.org.uk/data/gss_data/homelessness/homelessness-statistics#scheme/grounds-for-duty/dataset",
+            "@id": "http://gss-data.org.uk/data/gss_data/homelessness/wg-homelessness-statistics#scheme/grounds-for-duty/dataset",
             "@type": [
                 "dcat:Dataset",
                 "http://publishmydata.com/pmdcat#Dataset"
             ],
             "http://publishmydata.com/pmdcat#datasetContents": {
-                "@id": "http://gss-data.org.uk/data/gss_data/homelessness/homelessness-statistics#scheme/grounds-for-duty"
+                "@id": "http://gss-data.org.uk/data/gss_data/homelessness/wg-homelessness-statistics#scheme/grounds-for-duty"
             },
             "http://publishmydata.com/pmdcat#graph": {
-                "@id": "http://gss-data.org.uk/data/gss_data/homelessness/homelessness-statistics#scheme/grounds-for-duty"
+                "@id": "http://gss-data.org.uk/data/gss_data/homelessness/wg-homelessness-statistics#scheme/grounds-for-duty"
             },
             "rdfs:label": "Grounds For Duty",
             "dc:title": "Grounds For Duty",
@@ -109,17 +109,17 @@
         {
             "@id": "http://gss-data.org.uk/catalog/vocabularies",
             "dcat:record": {
-                "@id": "http://gss-data.org.uk/data/gss_data/homelessness/homelessness-statistics#scheme/grounds-for-duty/catalog-record"
+                "@id": "http://gss-data.org.uk/data/gss_data/homelessness/wg-homelessness-statistics#scheme/grounds-for-duty/catalog-record"
             }
         },
         {
-            "@id": "http://gss-data.org.uk/data/gss_data/homelessness/homelessness-statistics#scheme/grounds-for-duty/catalog-record",
+            "@id": "http://gss-data.org.uk/data/gss_data/homelessness/wg-homelessness-statistics#scheme/grounds-for-duty/catalog-record",
             "@type": "dcat:CatalogRecord",
             "foaf:primaryTopic": {
-                "@id": "http://gss-data.org.uk/data/gss_data/homelessness/homelessness-statistics#scheme/grounds-for-duty/dataset"
+                "@id": "http://gss-data.org.uk/data/gss_data/homelessness/wg-homelessness-statistics#scheme/grounds-for-duty/dataset"
             },
             "http://publishmydata.com/pmdcat#metadataGraph": {
-                "@id": "http://gss-data.org.uk/data/gss_data/homelessness/homelessness-statistics#scheme/grounds-for-duty"
+                "@id": "http://gss-data.org.uk/data/gss_data/homelessness/wg-homelessness-statistics#scheme/grounds-for-duty"
             },
             "dc:title": "Grounds For Duty Catalog Record",
             "rdfs:label": "Grounds For Duty Catalog Record",

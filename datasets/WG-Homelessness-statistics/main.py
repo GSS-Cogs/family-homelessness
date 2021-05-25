@@ -1,7 +1,7 @@
 #!/usr/bin/env python
 # coding: utf-8
 
-# In[116]:
+# In[8]:
 
 
 # # WG Homelessness statistics
@@ -19,14 +19,14 @@ cubes   = Cubes(infoFileName)
 scraper
 
 
-# In[117]:
+# In[ ]:
 
 
 distro = scraper.distribution(title=lambda x: "Dataset" in x)
 distro
 
 
-# In[118]:
+# In[ ]:
 
 
 df = distro.as_pandas()
@@ -105,7 +105,7 @@ df['Period_Code'].cat.categories
 #
 # October-December is assigned a value of 201516Q3, which means these are government year and quarters not calendar years and quarters. If the value has a q in it it is a government quarter, otherwise a government year. Enter lambda functions with an anonymous dictionary
 
-df['Period_Code'].cat.rename_categories(lambda x: {True: f"government-quarter/{x[:4]}-Q{x[-1:]}", False: f"government-year/{x[:4]}-{x[-3:-1]}"}.get("Q" in x), inplace=True)
+df['Period_Code'].cat.rename_categories(lambda x: {True: f"government-quarter/{x[:4]}-Q{x[-1:]}", False: f"government-year/{x[:4]}-20{x[-3:-1]}"}.get("Q" in x), inplace=True)
 df.rename({'Period_Code': 'Period'}, inplace=True)
 
 # # Outcomes
@@ -167,7 +167,7 @@ df.loc[df['Value'] == -999999999, 'Marker'] = 'suppressed'
 df.loc[df['Value'] == -999999999, 'Value'] = ''
 
 
-# In[119]:
+# In[ ]:
 
 
 for col in df.columns:
@@ -176,7 +176,7 @@ for col in df.columns:
         df[col].cat.rename_categories(lambda x: pathify(x), inplace=True)
 
 
-# In[120]:
+# In[ ]:
 
 
 # Fix the Household column
@@ -198,19 +198,19 @@ df = df[['Period', 'Geography', 'Household Type', 'Client Behaviour', 'Duty', 'G
 df
 
 
-# In[121]:
+# In[ ]:
 
 
 cubes.add_cube(scraper, df, scraper.title)
 
 
-# In[122]:
+# In[ ]:
 
 
 cubes.output_all()
 
 
-# In[123]:
+# In[ ]:
 
 
 

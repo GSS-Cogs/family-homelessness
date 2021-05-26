@@ -528,6 +528,7 @@ for tab in tabs:
         df = tidy_sheet.topandas()
         
         df["Period"]= df["Period"].str.split(",", n = 1, expand = True)[1]
+        
         df['Reason Duty ended'] = df['prevention_duty_ended'] + df['accomodation']
         df.drop(['prevention_duty_ended', 'accomodation'],axis=1, inplace = True)
 #         print(df['Reason Duty ended'].unique())
@@ -559,61 +560,69 @@ for tab in tabs:
         print(tab.name)
         
         remove_notes = tab.filter(contains_string('Notes')).expand(DOWN).expand(RIGHT)
-        ons_geo = tab.excel_ref('A3').fill(DOWN).is_not_blank() - remove_notes # "-" suppressed in geography code to be processed in stage-2 transformation
-        period = tab.excel_ref('A1').is_not_blank() #period can be extracted from this cell 
-        sheet_name = tab.name
-        
-        prevention_duty_ended_accomodation_secured = tab.excel_ref('D3').expand(RIGHT)
-        prs_and_srs = tab.excel_ref('D4').expand(RIGHT)
-        tenancy_type = tab.excel_ref('D5').expand(RIGHT)
-        observations = tab.excel_ref('D6').expand(DOWN).expand(RIGHT).is_not_blank() - remove_notes
-#         savepreviewhtml(tenancy_type, fname= tab.name + "PREVIEW.html")
+        unwanted_ons_geo = tab.filter("Total number of households whose prevention duty ended with accommodation secured1").shift(LEFT).shift(LEFT).shift(LEFT).fill(DOWN).filter("-").expand(RIGHT)|remove_notes
+        total_unwanted = unwanted_ons_geo|remove_notes
+        prevention_duty_ended_accomodation_secured = tab.filter("Total number of households whose prevention duty ended with accommodation secured1").expand(RIGHT)
+        prs_and_srs = prevention_duty_ended_accomodation_secured.shift(DOWN)
+        tenancy_type = prs_and_srs.shift(DOWN)
+        observations = tenancy_type.fill(DOWN).expand(RIGHT).is_not_blank()-total_unwanted
+        ons_geo = tab.filter("Total number of households whose prevention duty ended with accommodation secured1").shift(LEFT).shift(LEFT).shift(LEFT).fill(DOWN).is_not_blank()-total_unwanted
+        period = tab.filter("Total number of households whose prevention duty ended with accommodation secured1").shift(ABOVE).shift(ABOVE).fill(LEFT).is_not_blank()
+        sheet = tab.name
+#         savepreviewhtml(period, fname= tab.name + "PREVIEW.html")
         dimensions = [
             HDim(ons_geo,'ONS Geography Code',DIRECTLY,LEFT),
             HDim(period,'Period',CLOSEST,LEFT),
             HDim(prevention_duty_ended_accomodation_secured,'prevention_duty_ended_accomodation_secured',DIRECTLY, ABOVE),
             HDim(prs_and_srs,'prs_and_srs',DIRECTLY, ABOVE),
             HDim(tenancy_type,'tenancy_type',DIRECTLY, ABOVE),
-#             HDimConst("sheet_name", sheet_name) #Might be handy to have for post processing when other tabs are running also 
+            HDimConst("sheet", sheet) #Might be handy to have for post processing when other tabs are running also 
         ]
         tidy_sheet = ConversionSegment(tab, dimensions, observations)
         savepreviewhtml(tidy_sheet, fname= tab.name + "PREVIEW.html")
         trace.with_preview(tidy_sheet)
+        
+        df = tidy_sheet.topandas()
+        
+        df["Period"]= df["Period"].str.split(",", n = 1, expand = True)[1]
+        
+        df['Accommodation Type'] = df['prevention_duty_ended_accomodation_secured']+df['prs_and_srs']+df['tenancy_type']
+        df.drop(['prevention_duty_ended_accomodation_secured', 'prs_and_srs', 'tenancy_type'],axis=1, inplace = True)
+        print(df['Accommodation Type'].unique())
+        
+        temp = {'Private rented sectorTotal PRS':'Private rented sector total',
+                'Of which:Self-contained':'Private rented sector self-contained',
+                'House in multiple occupation (HMO)':'Private rented sector house in multiple occupation',
+                'Lodging (not with family or friends)':'Private rented sector lodging (not with friends and family)',
+                'Social rented sectorTotal SRS':'Social rented sector total',
+                'Of which:Council\n tenancy':'Social rented sector council tenant',
+                'Registered Provider\n tenancy':'Social rented sector registered provider tenant',
+                'Supported\n housing or hostel':'Social rented sector supported housing or hostel '}
+        
+        
+        df['Accommodation Type'] = df['Accommodation Type'].replace(temp)
+        
+        print(df['Accommodation Type'].unique())
+        
         trace.store("combined_dataframe", tidy_sheet.topandas())
-df = trace.combine_and_trace(datasetTitle, "combined_dataframe")
 
-#sheet:A1
-df.drop(['temp_assessment_duty_type_1', 'temp_assessment_duty_type_2', 'temp_assessment_duty_type_3'], axis=1, inplace=True)
-#sheet:A2P
-df.drop(['reason_for_loss_of_home_1', 'end_of_tenancy_2', 'reason_for_end_of_tenancy_3', 'change_of_circumstances_4'], axis=1, inplace=True)
-#sheet:A2R_
-df.drop(['relief_duty_by_reason', 'end_of_AST', 'reason_for_end_of_AST', 'reason_for_rent_arrears'], axis =1, inplace=True)
-# sheet:A3
-df.drop(['total_no_of_households', 'reason_of_households_with_support_needs', 'total_households_and_no_of_people_with_support_needs'], axis=1, inplace=True)
-#sheet:A4P
-df.drop(['prevention_duty_owed_by_sector', 'prs_srs_homeless_on_departure_from_institution', 'status_of_occupation'],axis=1,inplace=True)
-#Sheet = A2R
-df.drop(['relief_duty_owed_by_sector', 'relief_prs_srs_homeless_on_departure_from_institution', 'relief_status_of_occupation'], axis=1, inplace=True)
-# Sheet = A5P
-df.drop(['prevention_duty_owed_by_household', 'single_parent_adult_male_female'], axis=1, inplace=True)
-# Sheet = A5R
-df.drop(['relief_duty_owed_by_household', 'relief_single_parent_adult_male_female'], axis=1, inplace=True)
-#Sheet = A6_
-df.drop(['age_of_main_applicants'], axis=1, inplace=True)
-#Sheet = A7
-df.drop(['assessed_household', 'referred_household', 'breakdown_of_referred_household'], axis=1, inplace=True)
-#Sheet = A8
-df.drop(['ethnicgroup', 'breakdown_of_ethnicgroup'], axis=1, inplace=True)
-#Sheet = A10
-df.drop(['employment_status'],axis=1, inplace=True)
-#Sheet = A12
-df.drop(['sexual_identification'], axis=1, inplace=True)
-#Sheet = P1
-df.drop(['prevention_duty_ended', 'accomodation'], axis=1, inplace=True)
+# Done all but verify the below logic as lot other values are in accomodation column
+# df['Accommodation Type'] = df['prevention_duty_ended_accomodation_secured']+df['prs_and_srs']+df['tenancy_type']
 
-df.rename(columns={'OBS' : 'Value', 'DATAMARKER' : 'Marker'}, inplace=True)
-df["Period"]= df["Period"].str.split(",", n = 1, expand = True)[1]
-df
+# (E3) Accommodation Type
+# E3, P3 to T3 to take value in cells
+# F4 to I4 to have following values:
+# 	Private rented sector total (joined F3 with F4)
+# 	Private rented sector self-contained (joined F3 with G4 )
+# Private rented sector house in multiple occupation (joined F3 with H4 )
+# Private rented sector lodging (not with friends and family) (joined F3 with I4) 
+
+# K4 to N4 to have following values:
+
+# 	Social rented sector total (joined K3 with K4)
+# 	Social rented sector council tenant (joined K3 with L4)
+# 	Social rented sector registered provider tenant (joined K3 with M4)
+# 	Social rented sector supported housing or hostel (joined K3 with N4)
 
 # +
 #Main prevention activity that resulted in accommodation secured for households at end of prevention duty by local authority England

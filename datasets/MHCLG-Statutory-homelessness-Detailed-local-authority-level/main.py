@@ -317,7 +317,7 @@ for tab in tabs:
 #         savepreviewhtml(period, fname= tab.name + "PREVIEW.html")
         dimensions = [
             HDim(ons_geo,'ONS Geography Code',DIRECTLY,LEFT),
-            HDim(period,'Period',CLOSEST,ABOVE),
+            HDim(period,'Period',CLOSEST,LEFT),
             HDim(referral_public_body,'Referral Public Body',DIRECTLY, ABOVE),
             HDim(referred_household,'referred_household',DIRECTLY, ABOVE),
             HDim(breakdown_of_referred_household, 'breakdown_of_referred_household', DIRECTLY, ABOVE),
@@ -365,7 +365,7 @@ for tab in tabs:
 #         savepreviewhtml(total_unwanted, fname= tab.name + "PREVIEW.html")
         dimensions = [
             HDim(ons_geo,'ONS Geography Code',DIRECTLY,LEFT),
-            HDim(period,'Period',CLOSEST,ABOVE),
+            HDim(period,'Period',CLOSEST,LEFT),
             HDim(age_of_main_applicants,'age_of_main_applicants',DIRECTLY, ABOVE),
             HDimConst("sheet", tab.name) #Might be handy to have for post processing when other tabs are running also 
         ]
@@ -403,7 +403,7 @@ for tab in tabs:
         sheet = tab.name
         dimensions = [
             HDim(ons_geo,'ONS Geography Code',DIRECTLY,LEFT),
-            HDim(period,'Period',CLOSEST,ABOVE),
+            HDim(period,'Period',CLOSEST,LEFT),
             HDim(ethnicgroup,'ethnicgroup',DIRECTLY, ABOVE),
             HDim(breakdown_of_ethnicgroup,'breakdown_of_ethnicgroup',DIRECTLY, ABOVE),
             HDimConst("sheet", tab.name) #Might be handy to have for post processing when other tabs are running also 
@@ -443,7 +443,7 @@ for tab in tabs:
 #         savepreviewhtml(ons_geo, fname= tab.name + "PREVIEW.html")
         dimensions = [
             HDim(ons_geo,'ONS Geography Code',DIRECTLY,LEFT),
-            HDim(period,'Period',CLOSEST,ABOVE),
+            HDim(period,'Period',CLOSEST,LEFT),
             HDim(employment_status,'employment_status',DIRECTLY, ABOVE),
             HDimConst("sheet_name", tab.name) #Might be handy to have for post processing when other tabs are running also 
         ]
@@ -470,54 +470,30 @@ for tab in tabs:
         print(tab.name)
         
         remove_notes = tab.filter(contains_string('Notes')).expand(DOWN).expand(RIGHT)
-        ons_geo = tab.excel_ref('A3').fill(DOWN).is_not_blank() - remove_notes # "-" suppressed in geography code to be processed in stage-2 transformation
-        period = tab.excel_ref('A1').is_not_blank() #period can be extracted from this cell 
-        sheet_name = tab.name
+        sexual_identification = tab.filter("Total owed a prevention or relief duty1,2").expand(RIGHT)
+        unwanted_ons_geo = tab.filter("Total owed a prevention or relief duty1,2").shift(LEFT).shift(LEFT).shift(LEFT).shift(LEFT).fill(DOWN).is_not_blank().filter("-").expand(RIGHT)|remove_notes
+        total_unwanted = remove_notes|unwanted_ons_geo
+        observations = sexual_identification.fill(DOWN).expand(RIGHT).is_not_blank()-total_unwanted
+        period = tab.filter("Total owed a prevention or relief duty1,2").shift(ABOVE).fill(LEFT).is_not_blank()
+        ons_geo = tab.filter("Total owed a prevention or relief duty1,2").shift(LEFT).shift(LEFT).shift(LEFT).shift(LEFT).fill(DOWN).is_not_blank()-total_unwanted
+        sheet = tab.name
 #         savepreviewhtml(ons_geo, fname= tab.name + "PREVIEW.html")
-        
-        sexual_identification = tab.excel_ref('E2').expand(RIGHT)
-        observations = tab.excel_ref('E5').expand(DOWN).expand(RIGHT).is_not_blank() - remove_notes
-#         savepreviewhtml(sexual_identification, fname= tab.name + "PREVIEW.html")
         dimensions = [
             HDim(ons_geo,'ONS Geography Code',DIRECTLY,LEFT),
-            HDim(period,'Period',CLOSEST,ABOVE),
-            HDim(sexual_identification,'sexual_identification',DIRECTLY, ABOVE),
-#             HDimConst("sheet_name", sheet_name) #Might be handy to have for post processing when other tabs are running also 
+            HDim(period,'Period',CLOSEST,LEFT),
+            HDim(sexual_identification,'Sexual Identification',DIRECTLY, ABOVE),
+            HDimConst("sheet", sheet) #Might be handy to have for post processing when other tabs are running also 
         ]
         tidy_sheet = ConversionSegment(tab, dimensions, observations)
         savepreviewhtml(tidy_sheet, fname= tab.name + "PREVIEW.html")
         trace.with_preview(tidy_sheet)
-        trace.store("combined_dataframe", tidy_sheet.topandas())
-df = trace.combine_and_trace(datasetTitle, "combined_dataframe")
-
-#sheet:A1
-df.drop(['temp_assessment_duty_type_1', 'temp_assessment_duty_type_2', 'temp_assessment_duty_type_3'], axis=1, inplace=True)
-#sheet:A2P
-df.drop(['reason_for_loss_of_home_1', 'end_of_tenancy_2', 'reason_for_end_of_tenancy_3', 'change_of_circumstances_4'], axis=1, inplace=True)
-#sheet:A2R_
-df.drop(['relief_duty_by_reason', 'end_of_AST', 'reason_for_end_of_AST', 'reason_for_rent_arrears'], axis =1, inplace=True)
-# sheet:A3
-df.drop(['total_no_of_households', 'reason_of_households_with_support_needs', 'total_households_and_no_of_people_with_support_needs'], axis=1, inplace=True)
-#sheet:A4P
-df.drop(['prevention_duty_owed_by_sector', 'prs_srs_homeless_on_departure_from_institution', 'status_of_occupation'],axis=1,inplace=True)
-#Sheet = A2R
-df.drop(['relief_duty_owed_by_sector', 'relief_prs_srs_homeless_on_departure_from_institution', 'relief_status_of_occupation'], axis=1, inplace=True)
-# Sheet = A5P
-df.drop(['prevention_duty_owed_by_household', 'single_parent_adult_male_female'], axis=1, inplace=True)
-# Sheet = A5R
-df.drop(['relief_duty_owed_by_household', 'relief_single_parent_adult_male_female'], axis=1, inplace=True)
-#Sheet = A6_
-df.drop(['age_of_main_applicants'], axis=1, inplace=True)
-#Sheet = A7
-df.drop(['assessed_household', 'referred_household', 'breakdown_of_referred_household'], axis=1, inplace=True)
-#Sheet = A8
-df.drop(['ethnicgroup', 'breakdown_of_ethnicgroup'], axis=1, inplace=True)
-#Sheet = A10
-df.drop(['employment_status'],axis=1, inplace=True)
-
-df.rename(columns={'OBS' : 'Value', 'DATAMARKER' : 'Marker'}, inplace=True)
-df["Period"]= df["Period"].str.split(",", n = 1, expand = True)[1]
-df
+        df = tidy_sheet.topandas()
+        df["Period"]= df["Period"].str.split(",", n = 1, expand = True)[1]
+        trace.store("combined_dataframe", df)
+# Ignore percentages-No percentages
+# Period from title-done
+# (A) Geography (Remove Rest of England row as it does not have a geography code)-done
+# (E2:K2) Sexual Identification-done
 
 # +
 #Number of households whose prevention duty ended by reason for duty end England
@@ -550,7 +526,7 @@ for tab in tabs:
         savepreviewhtml(tidy_sheet, fname= tab.name + "PREVIEW.html")
         trace.with_preview(tidy_sheet)
         trace.store("combined_dataframe", tidy_sheet.topandas())
-df = trace.combine_and_trace(datasetTitle, "combined_dataframe")
+
 
 #sheet:A1
 df.drop(['temp_assessment_duty_type_1', 'temp_assessment_duty_type_2', 'temp_assessment_duty_type_3'], axis=1, inplace=True)

@@ -671,30 +671,41 @@ for tab in tabs:
         remove_notes = tab.filter(contains_string('Notes')).expand(DOWN).expand(RIGHT)
         unwanted_ons_geo = tab.filter("Total number of households whose relief duty ended with  accommodation secured1").shift(LEFT).shift(LEFT).shift(LEFT).shift(LEFT).fill(DOWN).filter("-").expand(RIGHT)|remove_notes
         total_unwanted = unwanted_ons_geo|remove_notes
-        
+        accomodation_secured_at_end_of_relief_duty = tab.filter("Total number of households whose relief duty ended with  accommodation secured1").expand(RIGHT)
+        break_down = accomodation_secured_at_end_of_relief_duty.shift(DOWN)
+        break_down_of_PRS_SRS = break_down.shift(DOWN)
+        observations = break_down_of_PRS_SRS.fill(DOWN).is_not_blank()-total_unwanted
+        ons_geo = tab.filter("Total number of households whose relief duty ended with  accommodation secured1").shift(LEFT).shift(LEFT).shift(LEFT).shift(LEFT).fill(DOWN).is_not_blank()-total_unwanted
+        period = accomodation_secured_at_end_of_relief_duty.shift(ABOVE).shift(ABOVE).fill(LEFT).is_not_blank() 
+        sheet = tab.name
 #         ons_geo = tab.excel_ref('A3').fill(DOWN).is_not_blank() - remove_notes # "-" suppressed in geography code to be processed in stage-2 transformation
 #         period = tab.excel_ref('A1').is_not_blank() #period can be extracted from this cell 
 #         sheet_name = tab.name
-        savepreviewhtml(total_unwanted, fname= tab.name + "PREVIEW.html")
+#         savepreviewhtml(period, fname= tab.name + "PREVIEW.html")
         
 #         accomodation_secured_at_end_of_relief_duty = tab.excel_ref('D3').expand(RIGHT)
 #         break_down = tab.excel_ref('D4').expand(RIGHT)
 #         break_down_of_PRS_SRS = tab.excel_ref('D5').expand(RIGHT)
 #         observations = tab.excel_ref('D6').expand(DOWN).expand(RIGHT).is_not_blank() - remove_notes
 # #         savepreviewhtml(observations, fname= tab.name + "PREVIEW.html")
-#         dimensions = [
-#             HDim(ons_geo,'ONS Geography Code',DIRECTLY,LEFT),
-#             HDim(period,'Period',CLOSEST,ABOVE),
-#             HDim(accomodation_secured_at_end_of_relief_duty,'accomodation_secured_at_end_of_relief_duty',DIRECTLY, ABOVE),
-#             HDim(break_down,'break_down',DIRECTLY, ABOVE),
-#             HDim(break_down_of_PRS_SRS,'break_down_of_PRS_SRS',DIRECTLY,ABOVE),
-# #             HDimConst("sheet_name", sheet_name) #Might be handy to have for post processing when other tabs are running also 
-#         ]
-#         tidy_sheet = ConversionSegment(tab, dimensions, observations)
-#         savepreviewhtml(tidy_sheet, fname= tab.name + "PREVIEW.html")
-#         trace.with_preview(tidy_sheet)
-#         trace.store("combined_dataframe", tidy_sheet.topandas())
-# df = trace.combine_and_trace(datasetTitle, "combined_dataframe")
+        dimensions = [
+            HDim(ons_geo,'ONS Geography Code',DIRECTLY,LEFT),
+            HDim(period,'Period',CLOSEST,ABOVE),
+            HDim(accomodation_secured_at_end_of_relief_duty,'accomodation_secured_at_end_of_relief_duty',DIRECTLY, ABOVE),
+            HDim(break_down,'break_down',DIRECTLY, ABOVE),
+            HDim(break_down_of_PRS_SRS,'break_down_of_PRS_SRS',DIRECTLY,ABOVE),
+            HDimConst("sheet", sheet) #Might be handy to have for post processing when other tabs are running also 
+        ]
+        tidy_sheet = ConversionSegment(tab, dimensions, observations)
+        savepreviewhtml(tidy_sheet, fname= tab.name + "PREVIEW.html")
+        trace.with_preview(tidy_sheet)
+        
+        df = tidy_sheet.topandas()
+        
+        df["Period"]= df["Period"].str.split(",", n = 1, expand = True)[1]
+        
+        trace.store("combined_dataframe", df)
+
 
 # #sheet:A1
 # df.drop(['temp_assessment_duty_type_1', 'temp_assessment_duty_type_2', 'temp_assessment_duty_type_3'], axis=1, inplace=True)

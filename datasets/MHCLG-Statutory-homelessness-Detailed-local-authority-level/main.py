@@ -455,7 +455,7 @@ for tab in tabs:
         
         df["Period"]= df["Period"].str.split(",", n = 1, expand = True)[1]
         
-        trace.store("combined_dataframe", tidy_sheet.topandas())
+        trace.store("combined_dataframe", df)
 
 # Ignore percentages - To be done
 # (A) Geography (Remove Rest of England row as it does not have a geography code) - Done
@@ -540,7 +540,7 @@ for tab in tabs:
         
         print(df['Reason Duty ended'].unique())
         
-        trace.store("combined_dataframe", tidy_sheet.topandas())
+        trace.store("combined_dataframe", df)
         
 # (E3) Reason Duty ended
 
@@ -604,7 +604,7 @@ for tab in tabs:
         
         print(df['Accommodation Type'].unique())
         
-        trace.store("combined_dataframe", tidy_sheet.topandas())
+        trace.store("combined_dataframe", df)
 
 # Done all but verify the below logic as lot other values are in accomodation column
 # df['Accommodation Type'] = df['prevention_duty_ended_accomodation_secured']+df['prs_and_srs']+df['tenancy_type']
@@ -625,209 +625,40 @@ for tab in tabs:
 # 	Social rented sector supported housing or hostel (joined K3 with N4)
 
 # +
-#Main prevention activity that resulted in accommodation secured for households at end of prevention duty by local authority England
-
-for tab in tabs:
-    columns=['TO DO']
-    trace.start(datasetTitle, tab, columns, original_tabs.downloadURL)
-    if tab.name in ['P3']: #only transforming tab P3 for now
-        print(tab.name)
-              
-        remove_notes = tab.filter(contains_string('Notes')).expand(DOWN).expand(RIGHT)
-        ons_geo = tab.excel_ref('A3').fill(DOWN).is_not_blank() - remove_notes # "-" suppressed in geography code to be processed in stage-2 transformation
-        period = tab.excel_ref('A1').is_not_blank() #period can be extracted from this cell 
-        sheet_name = tab.name
-#         savepreviewhtml(period, fname= tab.name + "PREVIEW.html")
-        
-        type_of_secured_accomodation = tab.excel_ref('D3').expand(RIGHT)
-        observations = tab.excel_ref('D4').expand(DOWN).expand(RIGHT).is_not_blank() - remove_notes
-#         savepreviewhtml(observations, fname= tab.name + "PREVIEW.html")
-        dimensions = [
-            HDim(ons_geo,'ONS Geography Code',DIRECTLY,LEFT),
-            HDim(period,'Period',CLOSEST,ABOVE),
-            HDim(type_of_secured_accomodation,'type_of_secured_accomodation',DIRECTLY, ABOVE),
-#             HDimConst("sheet_name", sheet_name) #Might be handy to have for post processing when other tabs are running also 
-        ]
-        tidy_sheet = ConversionSegment(tab, dimensions, observations)
-        savepreviewhtml(tidy_sheet, fname= tab.name + "PREVIEW.html")
-        trace.with_preview(tidy_sheet)
-        trace.store("combined_dataframe", tidy_sheet.topandas())
-df = trace.combine_and_trace(datasetTitle, "combined_dataframe")
-
-#sheet:A1
-df.drop(['temp_assessment_duty_type_1', 'temp_assessment_duty_type_2', 'temp_assessment_duty_type_3'], axis=1, inplace=True)
-#sheet:A2P
-df.drop(['reason_for_loss_of_home_1', 'end_of_tenancy_2', 'reason_for_end_of_tenancy_3', 'change_of_circumstances_4'], axis=1, inplace=True)
-#sheet:A2R_
-df.drop(['relief_duty_by_reason', 'end_of_AST', 'reason_for_end_of_AST', 'reason_for_rent_arrears'], axis =1, inplace=True)
-# sheet:A3
-df.drop(['total_no_of_households', 'reason_of_households_with_support_needs', 'total_households_and_no_of_people_with_support_needs'], axis=1, inplace=True)
-#sheet:A4P
-df.drop(['prevention_duty_owed_by_sector', 'prs_srs_homeless_on_departure_from_institution', 'status_of_occupation'],axis=1,inplace=True)
-#Sheet = A2R
-df.drop(['relief_duty_owed_by_sector', 'relief_prs_srs_homeless_on_departure_from_institution', 'relief_status_of_occupation'], axis=1, inplace=True)
-# Sheet = A5P
-df.drop(['prevention_duty_owed_by_household', 'single_parent_adult_male_female'], axis=1, inplace=True)
-# Sheet = A5R
-df.drop(['relief_duty_owed_by_household', 'relief_single_parent_adult_male_female'], axis=1, inplace=True)
-#Sheet = A6_
-df.drop(['age_of_main_applicants'], axis=1, inplace=True)
-#Sheet = A7
-df.drop(['assessed_household', 'referred_household', 'breakdown_of_referred_household'], axis=1, inplace=True)
-#Sheet = A8
-df.drop(['ethnicgroup', 'breakdown_of_ethnicgroup'], axis=1, inplace=True)
-#Sheet = A10
-df.drop(['employment_status'],axis=1, inplace=True)
-#Sheet = A12
-df.drop(['sexual_identification'], axis=1, inplace=True)
-#Sheet = P1
-df.drop(['prevention_duty_ended', 'accomodation'], axis=1, inplace=True)
-#Sheet = P2
-df.drop(['prevention_duty_ended_accomodation_secured', 'prs_and_srs', 'tenancy_type'], axis=1, inplace=True)
-
-
-df.rename(columns={'OBS' : 'Value', 'DATAMARKER' : 'Marker'}, inplace=True)
-df["Period"]= df["Period"].str.split(",", n = 1, expand = True)[1]
-df
-
-# +
-# Household type of households with accommodation secured at end of prevention duty England
-
-for tab in tabs:
-    columns=['TO DO']
-    trace.start(datasetTitle, tab, columns, original_tabs.downloadURL)
-    if tab.name in ['P5']: #only transforming tab P5 for now
-        print(tab.name)
-              
-        remove_notes = tab.filter(contains_string('Notes')).expand(DOWN).expand(RIGHT)
-        ons_geo = tab.excel_ref('A3').fill(DOWN).is_not_blank() - remove_notes # "-" suppressed in geography code to be processed in stage-2 transformation
-        period = tab.excel_ref('A1').is_not_blank() #period can be extracted from this cell 
-        sheet_name = tab.name
-#         savepreviewhtml(period, fname= tab.name + "PREVIEW.html")
-
-        accomodation_secured_at_end_of_prevention_duty = tab.excel_ref('D3').expand(RIGHT)
-        gender = tab.excel_ref('D4').expand(RIGHT)
-        observations = tab.excel_ref('D5').expand(DOWN).expand(RIGHT).is_not_blank() - remove_notes
-#         savepreviewhtml(observations, fname= tab.name + "PREVIEW.html")
-        dimensions = [
-            HDim(ons_geo,'ONS Geography Code',DIRECTLY,LEFT),
-            HDim(period,'Period',CLOSEST,ABOVE),
-            HDim(accomodation_secured_at_end_of_prevention_duty,'accomodation_secured_at_end_of_prevention_duty',DIRECTLY, ABOVE),
-            HDim(gender,'gender',DIRECTLY, ABOVE),
-#             HDimConst("sheet_name", sheet_name) #Might be handy to have for post processing when other tabs are running also 
-        ]
-        tidy_sheet = ConversionSegment(tab, dimensions, observations)
-        savepreviewhtml(tidy_sheet, fname= tab.name + "PREVIEW.html")
-        trace.with_preview(tidy_sheet)
-        trace.store("combined_dataframe", tidy_sheet.topandas())
-df = trace.combine_and_trace(datasetTitle, "combined_dataframe")
-
-#sheet:A1
-df.drop(['temp_assessment_duty_type_1', 'temp_assessment_duty_type_2', 'temp_assessment_duty_type_3'], axis=1, inplace=True)
-#sheet:A2P
-df.drop(['reason_for_loss_of_home_1', 'end_of_tenancy_2', 'reason_for_end_of_tenancy_3', 'change_of_circumstances_4'], axis=1, inplace=True)
-#sheet:A2R_
-df.drop(['relief_duty_by_reason', 'end_of_AST', 'reason_for_end_of_AST', 'reason_for_rent_arrears'], axis =1, inplace=True)
-# sheet:A3
-df.drop(['total_no_of_households', 'reason_of_households_with_support_needs', 'total_households_and_no_of_people_with_support_needs'], axis=1, inplace=True)
-#sheet:A4P
-df.drop(['prevention_duty_owed_by_sector', 'prs_srs_homeless_on_departure_from_institution', 'status_of_occupation'],axis=1,inplace=True)
-#Sheet = A2R
-df.drop(['relief_duty_owed_by_sector', 'relief_prs_srs_homeless_on_departure_from_institution', 'relief_status_of_occupation'], axis=1, inplace=True)
-# Sheet = A5P
-df.drop(['prevention_duty_owed_by_household', 'single_parent_adult_male_female'], axis=1, inplace=True)
-# Sheet = A5R
-df.drop(['relief_duty_owed_by_household', 'relief_single_parent_adult_male_female'], axis=1, inplace=True)
-#Sheet = A6_
-df.drop(['age_of_main_applicants'], axis=1, inplace=True)
-#Sheet = A7
-df.drop(['assessed_household', 'referred_household', 'breakdown_of_referred_household'], axis=1, inplace=True)
-#Sheet = A8
-df.drop(['ethnicgroup', 'breakdown_of_ethnicgroup'], axis=1, inplace=True)
-#Sheet = A10
-df.drop(['employment_status'],axis=1, inplace=True)
-#Sheet = A12
-df.drop(['sexual_identification'], axis=1, inplace=True)
-#Sheet = P1
-df.drop(['prevention_duty_ended', 'accomodation'], axis=1, inplace=True)
-#Sheet = P2
-df.drop(['prevention_duty_ended_accomodation_secured', 'prs_and_srs', 'tenancy_type'], axis=1, inplace=True)
-#Sheet = P3
-df.drop(['type_of_secured_accomodation'], axis=1, inplace=True)
-
-df.rename(columns={'OBS' : 'Value', 'DATAMARKER' : 'Marker'}, inplace=True)
-df["Period"]= df["Period"].str.split(",", n = 1, expand = True)[1]
-df
-
-# +
 # Number of households whose relief duty ended by reason for duty end England
 
 for tab in tabs:
     columns=['TO DO']
     trace.start(datasetTitle, tab, columns, original_tabs.downloadURL)
     if tab.name in ['R1']: #only transforming tab R1 for now
-        print(tab.name)
-              
+        print(tab.name)     
         remove_notes = tab.filter(contains_string('Notes')).expand(DOWN).expand(RIGHT)
-        ons_geo = tab.excel_ref('A3').fill(DOWN).is_not_blank() - remove_notes # "-" suppressed in geography code to be processed in stage-2 transformation
-        period = tab.excel_ref('A1').is_not_blank() #period can be extracted from this cell 
-        sheet_name = tab.name
+        unwanted_ons_geo = tab.filter("Local connection referral accepted by other LA").shift(LEFT).shift(LEFT).shift(LEFT).shift(LEFT).shift(LEFT).shift(LEFT).shift(LEFT).fill(DOWN).filter("-").expand(RIGHT)|remove_notes 
+        total_unwanted = unwanted_ons_geo|remove_notes
+        end_of_relief_duty = tab.filter("Local connection referral accepted by other LA").shift(LEFT).shift(LEFT).shift(LEFT).expand(RIGHT)
+        observations = end_of_relief_duty.fill(DOWN).is_not_blank()-total_unwanted
+        ons_geo = tab.filter("Local connection referral accepted by other LA").shift(LEFT).shift(LEFT).shift(LEFT).shift(LEFT).shift(LEFT).shift(LEFT).shift(LEFT).fill(DOWN).is_not_blank()-total_unwanted
+        period = tab.filter("Local connection referral accepted by other LA").shift(ABOVE).shift(ABOVE).fill(LEFT).is_not_blank()
+        sheet = tab.name
 #         savepreviewhtml(period, fname= tab.name + "PREVIEW.html")
-
-        end_of_relief_duty = tab.excel_ref('D3').expand(RIGHT)
-        observations = tab.excel_ref('D4').expand(DOWN).expand(RIGHT).is_not_blank() - remove_notes
-#         savepreviewhtml(observations, fname= tab.name + "PREVIEW.html")
         dimensions = [
             HDim(ons_geo,'ONS Geography Code',DIRECTLY,LEFT),
             HDim(period,'Period',CLOSEST,ABOVE),
-            HDim(end_of_relief_duty,'end_of_relief_duty',DIRECTLY, ABOVE),
-#             HDimConst("sheet_name", sheet_name) #Might be handy to have for post processing when other tabs are running also 
+            HDim(end_of_relief_duty,'Reason Duty ended',DIRECTLY, ABOVE),
+            HDimConst("sheet", sheet) #Might be handy to have for post processing when other tabs are running also 
         ]
         tidy_sheet = ConversionSegment(tab, dimensions, observations)
         savepreviewhtml(tidy_sheet, fname= tab.name + "PREVIEW.html")
         trace.with_preview(tidy_sheet)
-        trace.store("combined_dataframe", tidy_sheet.topandas())
-df = trace.combine_and_trace(datasetTitle, "combined_dataframe")
-
-#sheet:A1
-df.drop(['temp_assessment_duty_type_1', 'temp_assessment_duty_type_2', 'temp_assessment_duty_type_3'], axis=1, inplace=True)
-#sheet:A2P
-df.drop(['reason_for_loss_of_home_1', 'end_of_tenancy_2', 'reason_for_end_of_tenancy_3', 'change_of_circumstances_4'], axis=1, inplace=True)
-#sheet:A2R_
-df.drop(['relief_duty_by_reason', 'end_of_AST', 'reason_for_end_of_AST', 'reason_for_rent_arrears'], axis =1, inplace=True)
-# sheet:A3
-df.drop(['total_no_of_households', 'reason_of_households_with_support_needs', 'total_households_and_no_of_people_with_support_needs'], axis=1, inplace=True)
-#sheet:A4P
-df.drop(['prevention_duty_owed_by_sector', 'prs_srs_homeless_on_departure_from_institution', 'status_of_occupation'],axis=1,inplace=True)
-#Sheet = A2R
-df.drop(['relief_duty_owed_by_sector', 'relief_prs_srs_homeless_on_departure_from_institution', 'relief_status_of_occupation'], axis=1, inplace=True)
-# Sheet = A5P
-df.drop(['prevention_duty_owed_by_household', 'single_parent_adult_male_female'], axis=1, inplace=True)
-# Sheet = A5R
-df.drop(['relief_duty_owed_by_household', 'relief_single_parent_adult_male_female'], axis=1, inplace=True)
-#Sheet = A6_
-df.drop(['age_of_main_applicants'], axis=1, inplace=True)
-#Sheet = A7
-df.drop(['assessed_household', 'referred_household', 'breakdown_of_referred_household'], axis=1, inplace=True)
-#Sheet = A8
-df.drop(['ethnicgroup', 'breakdown_of_ethnicgroup'], axis=1, inplace=True)
-#Sheet = A10
-df.drop(['employment_status'],axis=1, inplace=True)
-#Sheet = A12
-df.drop(['sexual_identification'], axis=1, inplace=True)
-#Sheet = P1
-df.drop(['prevention_duty_ended', 'accomodation'], axis=1, inplace=True)
-#Sheet = P2
-df.drop(['prevention_duty_ended_accomodation_secured', 'prs_and_srs', 'tenancy_type'], axis=1, inplace=True)
-#Sheet = P3
-df.drop(['type_of_secured_accomodation'], axis=1, inplace=True)
-#Sheet = P5
-df.drop(['accomodation_secured_at_end_of_prevention_duty', 'gender'], axis=1, inplace=True)
-
-
-df.rename(columns={'OBS' : 'Value', 'DATAMARKER' : 'Marker'}, inplace=True)
-df["Period"]= df["Period"].str.split(",", n = 1, expand = True)[1]
-df
+        
+        df = tidy_sheet.topandas()
+        
+        df["Period"]= df["Period"].str.split(",", n = 1, expand = True)[1]
+        
+        trace.store("combined_dataframe", df)
+        
+# (E3) Reason Duty ended
+# 	E3 to O3 to take value in cells - DONE
 # +
 # Number of households whose relief duty ended by type of accommodation secured England
 
@@ -838,70 +669,73 @@ for tab in tabs:
         print(tab.name)
               
         remove_notes = tab.filter(contains_string('Notes')).expand(DOWN).expand(RIGHT)
-        ons_geo = tab.excel_ref('A3').fill(DOWN).is_not_blank() - remove_notes # "-" suppressed in geography code to be processed in stage-2 transformation
-        period = tab.excel_ref('A1').is_not_blank() #period can be extracted from this cell 
-        sheet_name = tab.name
-#         savepreviewhtml(remove_notes, fname= tab.name + "PREVIEW.html")
+        unwanted_ons_geo = tab.filter("Total number of households whose relief duty ended with  accommodation secured1").shift(LEFT).shift(LEFT).shift(LEFT).shift(LEFT).fill(DOWN).filter("-").expand(RIGHT)|remove_notes
+        total_unwanted = unwanted_ons_geo|remove_notes
         
-        accomodation_secured_at_end_of_relief_duty = tab.excel_ref('D3').expand(RIGHT)
-        break_down = tab.excel_ref('D4').expand(RIGHT)
-        break_down_of_PRS_SRS = tab.excel_ref('D5').expand(RIGHT)
-        observations = tab.excel_ref('D6').expand(DOWN).expand(RIGHT).is_not_blank() - remove_notes
-#         savepreviewhtml(observations, fname= tab.name + "PREVIEW.html")
-        dimensions = [
-            HDim(ons_geo,'ONS Geography Code',DIRECTLY,LEFT),
-            HDim(period,'Period',CLOSEST,ABOVE),
-            HDim(accomodation_secured_at_end_of_relief_duty,'accomodation_secured_at_end_of_relief_duty',DIRECTLY, ABOVE),
-            HDim(break_down,'break_down',DIRECTLY, ABOVE),
-            HDim(break_down_of_PRS_SRS,'break_down_of_PRS_SRS',DIRECTLY,ABOVE),
-#             HDimConst("sheet_name", sheet_name) #Might be handy to have for post processing when other tabs are running also 
-        ]
-        tidy_sheet = ConversionSegment(tab, dimensions, observations)
-        savepreviewhtml(tidy_sheet, fname= tab.name + "PREVIEW.html")
-        trace.with_preview(tidy_sheet)
-        trace.store("combined_dataframe", tidy_sheet.topandas())
-df = trace.combine_and_trace(datasetTitle, "combined_dataframe")
+#         ons_geo = tab.excel_ref('A3').fill(DOWN).is_not_blank() - remove_notes # "-" suppressed in geography code to be processed in stage-2 transformation
+#         period = tab.excel_ref('A1').is_not_blank() #period can be extracted from this cell 
+#         sheet_name = tab.name
+        savepreviewhtml(total_unwanted, fname= tab.name + "PREVIEW.html")
+        
+#         accomodation_secured_at_end_of_relief_duty = tab.excel_ref('D3').expand(RIGHT)
+#         break_down = tab.excel_ref('D4').expand(RIGHT)
+#         break_down_of_PRS_SRS = tab.excel_ref('D5').expand(RIGHT)
+#         observations = tab.excel_ref('D6').expand(DOWN).expand(RIGHT).is_not_blank() - remove_notes
+# #         savepreviewhtml(observations, fname= tab.name + "PREVIEW.html")
+#         dimensions = [
+#             HDim(ons_geo,'ONS Geography Code',DIRECTLY,LEFT),
+#             HDim(period,'Period',CLOSEST,ABOVE),
+#             HDim(accomodation_secured_at_end_of_relief_duty,'accomodation_secured_at_end_of_relief_duty',DIRECTLY, ABOVE),
+#             HDim(break_down,'break_down',DIRECTLY, ABOVE),
+#             HDim(break_down_of_PRS_SRS,'break_down_of_PRS_SRS',DIRECTLY,ABOVE),
+# #             HDimConst("sheet_name", sheet_name) #Might be handy to have for post processing when other tabs are running also 
+#         ]
+#         tidy_sheet = ConversionSegment(tab, dimensions, observations)
+#         savepreviewhtml(tidy_sheet, fname= tab.name + "PREVIEW.html")
+#         trace.with_preview(tidy_sheet)
+#         trace.store("combined_dataframe", tidy_sheet.topandas())
+# df = trace.combine_and_trace(datasetTitle, "combined_dataframe")
 
-#sheet:A1
-df.drop(['temp_assessment_duty_type_1', 'temp_assessment_duty_type_2', 'temp_assessment_duty_type_3'], axis=1, inplace=True)
-#sheet:A2P
-df.drop(['reason_for_loss_of_home_1', 'end_of_tenancy_2', 'reason_for_end_of_tenancy_3', 'change_of_circumstances_4'], axis=1, inplace=True)
-#sheet:A2R_
-df.drop(['relief_duty_by_reason', 'end_of_AST', 'reason_for_end_of_AST', 'reason_for_rent_arrears'], axis =1, inplace=True)
-# sheet:A3
-df.drop(['total_no_of_households', 'reason_of_households_with_support_needs', 'total_households_and_no_of_people_with_support_needs'], axis=1, inplace=True)
-#sheet:A4P
-df.drop(['prevention_duty_owed_by_sector', 'prs_srs_homeless_on_departure_from_institution', 'status_of_occupation'],axis=1,inplace=True)
-#Sheet = A2R
-df.drop(['relief_duty_owed_by_sector', 'relief_prs_srs_homeless_on_departure_from_institution', 'relief_status_of_occupation'], axis=1, inplace=True)
-# Sheet = A5P
-df.drop(['prevention_duty_owed_by_household', 'single_parent_adult_male_female'], axis=1, inplace=True)
-# Sheet = A5R
-df.drop(['relief_duty_owed_by_household', 'relief_single_parent_adult_male_female'], axis=1, inplace=True)
-#Sheet = A6_
-df.drop(['age_of_main_applicants'], axis=1, inplace=True)
-#Sheet = A7
-df.drop(['assessed_household', 'referred_household', 'breakdown_of_referred_household'], axis=1, inplace=True)
-#Sheet = A8
-df.drop(['ethnicgroup', 'breakdown_of_ethnicgroup'], axis=1, inplace=True)
-#Sheet = A10
-df.drop(['employment_status'],axis=1, inplace=True)
-#Sheet = A12
-df.drop(['sexual_identification'], axis=1, inplace=True)
-#Sheet = P1
-df.drop(['prevention_duty_ended', 'accomodation'], axis=1, inplace=True)
-#Sheet = P2
-df.drop(['prevention_duty_ended_accomodation_secured', 'prs_and_srs', 'tenancy_type'], axis=1, inplace=True)
-#Sheet = P3
-df.drop(['type_of_secured_accomodation'], axis=1, inplace=True)
-#Sheet = P5
-df.drop(['accomodation_secured_at_end_of_prevention_duty', 'gender'], axis=1, inplace=True)
-#Sheet = R1
-df.drop(['end_of_relief_duty'], axis=1, inplace=True)
+# #sheet:A1
+# df.drop(['temp_assessment_duty_type_1', 'temp_assessment_duty_type_2', 'temp_assessment_duty_type_3'], axis=1, inplace=True)
+# #sheet:A2P
+# df.drop(['reason_for_loss_of_home_1', 'end_of_tenancy_2', 'reason_for_end_of_tenancy_3', 'change_of_circumstances_4'], axis=1, inplace=True)
+# #sheet:A2R_
+# df.drop(['relief_duty_by_reason', 'end_of_AST', 'reason_for_end_of_AST', 'reason_for_rent_arrears'], axis =1, inplace=True)
+# # sheet:A3
+# df.drop(['total_no_of_households', 'reason_of_households_with_support_needs', 'total_households_and_no_of_people_with_support_needs'], axis=1, inplace=True)
+# #sheet:A4P
+# df.drop(['prevention_duty_owed_by_sector', 'prs_srs_homeless_on_departure_from_institution', 'status_of_occupation'],axis=1,inplace=True)
+# #Sheet = A2R
+# df.drop(['relief_duty_owed_by_sector', 'relief_prs_srs_homeless_on_departure_from_institution', 'relief_status_of_occupation'], axis=1, inplace=True)
+# # Sheet = A5P
+# df.drop(['prevention_duty_owed_by_household', 'single_parent_adult_male_female'], axis=1, inplace=True)
+# # Sheet = A5R
+# df.drop(['relief_duty_owed_by_household', 'relief_single_parent_adult_male_female'], axis=1, inplace=True)
+# #Sheet = A6_
+# df.drop(['age_of_main_applicants'], axis=1, inplace=True)
+# #Sheet = A7
+# df.drop(['assessed_household', 'referred_household', 'breakdown_of_referred_household'], axis=1, inplace=True)
+# #Sheet = A8
+# df.drop(['ethnicgroup', 'breakdown_of_ethnicgroup'], axis=1, inplace=True)
+# #Sheet = A10
+# df.drop(['employment_status'],axis=1, inplace=True)
+# #Sheet = A12
+# df.drop(['sexual_identification'], axis=1, inplace=True)
+# #Sheet = P1
+# df.drop(['prevention_duty_ended', 'accomodation'], axis=1, inplace=True)
+# #Sheet = P2
+# df.drop(['prevention_duty_ended_accomodation_secured', 'prs_and_srs', 'tenancy_type'], axis=1, inplace=True)
+# #Sheet = P3
+# df.drop(['type_of_secured_accomodation'], axis=1, inplace=True)
+# #Sheet = P5
+# df.drop(['accomodation_secured_at_end_of_prevention_duty', 'gender'], axis=1, inplace=True)
+# #Sheet = R1
+# df.drop(['end_of_relief_duty'], axis=1, inplace=True)
 
-df.rename(columns={'OBS' : 'Value', 'DATAMARKER' : 'Marker'}, inplace=True)
-df["Period"]= df["Period"].str.split(",", n = 1, expand = True)[1]
-df
+# df.rename(columns={'OBS' : 'Value', 'DATAMARKER' : 'Marker'}, inplace=True)
+# df["Period"]= df["Period"].str.split(",", n = 1, expand = True)[1]
+# df
 
 
 # +

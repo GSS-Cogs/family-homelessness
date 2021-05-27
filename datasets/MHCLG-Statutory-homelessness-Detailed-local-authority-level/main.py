@@ -707,48 +707,6 @@ for tab in tabs:
         trace.store("combined_dataframe", df)
 
 
-# #sheet:A1
-# df.drop(['temp_assessment_duty_type_1', 'temp_assessment_duty_type_2', 'temp_assessment_duty_type_3'], axis=1, inplace=True)
-# #sheet:A2P
-# df.drop(['reason_for_loss_of_home_1', 'end_of_tenancy_2', 'reason_for_end_of_tenancy_3', 'change_of_circumstances_4'], axis=1, inplace=True)
-# #sheet:A2R_
-# df.drop(['relief_duty_by_reason', 'end_of_AST', 'reason_for_end_of_AST', 'reason_for_rent_arrears'], axis =1, inplace=True)
-# # sheet:A3
-# df.drop(['total_no_of_households', 'reason_of_households_with_support_needs', 'total_households_and_no_of_people_with_support_needs'], axis=1, inplace=True)
-# #sheet:A4P
-# df.drop(['prevention_duty_owed_by_sector', 'prs_srs_homeless_on_departure_from_institution', 'status_of_occupation'],axis=1,inplace=True)
-# #Sheet = A2R
-# df.drop(['relief_duty_owed_by_sector', 'relief_prs_srs_homeless_on_departure_from_institution', 'relief_status_of_occupation'], axis=1, inplace=True)
-# # Sheet = A5P
-# df.drop(['prevention_duty_owed_by_household', 'single_parent_adult_male_female'], axis=1, inplace=True)
-# # Sheet = A5R
-# df.drop(['relief_duty_owed_by_household', 'relief_single_parent_adult_male_female'], axis=1, inplace=True)
-# #Sheet = A6_
-# df.drop(['age_of_main_applicants'], axis=1, inplace=True)
-# #Sheet = A7
-# df.drop(['assessed_household', 'referred_household', 'breakdown_of_referred_household'], axis=1, inplace=True)
-# #Sheet = A8
-# df.drop(['ethnicgroup', 'breakdown_of_ethnicgroup'], axis=1, inplace=True)
-# #Sheet = A10
-# df.drop(['employment_status'],axis=1, inplace=True)
-# #Sheet = A12
-# df.drop(['sexual_identification'], axis=1, inplace=True)
-# #Sheet = P1
-# df.drop(['prevention_duty_ended', 'accomodation'], axis=1, inplace=True)
-# #Sheet = P2
-# df.drop(['prevention_duty_ended_accomodation_secured', 'prs_and_srs', 'tenancy_type'], axis=1, inplace=True)
-# #Sheet = P3
-# df.drop(['type_of_secured_accomodation'], axis=1, inplace=True)
-# #Sheet = P5
-# df.drop(['accomodation_secured_at_end_of_prevention_duty', 'gender'], axis=1, inplace=True)
-# #Sheet = R1
-# df.drop(['end_of_relief_duty'], axis=1, inplace=True)
-
-# df.rename(columns={'OBS' : 'Value', 'DATAMARKER' : 'Marker'}, inplace=True)
-# df["Period"]= df["Period"].str.split(",", n = 1, expand = True)[1]
-# df
-
-
 # +
 # Main relief activity that resulted in accommodation secured for households at end of relief duty by local authority England
 

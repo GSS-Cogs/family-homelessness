@@ -196,7 +196,7 @@ for tab in tabs:
         print(tab.name)
         
         remove_notes = tab.filter(contains_string('Notes')).assert_one().expand(DOWN).expand(RIGHT)
-        reason_of_households_with_support_needs = tab.filter("Households with no support needs owed duty1,2").assert_one().expand(RIGHT)
+        reason_of_households_with_support_needs = tab.filter("Households with no support needs owed duty1,2").assert_one().assert_one().expand(RIGHT)
         total_no_of_households = reason_of_households_with_support_needs.shift(ABOVE)
         total_households_with_support_needs = reason_of_households_with_support_needs.shift(DOWN)
         observations = total_households_with_support_needs.fill(DOWN).expand(RIGHT).is_not_blank()-remove_notes
@@ -256,7 +256,7 @@ for tab in tabs:
         print(tab.name)
         
         remove_notes = tab.filter(contains_string('Notes')).expand(DOWN).expand(RIGHT)
-        prevention_duty_owed_by_household = tab.filter("Single parent with dependent children").shift(LEFT).shift(LEFT).shift(LEFT).expand(RIGHT)
+        prevention_duty_owed_by_household = tab.filter("Single parent with dependent children").assert_one().shift(LEFT).shift(LEFT).shift(LEFT).expand(RIGHT)
         single_parent_adult_male_female = prevention_duty_owed_by_household.shift(DOWN)
         observations = prevention_duty_owed_by_household.shift(DOWN).fill(DOWN).expand(RIGHT).is_not_blank()-remove_notes
         unwanted = observations.shift(LEFT).shift(LEFT).shift(LEFT).shift(LEFT).fill(RIGHT)
@@ -307,7 +307,7 @@ for tab in tabs:
         remove_notes_1 = tab.filter(contains_string('% assessed as owed a duty')).expand(RIGHT)
         remove_notes_2 = tab.filter(contains_string('Grand Total'))
         total_remove = remove_notes|remove_notes_1|remove_notes_2
-        referral_public_body = tab.filter("Total households assessed as a result of a referral1,5").expand(RIGHT)
+        referral_public_body = tab.filter("Total households assessed as a result of a referral1,5").assert_one().expand(RIGHT)
         referred_household = referral_public_body.shift(DOWN)
         breakdown_of_referred_household = referred_household.shift(DOWN)
         observations = breakdown_of_referred_household.fill(DOWN).expand(RIGHT).is_not_blank()-total_remove
@@ -355,12 +355,12 @@ for tab in tabs:
         print(tab.name)
         
         remove_notes = tab.filter(contains_string('Notes')).expand(DOWN).expand(RIGHT)
-        total_unwanted = tab.filter("Total owed a prevention or relief duty1").shift(RIGHT).expand(DOWN)|remove_notes
-        age_of_main_applicants = tab.filter("Total owed a prevention or relief duty1").expand(RIGHT).is_not_blank().filter(lambda x: type(x.value) != '%' not in x.value) 
-        unwanted_ons_geo = tab.filter("Total owed a prevention or relief duty1").shift(LEFT).shift(LEFT).shift(LEFT).shift(LEFT).fill(DOWN).is_not_blank()-remove_notes
+        total_unwanted = tab.filter("Total owed a prevention or relief duty1").assert_one().shift(RIGHT).expand(DOWN)|remove_notes
+        age_of_main_applicants = tab.filter("Total owed a prevention or relief duty1").assert_one().expand(RIGHT).is_not_blank().filter(lambda x: type(x.value) != '%' not in x.value) 
+        unwanted_ons_geo = tab.filter("Total owed a prevention or relief duty1").assert_one().shift(LEFT).shift(LEFT).shift(LEFT).shift(LEFT).fill(DOWN).is_not_blank()-remove_notes
         unwanted = unwanted_ons_geo.filter("-").expand(RIGHT)|remove_notes
         ons_geo = unwanted_ons_geo-unwanted
-        period = tab.filter("Total owed a prevention or relief duty1").shift(ABOVE).shift(ABOVE).fill(LEFT).is_not_blank()
+        period = tab.filter("Total owed a prevention or relief duty1").assert_one().shift(ABOVE).shift(ABOVE).fill(LEFT).is_not_blank()
         observations = age_of_main_applicants.waffle(ons_geo)-total_unwanted
         sheet = tab.name
 #         savepreviewhtml(total_unwanted, fname= tab.name + "PREVIEW.html")
@@ -395,12 +395,12 @@ for tab in tabs:
         
         remove_notes = tab.filter(contains_string('Notes')).expand(DOWN).expand(RIGHT)
         unwanted = tab.excel_ref("A6").expand(DOWN).filter("-").expand(RIGHT)|remove_notes
-        ethnicgroup = tab.filter("Total owed a prevention or relief duty1").expand(RIGHT)
+        ethnicgroup = tab.filter("Total owed a prevention or relief duty1").assert_one().expand(RIGHT)
         breakdown_of_ethnicgroup = ethnicgroup.shift(DOWN)
         observations = breakdown_of_ethnicgroup.fill(DOWN).expand(RIGHT).is_not_blank()-unwanted
         unwanted = observations.shift(LEFT).shift(LEFT).shift(LEFT).shift(LEFT).fill(RIGHT)-remove_notes
         ons_geo = unwanted.shift(LEFT)-unwanted
-        period = tab.filter("Total owed a prevention or relief duty1").shift(ABOVE).shift(ABOVE).fill(LEFT).is_not_blank()
+        period = tab.filter("Total owed a prevention or relief duty1").assert_one().shift(ABOVE).shift(ABOVE).fill(LEFT).is_not_blank()
         sheet = tab.name
         dimensions = [
             HDim(ons_geo,'ONS Geography Code',DIRECTLY,LEFT),
@@ -435,7 +435,7 @@ for tab in tabs:
         print(tab.name)
         
         remove_notes = tab.filter(contains_string('Notes')).expand(DOWN).expand(RIGHT)
-        employment_status = tab.filter("Total owed a prevention or relief duty1").expand(RIGHT)
+        employment_status = tab.filter("Total owed a prevention or relief duty1").assert_one().expand(RIGHT)
         unwanted_ons_geo = employment_status.fill(DOWN).shift(LEFT).shift(LEFT).shift(LEFT).filter("Rest of England").shift(LEFT).expand(RIGHT)|remove_notes
         observations = employment_status.fill(DOWN).expand(RIGHT).is_not_blank()-unwanted_ons_geo
         period = employment_status.shift(ABOVE).shift(ABOVE).fill(LEFT).is_not_blank()
@@ -471,12 +471,12 @@ for tab in tabs:
         print(tab.name)
         
         remove_notes = tab.filter(contains_string('Notes')).expand(DOWN).expand(RIGHT)
-        sexual_identification = tab.filter("Total owed a prevention or relief duty1,2").expand(RIGHT)
-        unwanted_ons_geo = tab.filter("Total owed a prevention or relief duty1,2").shift(LEFT).shift(LEFT).shift(LEFT).shift(LEFT).fill(DOWN).is_not_blank().filter("-").expand(RIGHT)|remove_notes
+        sexual_identification = tab.filter("Total owed a prevention or relief duty1,2").assert_one().expand(RIGHT)
+        unwanted_ons_geo = tab.filter("Total owed a prevention or relief duty1,2").assert_one().shift(LEFT).shift(LEFT).shift(LEFT).shift(LEFT).fill(DOWN).is_not_blank().filter("-").expand(RIGHT)|remove_notes
         total_unwanted = remove_notes|unwanted_ons_geo
         observations = sexual_identification.fill(DOWN).expand(RIGHT).is_not_blank()-total_unwanted
-        period = tab.filter("Total owed a prevention or relief duty1,2").shift(ABOVE).fill(LEFT).is_not_blank()
-        ons_geo = tab.filter("Total owed a prevention or relief duty1,2").shift(LEFT).shift(LEFT).shift(LEFT).shift(LEFT).fill(DOWN).is_not_blank()-total_unwanted
+        period = tab.filter("Total owed a prevention or relief duty1,2").assert_one().shift(ABOVE).fill(LEFT).is_not_blank()
+        ons_geo = tab.filter("Total owed a prevention or relief duty1,2").assert_one().shift(LEFT).shift(LEFT).shift(LEFT).shift(LEFT).fill(DOWN).is_not_blank()-total_unwanted
         sheet = tab.name
 #         savepreviewhtml(ons_geo, fname= tab.name + "PREVIEW.html")
         dimensions = [
@@ -506,13 +506,13 @@ for tab in tabs:
         print(tab.name)
         
         remove_notes = tab.filter(contains_string('Notes')).expand(DOWN).expand(RIGHT)
-        prevention_duty_ended = tab.filter("Total number of households whose prevention duty ended1,2").expand(RIGHT)
+        prevention_duty_ended = tab.filter("Total number of households whose prevention duty ended1,2").assert_one().expand(RIGHT)
         accomodation = prevention_duty_ended.shift(DOWN)
-        unwanted_ons_geo = tab.filter("Total number of households whose prevention duty ended1,2").shift(LEFT).shift(LEFT).shift(LEFT).shift(LEFT).fill(DOWN).is_not_blank().filter("-").expand(RIGHT)|remove_notes
+        unwanted_ons_geo = tab.filter("Total number of households whose prevention duty ended1,2").assert_one().shift(LEFT).shift(LEFT).shift(LEFT).shift(LEFT).fill(DOWN).is_not_blank().filter("-").expand(RIGHT)|remove_notes
         total_unwanted = unwanted_ons_geo|remove_notes
         observations = accomodation.fill(DOWN).expand(RIGHT).is_not_blank()-total_unwanted
-        period = tab.filter("Total number of households whose prevention duty ended1,2").shift(ABOVE).shift(ABOVE).fill(LEFT).is_not_blank()
-        ons_geo = tab.filter("Total number of households whose prevention duty ended1,2").shift(LEFT).shift(LEFT).shift(LEFT).shift(LEFT).fill(DOWN).is_not_blank()-total_unwanted
+        period = tab.filter("Total number of households whose prevention duty ended1,2").assert_one().shift(ABOVE).shift(ABOVE).fill(LEFT).is_not_blank()
+        ons_geo = tab.filter("Total number of households whose prevention duty ended1,2").assert_one().shift(LEFT).shift(LEFT).shift(LEFT).shift(LEFT).fill(DOWN).is_not_blank()-total_unwanted
         sheet = tab.name
 #         savepreviewhtml(ons_geo, fname= tab.name + "PREVIEW.html")
         dimensions = [
@@ -560,14 +560,14 @@ for tab in tabs:
         print(tab.name)
         
         remove_notes = tab.filter(contains_string('Notes')).expand(DOWN).expand(RIGHT)
-        unwanted_ons_geo = tab.filter("Total number of households whose prevention duty ended with accommodation secured1").shift(LEFT).shift(LEFT).shift(LEFT).fill(DOWN).filter("-").expand(RIGHT)|remove_notes
+        unwanted_ons_geo = tab.filter("Total number of households whose prevention duty ended with accommodation secured1").assert_one().shift(LEFT).shift(LEFT).shift(LEFT).fill(DOWN).filter("-").expand(RIGHT)|remove_notes
         total_unwanted = unwanted_ons_geo|remove_notes
-        prevention_duty_ended_accomodation_secured = tab.filter("Total number of households whose prevention duty ended with accommodation secured1").expand(RIGHT)
+        prevention_duty_ended_accomodation_secured = tab.filter("Total number of households whose prevention duty ended with accommodation secured1").assert_one().expand(RIGHT)
         prs_and_srs = prevention_duty_ended_accomodation_secured.shift(DOWN)
         tenancy_type = prs_and_srs.shift(DOWN)
         observations = tenancy_type.fill(DOWN).expand(RIGHT).is_not_blank()-total_unwanted
-        ons_geo = tab.filter("Total number of households whose prevention duty ended with accommodation secured1").shift(LEFT).shift(LEFT).shift(LEFT).fill(DOWN).is_not_blank()-total_unwanted
-        period = tab.filter("Total number of households whose prevention duty ended with accommodation secured1").shift(ABOVE).shift(ABOVE).fill(LEFT).is_not_blank()
+        ons_geo = tab.filter("Total number of households whose prevention duty ended with accommodation secured1").assert_one().shift(LEFT).shift(LEFT).shift(LEFT).fill(DOWN).is_not_blank()-total_unwanted
+        period = tab.filter("Total number of households whose prevention duty ended with accommodation secured1").assert_one().shift(ABOVE).shift(ABOVE).fill(LEFT).is_not_blank()
         sheet = tab.name
 #         savepreviewhtml(period, fname= tab.name + "PREVIEW.html")
         dimensions = [
@@ -633,12 +633,12 @@ for tab in tabs:
     if tab.name in ['R1']: #only transforming tab R1 for now
         print(tab.name)     
         remove_notes = tab.filter(contains_string('Notes')).expand(DOWN).expand(RIGHT)
-        unwanted_ons_geo = tab.filter("Local connection referral accepted by other LA").shift(LEFT).shift(LEFT).shift(LEFT).shift(LEFT).shift(LEFT).shift(LEFT).shift(LEFT).fill(DOWN).filter("-").expand(RIGHT)|remove_notes 
+        unwanted_ons_geo = tab.filter("Local connection referral accepted by other LA").assert_one().shift(LEFT).shift(LEFT).shift(LEFT).shift(LEFT).shift(LEFT).shift(LEFT).shift(LEFT).fill(DOWN).filter("-").expand(RIGHT)|remove_notes 
         total_unwanted = unwanted_ons_geo|remove_notes
-        end_of_relief_duty = tab.filter("Local connection referral accepted by other LA").shift(LEFT).shift(LEFT).shift(LEFT).expand(RIGHT)
+        end_of_relief_duty = tab.filter("Local connection referral accepted by other LA").assert_one().shift(LEFT).shift(LEFT).shift(LEFT).expand(RIGHT)
         observations = end_of_relief_duty.fill(DOWN).is_not_blank()-total_unwanted
-        ons_geo = tab.filter("Local connection referral accepted by other LA").shift(LEFT).shift(LEFT).shift(LEFT).shift(LEFT).shift(LEFT).shift(LEFT).shift(LEFT).fill(DOWN).is_not_blank()-total_unwanted
-        period = tab.filter("Local connection referral accepted by other LA").shift(ABOVE).shift(ABOVE).fill(LEFT).is_not_blank()
+        ons_geo = tab.filter("Local connection referral accepted by other LA").assert_one().shift(LEFT).shift(LEFT).shift(LEFT).shift(LEFT).shift(LEFT).shift(LEFT).shift(LEFT).fill(DOWN).is_not_blank()-total_unwanted
+        period = tab.filter("Local connection referral accepted by other LA").assert_one().shift(ABOVE).shift(ABOVE).fill(LEFT).is_not_blank()
         sheet = tab.name
 #         savepreviewhtml(period, fname= tab.name + "PREVIEW.html")
         dimensions = [
@@ -669,13 +669,13 @@ for tab in tabs:
         print(tab.name)
               
         remove_notes = tab.filter(contains_string('Notes')).expand(DOWN).expand(RIGHT)
-        unwanted_ons_geo = tab.filter("Total number of households whose relief duty ended with  accommodation secured1").shift(LEFT).shift(LEFT).shift(LEFT).shift(LEFT).fill(DOWN).filter("-").expand(RIGHT)|remove_notes
+        unwanted_ons_geo = tab.filter("Total number of households whose relief duty ended with  accommodation secured1").assert_one().shift(LEFT).shift(LEFT).shift(LEFT).shift(LEFT).fill(DOWN).filter("-").expand(RIGHT)|remove_notes
         total_unwanted = unwanted_ons_geo|remove_notes
-        accomodation_secured_at_end_of_relief_duty = tab.filter("Total number of households whose relief duty ended with  accommodation secured1").expand(RIGHT)
+        accomodation_secured_at_end_of_relief_duty = tab.filter("Total number of households whose relief duty ended with  accommodation secured1").assert_one().expand(RIGHT)
         break_down = accomodation_secured_at_end_of_relief_duty.shift(DOWN)
         break_down_of_PRS_SRS = break_down.shift(DOWN)
         observations = break_down_of_PRS_SRS.fill(DOWN).is_not_blank()-total_unwanted
-        ons_geo = tab.filter("Total number of households whose relief duty ended with  accommodation secured1").shift(LEFT).shift(LEFT).shift(LEFT).shift(LEFT).fill(DOWN).is_not_blank()-total_unwanted
+        ons_geo = tab.filter("Total number of households whose relief duty ended with  accommodation secured1").assert_one().shift(LEFT).shift(LEFT).shift(LEFT).shift(LEFT).fill(DOWN).is_not_blank()-total_unwanted
         period = accomodation_secured_at_end_of_relief_duty.shift(ABOVE).shift(ABOVE).fill(LEFT).is_not_blank() 
         sheet = tab.name
         dimensions = [
@@ -693,7 +693,20 @@ for tab in tabs:
         df = tidy_sheet.topandas()
         
         df["Period"]= df["Period"].str.split(",", n = 1, expand = True)[1]
+        df['total_accommodation'] = df['accomodation_secured_at_end_of_relief_duty'] + df['break_down']+df['break_down_of_PRS_SRS']
+        print(df['total_accommodation'].unique())
         
+        temp = {'Private rented sectorTotal PRS':'Private rented sector total',
+               'Of which:Self-contained':'Private rented sector self-contained',
+               'HMO':'Private rented sector house in multiple occupation',
+               'Lodging (not with family or friends)':'Private rented sector lodging (not with friends and family)',
+               'Social rented sectorTotal SRS':'Social rented sector total',
+               'Of which:Council\n tenancy':'Social rented sector council tenant',
+               'Registered Provider tenancy':'Social rented sector registered provider tenant',
+               'Supported \nhousing or hostel':'Social rented sector supported housing or hostel'}
+        
+        df['Accommodation Type'] = df['total_accommodation'].replace(temp)
+        print(df['Accommodation Type'].unique())
         trace.store("combined_dataframe", df)
 #     To be done    
 # (E3) Accomodation Type

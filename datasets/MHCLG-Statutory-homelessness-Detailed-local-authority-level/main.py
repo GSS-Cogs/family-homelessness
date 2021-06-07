@@ -847,7 +847,42 @@ for tab in tabs:
         
         df["Period"]= df["Period"].str.split(",", n = 1, expand = True)[1]
         
+        df['households_vulnerable'] = df['households_by_priority']+df['vulnerable_households']
+        df.drop(['households_by_priority', 'vulnerable_households'],axis=1, inplace=True)
+        
+#         print(df['households_vulnerable'].unique())
+        
+        temp = {'Household member vulnerable as a result of:Total \nvulnerable households':
+               'Household member vulnerable as a result of Total', 
+                'Old age':'Household member vulnerable as a result of old age',
+               'Physical disability / ill health':'Household member vulnerable as a result of physical disability or ill health',
+               'Mental health problems':'Household member vulnerable as a result of mental health problems',
+               'Young\n applicant2': 'Household member vulnerable as a result of young applicant',
+               'Domestic\n abuse':'Household member vulnerable as a result of domestic abuse',
+               'Other\nreasons3':'Household member vulnerable as a result of other reasons'}
+        
+        df['Priority Need'] = df['households_vulnerable'].replace(temp)
+        
+        print(df['Priority Need'].unique())
+        
         trace.store("combined_dataframe", df)
+        
+#Done
+        
+# (E3:AA4) Priority Need
+# 	E3, G3, I3, AA3 to take value in cell
+#  L4: X4 to take following values:
+# 	  Household member vulnerable as a result of Total (K33 to K4)
+#   Household member vulnerable as a result of old age (K33 to L4) 
+# 	  Household member vulnerable as a result of physical disability or ill health (K33 to M4)
+# 	  Household member vulnerable as a result of mental health problems (K33 to N4)
+# 	  Household member vulnerable as a result of young applicant  (K33 to O4)
+# 	  Household member vulnerable as a result of domestic abuse  (K33 to P4)
+# 	  Household member vulnerable as a result of other reasons (K33 to Q4)
+# Add Decision after Relief duty ended column with value All
+# Add Reason for duty end column with value All
+# Add Measure Type column with value Households
+# Add Unit column with value count and percentage
 # +
 #Number of households by type of temporary accommodation provided England
 

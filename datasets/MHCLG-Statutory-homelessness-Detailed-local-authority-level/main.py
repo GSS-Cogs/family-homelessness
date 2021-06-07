@@ -905,7 +905,7 @@ for tab in tabs:
             HDim(period,'Period',CLOSEST,LEFT),
             HDim(type_of_households,'type_of_households',DIRECTLY, ABOVE),
             HDim(occupants_of_households,'occupants_of_households',DIRECTLY, ABOVE),
-#             HDimConst("sheet_name", sheet_name) #Might be handy to have for post processing when other tabs are running also 
+            HDimConst("sheet", tab.name) #Might be handy to have for post processing when other tabs are running also 
         ]
         tidy_sheet = ConversionSegment(tab, dimensions, observations)
         savepreviewhtml(tidy_sheet, fname= tab.name + "PREVIEW.html")
@@ -926,86 +926,39 @@ for tab in tabs:
         print(tab.name)
         
         remove_notes = tab.filter(contains_string('Notes')).expand(DOWN).expand(RIGHT)
-        ons_geo = tab.excel_ref('A3').fill(DOWN).is_not_blank() - remove_notes # "-" suppressed in geography code to be processed in stage-2 transformation
-        period = tab.excel_ref('A1').is_not_blank() #period can be extracted from this cell 
-        sheet_name = tab.name
-#         savepreviewhtml(period, fname= tab.name + "PREVIEW.html")
-
-        type_of_occupants_households = tab.excel_ref('E3').expand(RIGHT)
-        adult_and_children = tab.excel_ref('E4').expand(RIGHT)
-        adult_and_children_in_household = tab.excel_ref('E5').expand(RIGHT)
-        male_female = tab.excel_ref('E6').expand(RIGHT)
-        observations = tab.excel_ref('E7').expand(DOWN).expand(RIGHT).is_not_blank() - remove_notes
-#         savepreviewhtml(observations, fname= tab.name + "PREVIEW.html")
+        unwanted_ons_geo = tab.filter("Total number of households in TA1,2").assert_one().shift(LEFT).shift(LEFT).shift(LEFT).shift(LEFT).fill(DOWN).filter("-").expand(RIGHT)|remove_notes
+        adult_and_children_in_household = tab.filter("Total number of households in TA1,2").assert_one().expand(RIGHT)
+        adult_and_children = adult_and_children_in_household.shift(ABOVE)
+        type_of_occupants_households = adult_and_children.shift(ABOVE)
+        male_female = adult_and_children_in_household.shift(DOWN)
+        observations = adult_and_children_in_household.shift(DOWN).fill(DOWN).expand(RIGHT).is_not_blank()-unwanted_ons_geo
+        ons_geo = tab.filter("Total number of households in TA1,2").assert_one().shift(LEFT).shift(LEFT).shift(LEFT).shift(LEFT).fill(DOWN).is_not_blank()-unwanted_ons_geo
+        period = tab.filter("Sum of Couple with dependent children").assert_one().shift(ABOVE).shift(ABOVE).fill(LEFT).is_not_blank()
+        sheet = tab.name
+#         savepreviewhtml(male_female, fname= tab.name + "PREVIEW.html")
         dimensions = [
             HDim(ons_geo,'ONS Geography Code',DIRECTLY,LEFT),
-            HDim(period,'Period',CLOSEST,ABOVE),
+            HDim(period,'Period',CLOSEST,LEFT),
             HDim(type_of_occupants_households,'type_of_occupants_households',DIRECTLY, ABOVE),
             HDim(adult_and_children,'adult_and_children',DIRECTLY, ABOVE),
             HDim(adult_and_children_in_household,'adult_and_children_in_household',DIRECTLY, ABOVE),
             HDim(male_female,'male_female',DIRECTLY, ABOVE),
-#             HDimConst("sheet_name", sheet_name) #Might be handy to have for post processing when other tabs are running also 
+            HDimConst("sheet", tab.name) #Might be handy to have for post processing when other tabs are running also 
         ]
         tidy_sheet = ConversionSegment(tab, dimensions, observations)
         savepreviewhtml(tidy_sheet, fname= tab.name + "PREVIEW.html")
         trace.with_preview(tidy_sheet)
-        trace.store("combined_dataframe", tidy_sheet.topandas())
-# df = trace.combine_and_trace(datasetTitle, "combined_dataframe")
-
-#sheet:A1
-df.drop(['temp_assessment_duty_type_1', 'temp_assessment_duty_type_2', 'temp_assessment_duty_type_3'], axis=1, inplace=True)
-#sheet:A2P
-df.drop(['reason_for_loss_of_home_1', 'end_of_tenancy_2', 'reason_for_end_of_tenancy_3', 'change_of_circumstances_4'], axis=1, inplace=True)
-#sheet:A2R_
-df.drop(['relief_duty_by_reason', 'end_of_AST', 'reason_for_end_of_AST', 'reason_for_rent_arrears'], axis =1, inplace=True)
-# sheet:A3
-df.drop(['total_no_of_households', 'reason_of_households_with_support_needs', 'total_households_and_no_of_people_with_support_needs'], axis=1, inplace=True)
-#sheet:A4P
-df.drop(['prevention_duty_owed_by_sector', 'prs_srs_homeless_on_departure_from_institution', 'status_of_occupation'],axis=1,inplace=True)
-#Sheet = A2R
-df.drop(['relief_duty_owed_by_sector', 'relief_prs_srs_homeless_on_departure_from_institution', 'relief_status_of_occupation'], axis=1, inplace=True)
-# Sheet = A5P
-df.drop(['prevention_duty_owed_by_household', 'single_parent_adult_male_female'], axis=1, inplace=True)
-# Sheet = A5R
-df.drop(['relief_duty_owed_by_household', 'relief_single_parent_adult_male_female'], axis=1, inplace=True)
-#Sheet = A6_
-df.drop(['age_of_main_applicants'], axis=1, inplace=True)
-#Sheet = A7
-df.drop(['assessed_household', 'referred_household', 'breakdown_of_referred_household'], axis=1, inplace=True)
-#Sheet = A8
-df.drop(['ethnicgroup', 'breakdown_of_ethnicgroup'], axis=1, inplace=True)
-#Sheet = A10
-df.drop(['employment_status'],axis=1, inplace=True)
-#Sheet = A12
-df.drop(['sexual_identification'], axis=1, inplace=True)
-#Sheet = P1
-df.drop(['prevention_duty_ended', 'accomodation'], axis=1, inplace=True)
-#Sheet = P2
-df.drop(['prevention_duty_ended_accomodation_secured', 'prs_and_srs', 'tenancy_type'], axis=1, inplace=True)
-#Sheet = P3
-df.drop(['type_of_secured_accomodation'], axis=1, inplace=True)
-#Sheet = P5
-df.drop(['accomodation_secured_at_end_of_prevention_duty', 'gender'], axis=1, inplace=True)
-#Sheet = R1
-df.drop(['end_of_relief_duty'], axis=1, inplace=True)
-#Sheet = R2
-df.drop(['accomodation_secured_at_end_of_relief_duty', 'break_down', 'break_down_of_PRS_SRS'], axis=1, inplace=True)
-#Sheet = R3_
-df.drop(['accomodation_secured'], axis=1, inplace=True)
-#Sheet = R5
-df.drop(['secured_accomodation_at_end_of_relief_duty', 'male_female_other_gender'], axis=1, inplace=True)
-#Sheet = MD1
-df.drop(['eligible_house_holds'], axis=1, inplace=True)
-#Sheet = MD2
-df.drop(['house_holds_duty_ended', 'status'], axis=1, inplace=True)
-#Sheet = TA1
-df.drop(['households_by_priority', 'vulnerable_households'], axis=1, inplace=True)
-#Sheet = TA1
-df.drop(['type_of_households', 'occupants_of_households'], axis=1, inplace=True)
-
-# df.rename(columns={'OBS' : 'Value', 'DATAMARKER' : 'Marker'}, inplace=True)
-df["Period"]= df["Period"].str.split(",", n = 1, expand = True)[1]
-# df
+        
+        df = tidy_sheet.topandas()
+        
+        df["Period"]= df["Period"].str.split(",", n = 1, expand = True)[1]
+        
+        df['Household Composition'] = df['adult_and_children_in_household']+df['male_female']
+        
+        df.drop(['adult_and_children_in_household', 'male_female'],axis=1, inplace = True)
+        print(df['Household Composition'].unique())
+# Two 'Female' column and 'Other / gender not known' which needs to be distinguished
+        trace.store("combined_dataframe", df)
 
 # +
 # Number of households by duty under which temporary accommodation is provided England

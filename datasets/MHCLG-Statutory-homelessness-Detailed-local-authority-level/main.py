@@ -229,6 +229,7 @@ for tab in tabs:
         # sheet:A3
         df.drop(['total_no_of_households', 'reason_of_households_with_support_needs', 'total_households_with_support_needs'], axis=1, inplace=True)
         print(df['Period'].unique())
+        print(df['Support needs of household'].unique())
         trace.store("combined_dataframe", df)
 
 
@@ -238,6 +239,8 @@ for tab in tabs:
 # J4 - Households with two support needs
 # K4 - Households with three or more support needs
 
+#Ignore the below comments. Requirement is satisfied.
+
 # 'Number of householdsHouseholds with three or more support needs',is a odd value. Needs investigation.
 #'Households with one or more support needs owed duty1,2Total households with support needs',is a odd value. Needs investigation.
 
@@ -245,6 +248,45 @@ for tab in tabs:
 # df = trace.combine_and_trace(datasetTitle, "combined_dataframe")
 # df.rename(columns={'OBS' : 'Value', 'DATAMARKER' : 'Marker'}, inplace=True)
 # df.head()
+# -
+
+for tab in tabs:
+    columns=['TO DO']
+    trace.start(datasetTitle, tab, columns, original_tabs.downloadURL)
+    if tab.name in ['A4P', 'A4R']: #only transforming tab A5P for now
+        print(tab.name)
+        
+        remove_notes = tab.filter(contains_string('Notes')).expand(DOWN).expand(RIGHT)
+        unwanted_ons_geo = tab.filter("Private rented sector").shift(LEFT).shift(LEFT).assert_one().shift(LEFT).shift(LEFT).shift(LEFT).shift(LEFT).fill(DOWN).is_not_blank().filter("-").expand(RIGHT)|remove_notes
+        unwanted_total = unwanted_ons_geo|remove_notes
+        prevention_relief_duty_at_application_time = tab.filter("Private rented sector").shift(LEFT).shift(LEFT).expand(RIGHT)
+        prs_srs_homeless_on_departure_from_institution = prevention_relief_duty_at_application_time.shift(DOWN)
+        breakdown_prs_srs_homeless_on_departure_from_institution = prs_srs_homeless_on_departure_from_institution.shift(DOWN)
+        observations = breakdown_prs_srs_homeless_on_departure_from_institution.fill(DOWN).is_not_blank()-unwanted_total
+        ons_geo = tab.filter("Private rented sector").shift(LEFT).shift(LEFT).assert_one().shift(LEFT).shift(LEFT).shift(LEFT).shift(LEFT).fill(DOWN).is_not_blank()-unwanted_total
+        period = tab.filter("Private rented sector").shift(ABOVE).shift(ABOVE).fill(LEFT).is_not_blank()
+        sheet = tab.name
+#         savepreviewhtml(period, fname = tab.name + "PREVIEW.html")
+        
+        dimensions = [
+            HDim(ons_geo,'ONS Geography Code',DIRECTLY,LEFT),
+            HDim(period,'Period',CLOSEST,LEFT),
+            HDim(prevention_relief_duty_at_application_time,'prevention_relief_duty_at_application_time',DIRECTLY, ABOVE),
+            HDim(prs_srs_homeless_on_departure_from_institution,'prs_srs_homeless_on_departure_from_institution',DIRECTLY, ABOVE),
+            HDim(breakdown_prs_srs_homeless_on_departure_from_institution, 'breakdown_prs_srs_homeless_on_departure_from_institution',DIRECTLY, ABOVE),
+            HDimConst('sheet', tab.name), 
+        ]
+        tidy_sheet = ConversionSegment(tab, dimensions, observations)
+        savepreviewhtml(tidy_sheet, fname= tab.name + "PREVIEW.html")
+        trace.with_preview(tidy_sheet)
+        
+        df = tidy_sheet.topandas()
+        
+        df["Period"]= df["Period"].str.split(", ", n = 1, expand = True)[1]
+        
+        print(df["Period"].unique())
+        
+        trace.store("combined_dataframe", df)
 
 # +
 # Number of households owed a prevention duty by household composition England
@@ -334,7 +376,7 @@ for tab in tabs:
 #         df['Referral Public Body'] = df['assessed_household']
         df.drop(['referred_household', 'breakdown_of_referred_household'], axis=1, inplace=True)
         
-#         print(df['Referral Public Body'].unique())
+        print(df['Referral Public Body'].unique())
         trace.store("combined_dataframe", df)
 # -
 df = trace.combine_and_trace(datasetTitle, "combined_dataframe")
@@ -381,6 +423,8 @@ for tab in tabs:
         trace.store("combined_dataframe", df)
 
 # (E3:W3) Age (including total and not known)
+
+# To be done
 # Measure Type = Applicant
 # Unit = count
 
@@ -415,14 +459,18 @@ for tab in tabs:
         df = tidy_sheet.topandas()
         
         df["Period"]= df["Period"].str.split(",", n = 1, expand = True)[1]
-        
+        print(df['ethnicgroup'].unique())
+        print(df['breakdown_of_ethnicgroup'].unique())
         trace.store("combined_dataframe", df)
         
 # Ignore percentages - TO be done
 # (A) Geography (Remove Rest of England row as it does not have a geography code) - Done
-# (E3:BH3) Ethnicity (including total and not known) - To be done
-# (E3:BH3) Ethnic Group (including total and not known) - To be done
+# (E3:BH3) Ethnicity (including total and not known) - Done
+# (E3:BH3) Ethnic Group (including total and not known) - Done
 
+# To be Done
+# Measure Type = Applicant
+# Unit = count
 
 
 # +
@@ -455,11 +503,18 @@ for tab in tabs:
         
         df["Period"]= df["Period"].str.split(",", n = 1, expand = True)[1]
         
+        print(df['employment_status'].unique())
+        
         trace.store("combined_dataframe", df)
 
 # Ignore percentages - To be done
 # (A) Geography (Remove Rest of England row as it does not have a geography code) - Done
-# (E3:O3) Employment Status (including total and not known) - To be done
+# (E3:O3) Employment Status (including total and not known) - Done
+
+# To be done
+
+# Measure Type = Applicant
+# Unit = count
 
 # +
 # Number of households owed a homelessness duty by sexual identification of lead applicant England
@@ -490,11 +545,18 @@ for tab in tabs:
         trace.with_preview(tidy_sheet)
         df = tidy_sheet.topandas()
         df["Period"]= df["Period"].str.split(",", n = 1, expand = True)[1]
+        print(df['Sexual Identification'].unique())
         trace.store("combined_dataframe", df)
+
 # Ignore percentages-No percentages
 # Period from title-done
 # (A) Geography (Remove Rest of England row as it does not have a geography code)-done
 # (E2:K2) Sexual Identification-done
+
+# To be Done
+
+# Measure Type = Applicant
+# Unit = count
 
 # +
 #Number of households whose prevention duty ended by reason for duty end England
@@ -541,7 +603,8 @@ for tab in tabs:
         print(df['Reason Duty ended'].unique())
         
         trace.store("combined_dataframe", df)
-        
+
+# Done
 # (E3) Reason Duty ended
 
 # 	E3, K3 to R3 to take values in cells
@@ -655,6 +718,8 @@ for tab in tabs:
         
         df["Period"]= df["Period"].str.split(",", n = 1, expand = True)[1]
         
+        print(df['Reason Duty ended'].unique())
+        
         trace.store("combined_dataframe", df)
         
 # (E3) Reason Duty ended
@@ -708,7 +773,7 @@ for tab in tabs:
         df['Accommodation Type'] = df['total_accommodation'].replace(temp)
         print(df['Accommodation Type'].unique())
         trace.store("combined_dataframe", df)
-#     To be done    
+#     Done but contains other values    
 # (E3) Accomodation Type
 # E3, P3 to T3 to take value in cells
 # F4 to I4 to have following values:
@@ -867,7 +932,7 @@ for tab in tabs:
         
         trace.store("combined_dataframe", df)
         
-#Done
+# Done but contains other values
         
 # (E3:AA4) Priority Need
 # 	E3, G3, I3, AA3 to take value in cell
@@ -916,6 +981,13 @@ for tab in tabs:
         df["Period"]= df["Period"].str.split(",", n = 1, expand = True)[1]
         
         trace.store("combined_dataframe", df)
+        
+# To be Done
+        
+# (E2:AI2) Accommodation Type
+# 	All values in Row 2 (Any with nothing in a cell should be N/A) - Requirements inside brackets needs to be validated
+# (H3:AI3) Household Composition column with value all - Requirements inside brackets needs to be validated
+# 	All values in Row 3 (Any with nothing in a cell should be N/A)
 # +
 # Number of households in temporary accommodation by household composition England
 

@@ -289,7 +289,63 @@ for tab in tabs:
         trace.store("combined_dataframe", df)
 
 # +
-# Number of households owed a prevention duty by household composition England
+# # Number of households owed a prevention duty by household composition England
+
+# # Andrew and Santhosh's improved method
+
+
+
+# for tab in tabs:
+#     columns=['TO DO']
+#     trace.start(datasetTitle, tab, columns, original_tabs.downloadURL)
+#     if tab.name in ['A5P', 'A5R']: #only transforming tab A5P for now
+#         print(tab.name)
+        
+#         remove_notes = tab.filter(contains_string('Notes')).expand(DOWN).expand(RIGHT)
+#         prevention_duty_owed_by_household = tab.filter("Single parent with dependent children").assert_one().shift(LEFT).shift(LEFT).shift(LEFT).expand(RIGHT)
+#         single_parent_adult_male_female = prevention_duty_owed_by_household.shift(DOWN)
+#         total_col = prevention_duty_owed_by_household|single_parent_adult_male_female
+#         observations = total_col.shift(DOWN).fill(DOWN).is_not_blank()-remove_notes
+
+#         unwanted = observations.shift(LEFT).shift(LEFT).shift(LEFT).shift(LEFT).fill(RIGHT)
+#         ons_geo = unwanted.shift(LEFT)-unwanted
+#         sheet = tab.name
+#         period = prevention_duty_owed_by_household.shift(ABOVE).shift(ABOVE).fill(LEFT).is_not_blank()
+# #         savepreviewhtml(total_col, fname= tab.name + "PREVIEW.html")
+#         dimensions = [
+#             HDim(ons_geo,'ONS Geography Code',DIRECTLY,LEFT),
+#             HDim(period,'Period',CLOSEST,LEFT),
+#             HDim(prevention_duty_owed_by_household,'prevention_duty_owed_by_household',DIRECTLY, ABOVE),
+#             HDim(single_parent_adult_male_female,'single_parent_adult_male_female',DIRECTLY, ABOVE),
+#             HDimConst('sheet', tab.name),
+# #             HDimConst("sheet_name", sheet_name) #Might be handy to have for post processing when other tabs are running also 
+#         ]
+#         tidy_sheet = ConversionSegment(tab, dimensions, observations)
+#         savepreviewhtml(tidy_sheet, fname= tab.name + "PREVIEW.html")
+#         trace.with_preview(tidy_sheet)
+        
+#         df = tidy_sheet.topandas()
+        
+#         df["Period"]= df["Period"].str.split(",", n = 1, expand = True)[1]
+        
+#         df['Household composition'] = df['prevention_duty_owed_by_household']+df['single_parent_adult_male_female']
+        
+#         # a5p&a5r.prevention &relief to be changed
+#         if tab.name == 'A5P':
+#             df['Duty Type'] = df['sheet'].apply(lambda x: "a5p.Prevention" if x == 'A5P' else x)
+
+#         if tab.name == 'A5R':
+#             df['Duty Type'] = df['sheet'].apply(lambda x: "a5r.Relief" if x == 'A5R' else x)
+        
+        
+#         df['Household composition'] = df['prevention_duty_owed_by_household']+df['single_parent_adult_male_female']
+#         df.drop(['prevention_duty_owed_by_household', 'single_parent_adult_male_female'], axis=1, inplace=True)
+#         df.drop(['sheet'], axis=1, inplace=True)
+#         print(df['Household composition'].value_counts())
+#         print(df['Duty Type'].value_counts())
+#         trace.store("combined_dataframe", df)
+# -
+
 
 for tab in tabs:
     columns=['TO DO']
@@ -298,21 +354,36 @@ for tab in tabs:
         print(tab.name)
         
         remove_notes = tab.filter(contains_string('Notes')).expand(DOWN).expand(RIGHT)
-        prevention_duty_owed_by_household = tab.filter("Single parent with dependent children").assert_one().shift(LEFT).shift(LEFT).shift(LEFT).expand(RIGHT)
-        single_parent_adult_male_female = prevention_duty_owed_by_household.shift(DOWN)
-        observations = prevention_duty_owed_by_household.shift(DOWN).fill(DOWN).expand(RIGHT).is_not_blank()-remove_notes
-        unwanted = observations.shift(LEFT).shift(LEFT).shift(LEFT).shift(LEFT).fill(RIGHT)
-        ons_geo = unwanted.shift(LEFT)-unwanted
+        prevention_duty_owed_by_household = tab.filter("Single parent with dependent children").shift(LEFT).shift(LEFT).shift(LEFT).expand(RIGHT).is_blank()
+        single_parent_adult_male_female  = prevention_duty_owed_by_household.shift(DOWN)
+        total_col = prevention_duty_owed_by_household|single_parent_adult_male_female
+        
+        
+        total_prevention_duty_owed = tab.filter("Single parent with dependent children").shift(LEFT).shift(LEFT).shift(LEFT).expand(RIGHT)
+        total_single = total_prevention_duty_owed.shift(DOWN)
+
+        total_column = total_prevention_duty_owed|total_single
+        total_observations = total_column.shift(DOWN).fill(DOWN).is_not_blank()-remove_notes 
+         
+        household_2 = prevention_duty_owed_by_household.shift(DOWN).is_not_blank()
+        household_2_obs = household_2.fill(DOWN).is_not_blank()
+        unwanted_observations = total_col.shift(DOWN).fill(DOWN).is_not_blank()-household_2_obs
+        
+        observations = total_observations - unwanted_observations
+        
         sheet = tab.name
+        ons_geo = tab.filter("E92000001").expand(DOWN).is_not_blank()
+
         period = prevention_duty_owed_by_household.shift(ABOVE).shift(ABOVE).fill(LEFT).is_not_blank()
-#         savepreviewhtml(observations, fname= tab.name + "PREVIEW.html")
+        savepreviewhtml(total_single, fname= tab.name + "PREVIEW.html")
+        
         dimensions = [
             HDim(ons_geo,'ONS Geography Code',DIRECTLY,LEFT),
             HDim(period,'Period',CLOSEST,LEFT),
-            HDim(prevention_duty_owed_by_household,'prevention_duty_owed_by_household',DIRECTLY, ABOVE),
-            HDim(single_parent_adult_male_female,'single_parent_adult_male_female',DIRECTLY, ABOVE),
-            HDimConst('sheet', tab.name),
-#             HDimConst("sheet_name", sheet_name) #Might be handy to have for post processing when other tabs are running also 
+            HDim(total_prevention_duty_owed,'total_prevention_duty_owed',DIRECTLY, ABOVE),
+            HDim(total_single,'total_single',DIRECTLY, ABOVE),
+            HDimConst('sheet', sheet),  #Might be handy to have for post processing when other tabs are running also
+             
         ]
         tidy_sheet = ConversionSegment(tab, dimensions, observations)
         savepreviewhtml(tidy_sheet, fname= tab.name + "PREVIEW.html")
@@ -322,9 +393,9 @@ for tab in tabs:
         
         df["Period"]= df["Period"].str.split(",", n = 1, expand = True)[1]
         
-#         df['Household composition'] = df['prevention_duty_owed_by_household']+df['single_parent_adult_male_female']
+        df['Household composition'] = df['total_prevention_duty_owed']+df['total_single']
         
-        #a5p&a5r.prevention &relief to be changed
+        # a5p&a5r.prevention &relief to be changed
         if tab.name == 'A5P':
             df['Duty Type'] = df['sheet'].apply(lambda x: "a5p.Prevention" if x == 'A5P' else x)
 
@@ -332,12 +403,14 @@ for tab in tabs:
             df['Duty Type'] = df['sheet'].apply(lambda x: "a5r.Relief" if x == 'A5R' else x)
         
         
-        df['Household composition'] = df['prevention_duty_owed_by_household']+df['single_parent_adult_male_female']
-        df.drop(['prevention_duty_owed_by_household', 'single_parent_adult_male_female'], axis=1, inplace=True)
+        df['Household composition'] = df['total_prevention_duty_owed']+df['total_single']
+        df.drop(['total_prevention_duty_owed', 'total_single'], axis=1, inplace=True)
         df.drop(['sheet'], axis=1, inplace=True)
-#         print(df['Household composition'].value_counts())
-#         print(df['Duty Type'].value_counts())
-        trace.store("combined_dataframe", df)
+        print(df['Household composition'].value_counts())
+        print(df['Duty Type'].value_counts())
+
+df.head()
+
 # +
 for tab in tabs:
     columns=['TO DO']

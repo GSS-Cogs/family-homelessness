@@ -502,7 +502,50 @@ for tab in tabs:
 # Unit = count
 
 # +
-#Ethnicity of main applicants assessed as owed a prevention or relief duty by local authority England
+# #Ethnicity of main applicants assessed as owed a prevention or relief duty by local authority England
+
+# for tab in tabs:
+#     columns=['TO DO']
+#     trace.start(datasetTitle, tab, columns, original_tabs.downloadURL)
+#     if tab.name in ['A8']: #only transforming tab A8 for now
+#         print(tab.name)
+        
+#         remove_notes = tab.filter(contains_string('Notes')).expand(DOWN).expand(RIGHT)
+#         unwanted = tab.excel_ref("A6").expand(DOWN).filter("-").expand(RIGHT)|remove_notes
+#         ethnicgroup = tab.filter("Total owed a prevention or relief duty1").assert_one().expand(RIGHT)
+#         breakdown_of_ethnicgroup = ethnicgroup.shift(DOWN)
+#         observations = breakdown_of_ethnicgroup.fill(DOWN).expand(RIGHT).is_not_blank()-unwanted
+#         unwanted = observations.shift(LEFT).shift(LEFT).shift(LEFT).shift(LEFT).fill(RIGHT)-remove_notes
+#         ons_geo = unwanted.shift(LEFT)-unwanted
+#         period = tab.filter("Total owed a prevention or relief duty1").assert_one().shift(ABOVE).shift(ABOVE).fill(LEFT).is_not_blank()
+#         sheet = tab.name
+#         dimensions = [
+#             HDim(ons_geo,'ONS Geography Code',DIRECTLY,LEFT),
+#             HDim(period,'Period',CLOSEST,LEFT),
+#             HDim(ethnicgroup,'ethnicgroup',DIRECTLY, ABOVE),
+#             HDim(breakdown_of_ethnicgroup,'breakdown_of_ethnicgroup',DIRECTLY, ABOVE),
+#             HDimConst("sheet", tab.name) #Might be handy to have for post processing when other tabs are running also 
+#         ]
+#         tidy_sheet = ConversionSegment(tab, dimensions, observations)
+#         savepreviewhtml(tidy_sheet, fname= tab.name + "PREVIEW.html")
+#         trace.with_preview(tidy_sheet)
+#         df = tidy_sheet.topandas()
+        
+#         df["Period"]= df["Period"].str.split(",", n = 1, expand = True)[1]
+#         print(df['ethnicgroup'].unique())
+#         print(df['breakdown_of_ethnicgroup'].unique())
+#         trace.store("combined_dataframe", df)
+        
+# # Ignore percentages - TO be done
+# # (A) Geography (Remove Rest of England row as it does not have a geography code) - Done
+# # (E3:BH3) Ethnicity (including total and not known) - Done
+# # (E3:BH3) Ethnic Group (including total and not known) - Done
+
+# # To be Done
+# # Measure Type = Applicant
+# # Unit = count
+# -
+
 
 for tab in tabs:
     columns=['TO DO']
@@ -512,13 +555,17 @@ for tab in tabs:
         
         remove_notes = tab.filter(contains_string('Notes')).expand(DOWN).expand(RIGHT)
         unwanted = tab.excel_ref("A6").expand(DOWN).filter("-").expand(RIGHT)|remove_notes
+        ethnicgroup_blank = tab.filter("Total owed a prevention or relief duty1").assert_one().expand(RIGHT).is_blank()
+        breakdown_of_ethnicgroup_blank = ethnicgroup_blank.shift(DOWN).is_blank()
         ethnicgroup = tab.filter("Total owed a prevention or relief duty1").assert_one().expand(RIGHT)
         breakdown_of_ethnicgroup = ethnicgroup.shift(DOWN)
-        observations = breakdown_of_ethnicgroup.fill(DOWN).expand(RIGHT).is_not_blank()-unwanted
-        unwanted = observations.shift(LEFT).shift(LEFT).shift(LEFT).shift(LEFT).fill(RIGHT)-remove_notes
-        ons_geo = unwanted.shift(LEFT)-unwanted
+        unwanted_observations = breakdown_of_ethnicgroup_blank.fill(DOWN).is_not_blank()
+        unwanted_ons_geo = tab.filter("Total owed a prevention or relief duty1").assert_one().shift(LEFT).shift(LEFT).shift(LEFT).shift(LEFT).fill(DOWN).is_not_blank().filter("-").expand(RIGHT)|remove_notes
+        total_unwanted = unwanted_observations|unwanted_ons_geo
+        observations = ethnicgroup.shift(DOWN).fill(DOWN).is_not_blank()-total_unwanted
+        ons_geo = tab.filter("Total owed a prevention or relief duty1").assert_one().shift(LEFT).shift(LEFT).shift(LEFT).shift(LEFT).fill(DOWN).is_not_blank()-total_unwanted
         period = tab.filter("Total owed a prevention or relief duty1").assert_one().shift(ABOVE).shift(ABOVE).fill(LEFT).is_not_blank()
-        sheet = tab.name
+#         savepreviewhtml(breakdown_of_ethnicgroup, fname= tab.name + "PREVIEW.html")
         dimensions = [
             HDim(ons_geo,'ONS Geography Code',DIRECTLY,LEFT),
             HDim(period,'Period',CLOSEST,LEFT),
@@ -530,21 +577,10 @@ for tab in tabs:
         savepreviewhtml(tidy_sheet, fname= tab.name + "PREVIEW.html")
         trace.with_preview(tidy_sheet)
         df = tidy_sheet.topandas()
-        
         df["Period"]= df["Period"].str.split(",", n = 1, expand = True)[1]
         print(df['ethnicgroup'].unique())
         print(df['breakdown_of_ethnicgroup'].unique())
         trace.store("combined_dataframe", df)
-        
-# Ignore percentages - TO be done
-# (A) Geography (Remove Rest of England row as it does not have a geography code) - Done
-# (E3:BH3) Ethnicity (including total and not known) - Done
-# (E3:BH3) Ethnic Group (including total and not known) - Done
-
-# To be Done
-# Measure Type = Applicant
-# Unit = count
-
 
 # +
 #Employment status of main applicants assessed as owed a prevention or relief duty by local authority England
@@ -953,6 +989,75 @@ which cannot be differentiated according to its association"""
 # 	Private rented sector offer Refused (joined I3 with J4)
 
 # +
+# # Number of households owed a main duty by priority need England
+
+# for tab in tabs:
+#     columns=['TO DO']
+#     trace.start(datasetTitle, tab, columns, original_tabs.downloadURL)
+#     if tab.name in ['MD3']: #only transforming tab MD3 for now
+#         print(tab.name)
+              
+#         remove_notes = tab.filter(contains_string('From July 2002, "Young applicant" ')).shift(LEFT).expand(DOWN).expand(RIGHT)
+#         unwanted_ons_geo = tab.filter("Total households owed a main duty1").assert_one().shift(LEFT).shift(LEFT).shift(LEFT).shift(LEFT).fill(DOWN).filter("-").expand(RIGHT)|remove_notes
+#         households_by_priority = tab.filter("Total households owed a main duty1").assert_one().expand(RIGHT)
+#         vulnerable_households = households_by_priority.shift(DOWN)
+#         observations = vulnerable_households.fill(DOWN).expand(RIGHT).is_not_blank()-unwanted_ons_geo
+#         ons_geo = tab.filter("Total households owed a main duty1").assert_one().shift(LEFT).shift(LEFT).shift(LEFT).shift(LEFT).fill(DOWN).is_not_blank()-unwanted_ons_geo
+#         period = tab.filter("Total households owed a main duty1").assert_one().shift(ABOVE).shift(ABOVE).fill(LEFT).is_not_blank()
+#         sheet = tab.name
+# #         savepreviewhtml(observations, fname= tab.name + "PREVIEW.html")
+#         dimensions = [
+#             HDim(ons_geo,'ONS Geography Code',DIRECTLY,LEFT),
+#             HDim(period,'Period',CLOSEST,LEFT),
+#             HDim(households_by_priority,'households_by_priority',DIRECTLY, ABOVE),
+#             HDim(vulnerable_households,'vulnerable_households',DIRECTLY, ABOVE),
+#             HDimConst("sheet", tab.name) #Might be handy to have for post processing when other tabs are running also 
+#         ]
+#         tidy_sheet = ConversionSegment(tab, dimensions, observations)
+#         savepreviewhtml(tidy_sheet, fname = tab.name + "PREVIEW.html")
+#         trace.with_preview(tidy_sheet)
+        
+#         df = tidy_sheet.topandas()
+        
+#         df["Period"]= df["Period"].str.split(",", n = 1, expand = True)[1]
+        
+#         df['households_vulnerable'] = df['households_by_priority']+df['vulnerable_households']
+#         df.drop(['households_by_priority', 'vulnerable_households'],axis=1, inplace=True)
+        
+# #         print(df['households_vulnerable'].unique())
+        
+#         temp = {'Household member vulnerable as a result of:Total \nvulnerable households':
+#                'Household member vulnerable as a result of Total', 
+#                 'Old age':'Household member vulnerable as a result of old age',
+#                'Physical disability / ill health':'Household member vulnerable as a result of physical disability or ill health',
+#                'Mental health problems':'Household member vulnerable as a result of mental health problems',
+#                'Young\n applicant2': 'Household member vulnerable as a result of young applicant',
+#                'Domestic\n abuse':'Household member vulnerable as a result of domestic abuse',
+#                'Other\nreasons3':'Household member vulnerable as a result of other reasons'}
+        
+#         df['Priority Need'] = df['households_vulnerable'].replace(temp)
+        
+#         print(df['Priority Need'].unique())
+        
+#         trace.store("combined_dataframe", df)
+        
+# # Done but contains other values
+        
+# # (E3:AA4) Priority Need
+# # 	E3, G3, I3, AA3 to take value in cell
+# #  L4: X4 to take following values:
+# # 	  Household member vulnerable as a result of Total (K33 to K4)
+# #   Household member vulnerable as a result of old age (K33 to L4) 
+# # 	  Household member vulnerable as a result of physical disability or ill health (K33 to M4)
+# # 	  Household member vulnerable as a result of mental health problems (K33 to N4)
+# # 	  Household member vulnerable as a result of young applicant  (K33 to O4)
+# # 	  Household member vulnerable as a result of domestic abuse  (K33 to P4)
+# # 	  Household member vulnerable as a result of other reasons (K33 to Q4)
+# # Add Decision after Relief duty ended column with value All
+# # Add Reason for duty end column with value All
+# # Add Measure Type column with value Households
+# # Add Unit column with value count and percentage
+# +
 # Number of households owed a main duty by priority need England
 
 for tab in tabs:
@@ -960,29 +1065,55 @@ for tab in tabs:
     trace.start(datasetTitle, tab, columns, original_tabs.downloadURL)
     if tab.name in ['MD3']: #only transforming tab MD3 for now
         print(tab.name)
-              
+        
         remove_notes = tab.filter(contains_string('From July 2002, "Young applicant" ')).shift(LEFT).expand(DOWN).expand(RIGHT)
-        unwanted_ons_geo = tab.filter("Total households owed a main duty1").assert_one().shift(LEFT).shift(LEFT).shift(LEFT).shift(LEFT).fill(DOWN).filter("-").expand(RIGHT)|remove_notes
+        
         households_by_priority = tab.filter("Total households owed a main duty1").assert_one().expand(RIGHT)
         vulnerable_households = households_by_priority.shift(DOWN)
-        observations = vulnerable_households.fill(DOWN).expand(RIGHT).is_not_blank()-unwanted_ons_geo
-        ons_geo = tab.filter("Total households owed a main duty1").assert_one().shift(LEFT).shift(LEFT).shift(LEFT).shift(LEFT).fill(DOWN).is_not_blank()-unwanted_ons_geo
+        
+        
+#         unwanted_ons_geo
+
+        unwanted_ons_geo = tab.filter("Total households owed a main duty1").shift(LEFT).shift(LEFT).shift(LEFT).shift(LEFT).fill(DOWN).is_not_blank().filter('-').expand(RIGHT)|remove_notes
+        
+        total_observations = vulnerable_households.fill(DOWN).is_not_blank()-unwanted_ons_geo
+        
+#         blank
+        
+        households_by_priority_blank = tab.filter("Total households owed a main duty1").assert_one().expand(RIGHT).is_blank()
+        
+        vulnerable_households_blank_cells = households_by_priority_blank.shift(DOWN).one_of(['Old age', 'Physical disability / ill health', 'Mental health problems'])
+        other_reasons = tab.filter('Homeless because of emergency5').shift(DOWN).shift(LEFT).shift(LEFT).shift(LEFT)
+        domestic_abuse = other_reasons.shift(LEFT).shift(LEFT)
+        young_applicant = domestic_abuse.shift(LEFT).shift(LEFT)
+        total_attributes = other_reasons|domestic_abuse|young_applicant
+        vulnerable_households_blank = households_by_priority_blank.shift(DOWN)-vulnerable_households_blank_cells
+        vulnerable_households_blank_total = vulnerable_households_blank-total_attributes
+        
+#         unwanted-observations
+
+        unwanted_observations = vulnerable_households_blank_total.fill(DOWN).is_not_blank()
+        observations = total_observations-unwanted_observations
+        
+#         ons_geo
+
+        ons_geo = tab.filter("Total households owed a main duty1").shift(LEFT).shift(LEFT).shift(LEFT).shift(LEFT).fill(DOWN).is_not_blank()-unwanted_ons_geo
+        
         period = tab.filter("Total households owed a main duty1").assert_one().shift(ABOVE).shift(ABOVE).fill(LEFT).is_not_blank()
-        sheet = tab.name
-#         savepreviewhtml(observations, fname= tab.name + "PREVIEW.html")
+#         savepreviewhtml(ons_geo, fname = tab.name + "PREVIEW.html")
+        
         dimensions = [
             HDim(ons_geo,'ONS Geography Code',DIRECTLY,LEFT),
             HDim(period,'Period',CLOSEST,LEFT),
             HDim(households_by_priority,'households_by_priority',DIRECTLY, ABOVE),
             HDim(vulnerable_households,'vulnerable_households',DIRECTLY, ABOVE),
-            HDimConst("sheet", tab.name) #Might be handy to have for post processing when other tabs are running also 
+#             HDimConst("sheet", tab.name) #Might be handy to have for post processing when other tabs are running also 
         ]
         tidy_sheet = ConversionSegment(tab, dimensions, observations)
-        savepreviewhtml(tidy_sheet, fname= tab.name + "PREVIEW.html")
+        savepreviewhtml(tidy_sheet, fname = tab.name + "PREVIEW.html")
         trace.with_preview(tidy_sheet)
         
         df = tidy_sheet.topandas()
-        
         df["Period"]= df["Period"].str.split(",", n = 1, expand = True)[1]
         
         df['households_vulnerable'] = df['households_by_priority']+df['vulnerable_households']
@@ -1005,8 +1136,8 @@ for tab in tabs:
         
         trace.store("combined_dataframe", df)
         
-# Done but contains other values
         
+# Done but contains other values        
 # (E3:AA4) Priority Need
 # 	E3, G3, I3, AA3 to take value in cell
 #  L4: X4 to take following values:
@@ -1021,6 +1152,7 @@ for tab in tabs:
 # Add Reason for duty end column with value All
 # Add Measure Type column with value Households
 # Add Unit column with value count and percentage
+
 # +
 #Number of households by type of temporary accommodation provided England
 
@@ -1062,6 +1194,50 @@ for tab in tabs:
 # (H3:AI3) Household Composition column with value all - Requirements inside brackets needs to be validated
 # 	All values in Row 3 (Any with nothing in a cell should be N/A)
 # +
+# # Number of households in temporary accommodation by household composition England
+
+# for tab in tabs:
+#     columns=['TO DO']
+#     trace.start(datasetTitle, tab, columns, original_tabs.downloadURL)
+#     if tab.name in ['TA2']: #only transforming tab TA2 for now
+#         print(tab.name)
+        
+#         remove_notes = tab.filter(contains_string('Notes')).expand(DOWN).expand(RIGHT)
+#         unwanted_ons_geo = tab.filter("Total number of households in TA1,2").assert_one().shift(LEFT).shift(LEFT).shift(LEFT).shift(LEFT).fill(DOWN).filter("-").expand(RIGHT)|remove_notes
+#         adult_and_children_in_household = tab.filter("Total number of households in TA1,2").assert_one().expand(RIGHT)
+#         adult_and_children = adult_and_children_in_household.shift(ABOVE)
+#         type_of_occupants_households = adult_and_children.shift(ABOVE)
+#         male_female = adult_and_children_in_household.shift(DOWN)
+#         observations = adult_and_children_in_household.shift(DOWN).fill(DOWN).expand(RIGHT).is_not_blank()-unwanted_ons_geo
+#         ons_geo = tab.filter("Total number of households in TA1,2").assert_one().shift(LEFT).shift(LEFT).shift(LEFT).shift(LEFT).fill(DOWN).is_not_blank()-unwanted_ons_geo
+#         period = tab.filter("Sum of Couple with dependent children").assert_one().shift(ABOVE).shift(ABOVE).fill(LEFT).is_not_blank()
+#         sheet = tab.name
+# #         savepreviewhtml(male_female, fname= tab.name + "PREVIEW.html")
+#         dimensions = [
+#             HDim(ons_geo,'ONS Geography Code',DIRECTLY,LEFT),
+#             HDim(period,'Period',CLOSEST,LEFT),
+#             HDim(type_of_occupants_households,'type_of_occupants_households',DIRECTLY, ABOVE),
+#             HDim(adult_and_children,'adult_and_children',DIRECTLY, ABOVE),
+#             HDim(adult_and_children_in_household,'adult_and_children_in_household',DIRECTLY, ABOVE),
+#             HDim(male_female,'male_female',DIRECTLY, ABOVE),
+#             HDimConst("sheet", tab.name) #Might be handy to have for post processing when other tabs are running also 
+#         ]
+#         tidy_sheet = ConversionSegment(tab, dimensions, observations)
+#         savepreviewhtml(tidy_sheet, fname= tab.name + "PREVIEW.html")
+#         trace.with_preview(tidy_sheet)
+        
+#         df = tidy_sheet.topandas()
+        
+#         df["Period"]= df["Period"].str.split(",", n = 1, expand = True)[1]
+        
+#         df['Household Composition'] = df['adult_and_children_in_household']+df['male_female']
+        
+#         df.drop(['adult_and_children_in_household', 'male_female'],axis=1, inplace = True)
+#         print(df['Household Composition'].unique())
+# # Two 'Female' column and 'Other / gender not known' which needs to be distinguished
+#         trace.store("combined_dataframe", df)
+
+# +
 # Number of households in temporary accommodation by household composition England
 
 for tab in tabs:
@@ -1072,15 +1248,41 @@ for tab in tabs:
         
         remove_notes = tab.filter(contains_string('Notes')).expand(DOWN).expand(RIGHT)
         unwanted_ons_geo = tab.filter("Total number of households in TA1,2").assert_one().shift(LEFT).shift(LEFT).shift(LEFT).shift(LEFT).fill(DOWN).filter("-").expand(RIGHT)|remove_notes
+        
+#         required
+
         adult_and_children_in_household = tab.filter("Total number of households in TA1,2").assert_one().expand(RIGHT)
         adult_and_children = adult_and_children_in_household.shift(ABOVE)
         type_of_occupants_households = adult_and_children.shift(ABOVE)
         male_female = adult_and_children_in_household.shift(DOWN)
-        observations = adult_and_children_in_household.shift(DOWN).fill(DOWN).expand(RIGHT).is_not_blank()-unwanted_ons_geo
-        ons_geo = tab.filter("Total number of households in TA1,2").assert_one().shift(LEFT).shift(LEFT).shift(LEFT).shift(LEFT).fill(DOWN).is_not_blank()-unwanted_ons_geo
-        period = tab.filter("Sum of Couple with dependent children").assert_one().shift(ABOVE).shift(ABOVE).fill(LEFT).is_not_blank()
-        sheet = tab.name
-#         savepreviewhtml(male_female, fname= tab.name + "PREVIEW.html")
+        
+#         To get rid of % values from observation
+
+        adult_and_children_in_household_blank = tab.filter("Total number of households in TA1,2").assert_one().expand(RIGHT).is_blank()
+        female_added = adult_and_children_in_household_blank.shift(DOWN).filter(lambda x: type(x.value) !=  'Female' in x.value) 
+        other_gender_added = adult_and_children_in_household_blank.shift(DOWN).filter(lambda x: type(x.value) !=  'Other / gender not known' in x.value) 
+        total_add = female_added|other_gender_added
+        male_female_required = adult_and_children_in_household_blank.shift(DOWN)-total_add
+        
+#         unwanted observations and unwanted ons_geo
+
+        unwanted_observations = male_female_required.fill(DOWN).is_not_blank()
+        unwanted_ons_geo = tab.filter('Total number of households in TA1,2').shift(LEFT).shift(LEFT).shift(LEFT).shift(LEFT).fill(DOWN).is_not_blank().filter('-').expand(RIGHT)
+        total_unwanted = unwanted_observations|unwanted_ons_geo
+
+#         required observations
+
+        observations = male_female.fill(DOWN).is_not_blank()-total_unwanted
+    
+#         ons_geo
+
+        total_unwanted_ons_geo = unwanted_ons_geo|remove_notes
+        ons_geo = tab.filter('Total number of households in TA1,2').shift(LEFT).shift(LEFT).shift(LEFT).shift(LEFT).fill(DOWN).is_not_blank()-total_unwanted_ons_geo
+        
+        period = tab.filter('Sum of Couple with dependent children').shift(ABOVE).shift(ABOVE).fill(LEFT).is_not_blank()
+        
+#         savepreviewhtml(observations, fname= tab.name + "PREVIEW.html")
+        
         dimensions = [
             HDim(ons_geo,'ONS Geography Code',DIRECTLY,LEFT),
             HDim(period,'Period',CLOSEST,LEFT),
@@ -1094,6 +1296,7 @@ for tab in tabs:
         savepreviewhtml(tidy_sheet, fname= tab.name + "PREVIEW.html")
         trace.with_preview(tidy_sheet)
         
+        
         df = tidy_sheet.topandas()
         
         df["Period"]= df["Period"].str.split(",", n = 1, expand = True)[1]
@@ -1102,7 +1305,9 @@ for tab in tabs:
         
         df.drop(['adult_and_children_in_household', 'male_female'],axis=1, inplace = True)
         print(df['Household Composition'].unique())
-# Two 'Female' column and 'Other / gender not known' which needs to be distinguished
+        
+#         Two 'Female' column and 'Other / gender not known' which needs to be distinguished
+        
         trace.store("combined_dataframe", df)
 # -
 

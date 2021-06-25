@@ -196,7 +196,7 @@ for tab in tabs:
         period = quarter.shift(LEFT).is_not_blank()
         dimensions = [
             HDim(quarter,'quarter',DIRECTLY,LEFT),
-            HDim(period,'period',CLOSEST,LEFT),
+#             HDim(period,'period',CLOSEST,LEFT),
             HDim(rented_sector,'rented_sector',DIRECTLY, ABOVE),
             HDim(prs_srs,'prs_srs',DIRECTLY, ABOVE),
             HDim(breakdown_of_prs_srs,'breakdown_of_prs_srs',DIRECTLY, ABOVE),
